@@ -1,0 +1,26 @@
+{
+    "configurations": [
+        {
+            "name": "STM32",
+            "includePath": [
+                "Core/Inc/**",
+                "Drivers/CMSIS/Device/ST/STM32H7xx/Include/**",
+                "Drivers/CMSIS/Include/**",
+                "Drivers/STM32H7xx_HAL_Driver/Inc/**",
+                "Drivers/STM32H7xx_HAL_Driver/Inc/Legacy/**",
+                "/usr/include/linux/**",
+                "/usr/include/**",
+                "${workspaceFolder}/Project/Inc"
+            ],
+            "defines": [
+                "STM32H743xx",
+                "USE_FULL_LL_DRIVER",
+                "USE_HAL_DRIVER"
+            ],
+            "compilerPath": "/opt/gcc-arm-none-eabi/bin/arm-none-eabi-g++",
+            "configurationProvider": "ms-vscode.makefile-tools",
+            "intelliSenseMode": "gcc-arm"
+        }
+    ],
+    "version": 4
+}

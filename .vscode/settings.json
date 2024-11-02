@@ -38,7 +38,8 @@
         "dshot.h": "c",
         "tim.h": "c",
         "upm_fti.h": "c",
-        "stdexcept": "cpp"
+        "stdexcept": "cpp",
+        "cstdint": "c"
     },
     "cortex-debug.variableUseNaturalFormat": true
 }

@@ -36,15 +36,21 @@ extern SPI_HandleTypeDef hspi1;
 
 extern SPI_HandleTypeDef hspi2;
 
+extern SPI_HandleTypeDef hspi3;
+
+extern SPI_HandleTypeDef hspi4;
+
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
 
 void MX_SPI1_Init(void);
 void MX_SPI2_Init(void);
+void MX_SPI3_Init(void);
+void MX_SPI4_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-void SPI_TransmitReceive_DMA(uint16_t* transferData, uint16_t* receiveData, uint16_t size);
+void SPI_TransmitReceive_DMA(uint8_t* transferData, uint8_t* receiveData, uint16_t size);
 void SPI_Transfer_DMA(uint16_t* transferData, uint16_t size);
 void SPI_Receive_DMA(uint16_t* receiveData, uint16_t size);
 void DMA1_ReceiveComplete(void);

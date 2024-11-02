@@ -17,6 +17,8 @@
 //#include "upm_utilities.h"
 #include "bma250e.h"
 
+extern SPI_HandleTypeDef hspi1;
+
 // macro for converting a uint8_t low/high pair into a float
 #define INT16_TO_FLOAT(h, l) \
     (float)( (int16_t)( (l) | ((h) << 8) ) )
@@ -303,7 +305,7 @@ uint8_t bma250e_read_reg(const bma250e_context dev, uint8_t reg)
     uint8_t pktin[2] = {reg, 0}, pktout[2]={0};
 
     //_csOn(dev);
-    SPI_TransmitReceive_DMA((uint16_t*)pktin, (uint16_t*)pktout, 1);
+    SPI_TransmitReceive_DMA(pktin, pktout, 2);
     // if (mraa_spi_transfer_buf(dev->spi, pkt, pkt, 2))
     // {
     //     _csOff(dev);

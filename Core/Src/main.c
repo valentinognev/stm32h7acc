@@ -18,7 +18,6 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "dma.h"
 #include "memorymap.h"
 #include "spi.h"
 #include "tim.h"
@@ -36,16 +35,31 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-
+static uint16_t Buffercmp(uint8_t *pBuffer1, uint8_t *pBuffer2, uint16_t BufferLength);
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+extern SPI_HandleTypeDef hspi1;
+extern SPI_HandleTypeDef hspi2;
+/* Buffer used for transmission */
+uint8_t aTxBuffer[] = "****SPI - Two Boards communication based on Interrupt **** SPI Message ******** SPI Message ******** SPI Message ****";
+#define BUFFERSIZE                       (COUNTOF(aTxBuffer) - 1)
+
+/* Exported macro ------------------------------------------------------------*/
+#define COUNTOF(__BUFFER__)   (sizeof(__BUFFER__) / sizeof(*(__BUFFER__)))
+
+/* Buffer used for reception */
+uint8_t aRxBuffer[BUFFERSIZE] = {0};
+
+/* transfer state */
+__IO uint32_t wTransferState = TRANSFER_WAIT;
 
 /* USER CODE END PV */
 
@@ -89,16 +103,54 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_DMA_Init();
-  MX_SPI1_Init();
   MX_SPI2_Init();
   MX_TIM1_Init();
+  MX_SPI3_Init();
+  MX_SPI4_Init();
+  MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  /*##-2- Start the Full Duplex Communication process ########################*/
+  /* While the SPI in TransmitReceive process, user can transmit data through
+     "aTxBuffer" buffer & receive data through "aRxBuffer" */
+  // if(HAL_SPI_TransmitReceive_IT(&hspi1, (uint8_t*)aTxBuffer, (uint8_t *)aRxBuffer, BUFFERSIZE) != HAL_OK)
+  // {
+  //   /* Transfer error in transmission process */
+  //   Error_Handler();
+  // }
+
+  // /*##-3- Wait for the end of the transfer ###################################*/
+  // /*  Before starting a new communication transfer, you must wait the callback call
+  //     to get the transfer complete confirmation or an error detection.
+  //     For simplicity reasons, this example is just waiting till the end of the
+  //     transfer, but application may perform other tasks while transfer operation
+  //     is ongoing. */
+  // while (wTransferState == TRANSFER_WAIT)
+  // {
+  // }
+
+  // switch(wTransferState)
+  // {
+  //   case TRANSFER_COMPLETE :
+  //     /*##-4- Compare the sent and received buffers ##############################*/
+  //     if(Buffercmp((uint8_t*)aTxBuffer, (uint8_t*)aRxBuffer, BUFFERSIZE))
+  //     {
+  //       /* Processing Error */
+  //       Error_Handler();
+  //     }
+  //     break;
+  //   default :
+  //     Error_Handler();
+  //     break;
+  // }
+ 
+    //  HAL_SPI_TransmitReceive_IT(&hspi1, (uint8_t*)aTxBuffer, (uint8_t *)aRxBuffer, 117);
+
+ 
   bma250e_context sensor = bma250e_init(BMA250E_DEFAULT_SPI_BUS,-1, 10);
   float x, y, z;
   while (1)
@@ -189,7 +241,27 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+/**
+  * @brief  Compares two buffers.
+  * @param  pBuffer1, pBuffer2: buffers to be compared.
+  * @param  BufferLength: buffer's length
+  * @retval 0  : pBuffer1 identical to pBuffer2
+  *         >0 : pBuffer1 differs from pBuffer2
+  */
+static uint16_t Buffercmp(uint8_t *pBuffer1, uint8_t *pBuffer2, uint16_t BufferLength)
+{
+  while (BufferLength--)
+  {
+    if ((*pBuffer1) != *pBuffer2)
+    {
+      return BufferLength;
+    }
+    pBuffer1++;
+    pBuffer2++;
+  }
 
+  return 0;
+}
 /* USER CODE END 4 */
 
 /**

@@ -18,16 +18,16 @@ endif()
 message("Build type: ${CMAKE_BUILD_TYPE}")
 
 # Set microcontroller information
-set(MCU_FAMILY STM32H7xx)
-set(MCU_MODEL STM32H743xx)
+set(MCU_FAMILY STM32H5xx)
+set(MCU_MODEL STM32H562xx)
 set(CPU_PARAMETERS
-    -mcpu=cortex-m7
+    -mcpu=cortex-m33
     -mthumb
-    -mfpu=fpv5-d16
+    -mfpu=fpv4-sp-d16
     -mfloat-abi=hard)
 
-set(STARTUP_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/startup_stm32h743xx.s)
-set(MCU_LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/STM32H743VITx_FLASH.ld)
+set(STARTUP_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/startup_stm32h562xx.s)
+set(MCU_LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/STM32H562xx_FLASH.ld)
 
 ###############################################################################
 set(EXECUTABLE ${CMAKE_PROJECT_NAME})

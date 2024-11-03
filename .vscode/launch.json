@@ -3,44 +3,44 @@
         {
             "showDevDebugOutput": "parsed",
             "cwd": "${workspaceRoot}",
-            "executable": "./build/stm32H7_ACC.elf",
+            "executable": "./build/stm32ACC.elf",
             "name": "Debug STM32",
             "request": "launch",
             "type": "cortex-debug",
             "servertype": "openocd",
             "preLaunchTask": "Build STM",
-            "device": "startup_stm32h743xx.s",
+            "device": "startup_stm32h562xx.s",
             "configFiles": [
                 "openocd.cfg"
             ],
-            "svdFile": "STM32H7x3.svd"
+            "svdFile": "stm32h562.svd"
         },
         {
             "showDevDebugOutput": "parsed",
             "cwd": "${workspaceRoot}",
-            "executable": "./build/stm32H7_ACC.elf",
+            "executable": "./build/stm32ACC.elf",
             "name": "Attach STM32",
             "request": "attach",
             "type": "cortex-debug",
             "servertype": "openocd",
             "preLaunchTask": "Build STM",
-            "device": "startup_stm32h743xx.s",
+            "device": "startup_stm32h562xx.s",
             "configFiles": [
                 "openocd.cfg"
             ],
-            "svdFile": "STM32H7x3.svd"
+            "svdFile": "stm32h562.svd"
         },
         {
             "showDevDebugOutput": "parsed",
             "cwd": "${workspaceRoot}",
-            "executable": "./build/stm32H7_ACC.elf",
+            "executable": "./build/stm32ACC.elf",
             "name": "Launch JLink",
             "request": "launch",
             "type": "cortex-debug",
             "servertype": "jlink",
             "interface": "swd",
             "preLaunchTask": "Build STM",
-            "device": "STM32G474CE",
+            "device": "STM32H562RG",
             "preLaunchCommands": [
                 "make flash-jlink"
             ],
@@ -59,19 +59,19 @@
                     }
                 ]
             },
-            "svdFile": "STM32G474.svd"
+            "svdFile": "stm32h562.svd"
         },
         {
             "showDevDebugOutput": "parsed",
             "cwd": "${workspaceRoot}",
-            "executable": "./build/stm32H7_ACC.elf",
+            "executable": "./build/stm32ACC.elf",
             "name": "Attach JLink",
             "request": "attach",
             "type": "cortex-debug",
             "servertype": "jlink",
             "interface": "swd",
             "preLaunchTask": "Build STM",
-            "device": "STM32G474CE",
+            "device": "STM32H562RG",
             "preAttachCommands": [
                 "make flash-jlink"
             ],
@@ -90,7 +90,7 @@
                     }
                 ]
             },
-            "svdFile": "STM32H7x3.svd"
+            "svdFile": "stm32h562.svd"
         },
     ]
 }

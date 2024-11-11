@@ -29,7 +29,7 @@ static void _csOn(const bma250e_context dev)
     assert(dev != NULL);
 
     // if (dev->gpioCS)        mraa_gpio_write(dev->gpioCS, 0);
-    HAL_GPIO_WritePin(  ACCL1_CS_GPIO_Port,   ACCL1_CS_Pin, GPIO_PIN_RESET); 
+    LL_GPIO_ResetOutputPin(ACCL1_CS_GPIO_Port, ACCL1_CS_Pin);
 }
 
 static void _csOff(const bma250e_context dev)
@@ -37,14 +37,13 @@ static void _csOff(const bma250e_context dev)
     assert(dev != NULL);
 
     // if (dev->gpioCS)        mraa_gpio_write(dev->gpioCS, 1);
-    HAL_GPIO_WritePin(  ACCL1_CS_GPIO_Port,   ACCL1_CS_Pin, GPIO_PIN_SET); 
+    LL_GPIO_SetOutputPin(ACCL1_CS_GPIO_Port, ACCL1_CS_Pin);
 }
 
 // init
 bma250e_context bma250e_init(int bus, int addr, int cs)
 {
-    bma250e_context dev =
-        (bma250e_context)malloc(sizeof(struct _bma250e_context));
+    bma250e_context dev = (bma250e_context)malloc(sizeof(struct _bma250e_context));
 
     if (!dev)
         return NULL;
@@ -52,69 +51,11 @@ bma250e_context bma250e_init(int bus, int addr, int cs)
     // zero out context
     memset((void *)dev, 0, sizeof(struct _bma250e_context));
 
-    // make sure MRAA is initialized
-    // if (mraa_init() != MRAA_SUCCESS)
-    // {
-    //     printf("%s: mraa_init() failed.\n", __FUNCTION__);
-    //     bma250e_close(dev);
-    //     return NULL;
-    // }
-
     if (addr < 0)
         dev->isSPI = true;
 
-    // if (dev->isSPI)
-    // {
-    //     // if (!(dev->spi = mraa_spi_init(bus)))
-    //     // {
-    //     //     printf("%s: mraa_spi_init() failed.\n", __FUNCTION__);
-    //     //     bma250e_close(dev);
-    //     //     return NULL;
-    //     // }
-
-    //     // Only create cs context if we are actually using a valid pin.
-    //     // A hardware controlled pin should specify cs as -1.
-    //     if (cs >= 0)
-    //     {
-    //         // if (!(dev->gpioCS = mraa_gpio_init(cs)))
-    //         // {
-    //         //     printf("%s: mraa_gpio_init() failed.\n", __FUNCTION__);
-    //         //     bma250e_close(dev);
-    //         //     return NULL;
-    //         // }
-    //         mraa_gpio_dir(dev->gpioCS, MRAA_GPIO_OUT);
-    //     }
-
-    //     // mraa_spi_mode(dev->spi, MRAA_SPI_MODE0);
-    //     // if (mraa_spi_frequency(dev->spi, 5000000))
-    //     // {
-    //     //     printf("%s: mraa_spi_frequency() failed.\n", __FUNCTION__);
-    //     //     bma250e_close(dev);
-    //     //     return NULL;
-    //     // }
-    // }
-    // else
-    // {
-    //     // I2C
-
-    //     if (!(dev->i2c = mraa_i2c_init(bus)))
-    //     {
-    //         printf("%s: mraa_i2c_init() failed.\n", __FUNCTION__);
-    //         bma250e_close(dev);
-    //         return NULL;
-    //     }
-
-    //     if (mraa_i2c_address(dev->i2c, addr))
-    //     {
-    //         printf("%s: mraa_i2c_address() failed.\n", __FUNCTION__);
-    //         bma250e_close(dev);
-    //         return NULL;
-    //     }
-    // }
-
     // check the chip id
-
-    uint8_t chipID = bma250e_get_chip_id(dev);
+    uint16_t chipID = bma250e_get_chip_id(dev);   
 
     // check the various chips id's and set appropriate capabilities.
     // Bail if the chip id is unknown.
@@ -139,15 +80,13 @@ bma250e_context bma250e_init(int bus, int addr, int cs)
         break;
 
     default:
-        printf("%s: invalid chip id: %02x.  Expected f9, fa, or 03\n",
-               __FUNCTION__, chipID);
+        // printf("%s: invalid chip id: %02x.  Expected f9, fa, or 03\n",  __FUNCTION__, chipID);
         bma250e_close(dev);
         return NULL;
     }
 
     // call devinit with default options
-    if (bma250e_devinit(dev, BMA250E_POWER_MODE_NORMAL, BMA250E_RANGE_2G,
-                        BMA250E_BW_250))
+    if (bma250e_devinit(dev, BMA250E_POWER_MODE_NORMAL, BMA250E_RANGE_2G, BMA250E_BW_250))
     {
         printf("%s: bma250e_devinit() failed.\n", __FUNCTION__);
         bma250e_close(dev);
@@ -174,10 +113,8 @@ void bma250e_close(bma250e_context dev)
     // free(dev);
 }
 
-upm_result_t bma250e_devinit(const bma250e_context dev,
-                             BMA250E_POWER_MODE_T pwr,
-                             BMA250E_RANGE_T range,
-                             BMA250E_BW_T bw)
+upm_result_t bma250e_devinit(const bma250e_context dev, BMA250E_POWER_MODE_T pwr, 
+                                 BMA250E_RANGE_T range, BMA250E_BW_T bw)
 {
     assert(dev != NULL);
 
@@ -196,11 +133,9 @@ upm_result_t bma250e_devinit(const bma250e_context dev,
         || bma250e_set_bandwidth(dev, bw)
         || bma250e_enable_register_shadowing(dev, true)
         || bma250e_enable_output_filtering(dev, true)
-        || bma250e_fifo_config(dev, BMA250E_FIFO_MODE_BYPASS,
-                               BMA250E_FIFO_DATA_SEL_XYZ))
+        || bma250e_fifo_config(dev, BMA250E_FIFO_MODE_BYPASS, BMA250E_FIFO_DATA_SEL_XYZ))
     {
-        printf("%s: failed to set configuration parameters.\n",
-               __FUNCTION__);
+        // printf("%s: failed to set configuration parameters.\n", __FUNCTION__);
         return UPM_ERROR_OPERATION_FAILED;
     }
 
@@ -233,10 +168,9 @@ upm_result_t bma250e_update(const bma250e_context dev)
 
     uint8_t buf[bufLen];
 
-    if (bma250e_read_regs(dev, startReg, buf, bufLen) != bufLen)
+    if (bma250e_read_regs(dev, startReg, buf, bufLen/2) != bufLen/2)
     {
-        printf("%s: bma250e_read_regs() failed to read %d bytes\n",
-               __FUNCTION__, bufLen);
+        // printf("%s: bma250e_read_regs() failed to read %d bytes\n", __FUNCTION__, bufLen);
         return UPM_ERROR_OPERATION_FAILED;
     }
 
@@ -297,46 +231,34 @@ void bma250e_enable_fifo(const bma250e_context dev, bool useFIFO)
         dev->useFIFO = useFIFO;
 }
 
-uint8_t bma250e_read_reg(const bma250e_context dev, uint8_t reg)
+uint16_t bma250e_read_reg(const bma250e_context dev, uint8_t reg)
 {
     assert(dev != NULL);
 
     reg |= 0x80; // needed for read
-    uint8_t pktin[2] = {reg, 0}, pktout[2]={0};
+    uint16_t pktin = reg; 
+    uint16_t pktout = 0;
 
-    //_csOn(dev);
-    SPI_TransmitReceive_DMA(pktin, pktout, 2);
-    // if (mraa_spi_transfer_buf(dev->spi, pkt, pkt, 2))
-    // {
-    //     _csOff(dev);
-    //     printf("%s: mraa_spi_transfer_buf() failed.\n", __FUNCTION__);
-    //     return 0xff;
-    // }
+    _csOn(dev);
+    SPI_TransmitReceive_DMA(&pktin, &pktout, 1);
     _csOff(dev);
 
-    return pktout[1];
+    return pktout >> 8;
 }
 
-int bma250e_read_regs(const bma250e_context dev, uint8_t reg,
-                      uint8_t *buffer, int len)
+int16_t bma250e_read_regs(const bma250e_context dev, uint8_t reg, int16_t *buffer, int len)
 {
     assert(dev != NULL);
 
 
     reg |= 0x80; // needed for read
 
-    uint8_t sbuf[len + 1];
-    memset((char *)sbuf, 0, len + 1);
+    uint16_t sbuf[len + 1];
+    memset((uint16_t *)sbuf, 0, len + 1);
     sbuf[0] = reg;
 
-    // _csOn(dev);
+    _csOn(dev);
     SPI_TransmitReceive_DMA((uint16_t*)sbuf, (uint16_t*)sbuf, len + 1);
-    // if (mraa_spi_transfer_buf(dev->spi, sbuf, sbuf, len + 1))
-    // {
-    //     _csOff(dev);
-    //     printf("%s: mraa_spi_transfer_buf() failed.\n", __FUNCTION__);
-    //     return -1;
-    // }
     _csOff(dev);
 
     // now copy it into user buffer
@@ -355,7 +277,7 @@ upm_result_t bma250e_write_reg(const bma250e_context dev,
     reg &= 0x7f; // mask off 0x80 for writing
     uint8_t pkt[2] = {reg, val}, buf[2];
 
-    // _csOn(dev);
+    _csOn(dev);
     SPI_TransmitReceive_DMA((uint16_t*)pkt, (uint16_t*)buf, 1);
     // if (mraa_spi_transfer_buf(dev->spi, pkt, NULL, 2))
     // {
@@ -370,7 +292,7 @@ upm_result_t bma250e_write_reg(const bma250e_context dev,
     return UPM_SUCCESS;
 }
 
-uint8_t bma250e_get_chip_id(const bma250e_context dev)
+uint16_t bma250e_get_chip_id(const bma250e_context dev)
 {
     assert(dev != NULL);
 
@@ -486,12 +408,9 @@ upm_result_t bma250e_set_power_mode(const bma250e_context dev,
     assert(dev != NULL);
 
     // mask off reserved bits first
-    uint8_t reg =
-        bma250e_read_reg(dev, BMA250E_REG_PMU_LPW)
-        & ~_BMA250E_PMU_LPW_RESERVED_MASK;
+    uint8_t reg = bma250e_read_reg(dev, BMA250E_REG_PMU_LPW) & ~_BMA250E_PMU_LPW_RESERVED_MASK;
 
-    reg &= ~(_BMA250E_PMU_LPW_POWER_MODE_MASK
-             << _BMA250E_PMU_LPW_POWER_MODE_SHIFT);
+    reg &= ~(_BMA250E_PMU_LPW_POWER_MODE_MASK << _BMA250E_PMU_LPW_POWER_MODE_SHIFT);
     reg |= (power << _BMA250E_PMU_LPW_POWER_MODE_SHIFT);
 
     if (bma250e_write_reg(dev, BMA250E_REG_PMU_LPW, power))

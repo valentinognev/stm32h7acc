@@ -108,7 +108,7 @@ extern "C" {
      * @param dev The device context.
      * @return The chip ID.
      */
-    uint8_t bma250e_get_chip_id(const bma250e_context dev);
+    uint16_t bma250e_get_chip_id(const bma250e_context dev);
 
     /**
      * Return accelerometer data in gravities.  bma250e_update() must
@@ -583,8 +583,7 @@ extern "C" {
      * @param intr One of the BMA250E_INTERRUPT_PINS_T values
      * specifying which interrupt pin you are removing.
      */
-    void bma250e_uninstall_isr(const bma250e_context dev,
-                               BMA250E_INTERRUPT_PINS_T intr);
+    void bma250e_uninstall_isr(const bma250e_context dev, BMA250E_INTERRUPT_PINS_T intr);
 
     /**
      * Read a register.
@@ -593,7 +592,7 @@ extern "C" {
      * @param reg The register to read.
      * @return The value of the register.
      */
-    uint8_t bma250e_read_reg(const bma250e_context dev, uint8_t reg);
+    uint16_t bma250e_read_reg(const bma250e_context dev, uint8_t reg);
 
     /**
      * Read contiguous registers into a buffer.
@@ -603,8 +602,7 @@ extern "C" {
      * @param len The number of registers to read.
      * @return The number of bytes read, or -1 on error.
      */
-    int bma250e_read_regs(const bma250e_context dev, uint8_t reg,
-                          uint8_t *buffer, int len);
+    int16_t bma250e_read_regs(const bma250e_context dev, uint8_t reg, int16_t *buffer, int len);
 
     /**
      * Write to a register.
@@ -614,8 +612,7 @@ extern "C" {
      * @param val The value to write.
      * @return UPM result.
      */
-    upm_result_t bma250e_write_reg(const bma250e_context dev,
-                                   uint8_t reg, uint8_t val);
+    upm_result_t bma250e_write_reg(const bma250e_context dev, uint8_t reg, uint8_t val);
 
 
 #ifdef __cplusplus

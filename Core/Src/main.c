@@ -25,7 +25,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "bma250e.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -40,12 +40,26 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-
+static uint16_t Buffercmp(uint8_t *pBuffer1, uint8_t *pBuffer2, uint16_t BufferLength);
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+extern SPI_HandleTypeDef hspi1;
+extern SPI_HandleTypeDef hspi2;
+/* Buffer used for transmission */
+uint8_t aTxBuffer[] = "****SPI - Two Boards communication based on Interrupt **** SPI Message ******** SPI Message ******** SPI Message ****";
+#define BUFFERSIZE                       (COUNTOF(aTxBuffer) - 1)
+
+/* Exported macro ------------------------------------------------------------*/
+#define COUNTOF(__BUFFER__)   (sizeof(__BUFFER__) / sizeof(*(__BUFFER__)))
+
+/* Buffer used for reception */
+uint8_t aRxBuffer[BUFFERSIZE] = {0};
+
+/* transfer state */
+__IO uint32_t wTransferState = TRANSFER_WAIT;
 
 /* USER CODE END PV */
 
@@ -100,8 +114,25 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+ 
+  bma250e_context sensor = bma250e_init(BMA250E_DEFAULT_SPI_BUS,-1, 10);
+  float x, y, z;
   while (1)
   {
+    if (bma250e_update(sensor))
+    {
+        // printf("bma250e_update() failed\n");
+        return 1;
+    }
+
+    bma250e_get_accelerometer(sensor, &x, &y, &z);
+    // printf("Acceleration x: %f y: %f z: %f g\n",
+    //         x, y, z);
+
+    // printf("Compensation Temperature: %f C\n\n",
+    bma250e_get_temperature(sensor);
+
+    HAL_Delay(250);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

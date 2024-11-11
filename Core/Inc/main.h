@@ -48,7 +48,11 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
-
+enum {
+  TRANSFER_WAIT,
+  TRANSFER_COMPLETE,
+  TRANSFER_ERROR
+};
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
@@ -71,12 +75,14 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define ACCL1_CS_Pin GPIO_PIN_4
 #define ACCL1_CS_GPIO_Port GPIOA
-#define ACCL1_SCK_Pin GPIO_PIN_5
-#define ACCL1_SCK_GPIO_Port GPIOA
-#define ACCL1_MISO_Pin GPIO_PIN_6
-#define ACCL1_MISO_GPIO_Port GPIOA
-#define ACCL1_MOSI_Pin GPIO_PIN_7
-#define ACCL1_MOSI_GPIO_Port GPIOA
+#define IMU1_SCK_Pin GPIO_PIN_5
+#define IMU1_SCK_GPIO_Port GPIOA
+#define IMU1_MISO_Pin GPIO_PIN_6
+#define IMU1_MISO_GPIO_Port GPIOA
+#define IMU1_MOSI_Pin GPIO_PIN_7
+#define IMU1_MOSI_GPIO_Port GPIOA
+#define GYRO1_CS_Pin GPIO_PIN_4
+#define GYRO1_CS_GPIO_Port GPIOC
 
 /* USER CODE BEGIN Private defines */
 

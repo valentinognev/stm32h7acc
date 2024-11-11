@@ -21,7 +21,14 @@
 #include "spi.h"
 
 /* USER CODE BEGIN 0 */
+#include "main.h"
 
+extern uint8_t* aTxBuffer;
+extern uint8_t* aRxBuffer;
+
+extern uint32_t wTransferState;
+uint8_t spiTxFinished = 1;
+uint8_t spiRxFinished = 1;
 /* USER CODE END 0 */
 
 SPI_HandleTypeDef hspi1;
@@ -43,11 +50,11 @@ void MX_SPI1_Init(void)
   hspi1.Instance = SPI1;
   hspi1.Init.Mode = SPI_MODE_MASTER;
   hspi1.Init.Direction = SPI_DIRECTION_2LINES;
-  hspi1.Init.DataSize = SPI_DATASIZE_4BIT;
+  hspi1.Init.DataSize = SPI_DATASIZE_8BIT;
   hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi1.Init.NSS = SPI_NSS_SOFT;
-  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_64;
   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -227,13 +234,16 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* spiHandle)
     PA6     ------> SPI1_MISO
     PA7     ------> SPI1_MOSI
     */
-    GPIO_InitStruct.Pin = ACCL1_SCK_Pin|ACCL1_MISO_Pin|ACCL1_MOSI_Pin;
+    GPIO_InitStruct.Pin = IMU1_SCK_Pin|IMU1_MISO_Pin|IMU1_MOSI_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     GPIO_InitStruct.Alternate = GPIO_AF5_SPI1;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
+    /* SPI1 interrupt Init */
+    HAL_NVIC_SetPriority(SPI1_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(SPI1_IRQn);
   /* USER CODE BEGIN SPI1_MspInit 1 */
 
   /* USER CODE END SPI1_MspInit 1 */
@@ -385,8 +395,10 @@ void HAL_SPI_MspDeInit(SPI_HandleTypeDef* spiHandle)
     PA6     ------> SPI1_MISO
     PA7     ------> SPI1_MOSI
     */
-    HAL_GPIO_DeInit(GPIOA, ACCL1_SCK_Pin|ACCL1_MISO_Pin|ACCL1_MOSI_Pin);
+    HAL_GPIO_DeInit(GPIOA, IMU1_SCK_Pin|IMU1_MISO_Pin|IMU1_MOSI_Pin);
 
+    /* SPI1 interrupt Deinit */
+    HAL_NVIC_DisableIRQ(SPI1_IRQn);
   /* USER CODE BEGIN SPI1_MspDeInit 1 */
 
   /* USER CODE END SPI1_MspDeInit 1 */
@@ -457,5 +469,99 @@ void HAL_SPI_MspDeInit(SPI_HandleTypeDef* spiHandle)
 }
 
 /* USER CODE BEGIN 1 */
+void SPI_TransmitReceive_DMA(uint16_t* transferData, uint16_t* receiveData, uint16_t size)
+{
+  // uint8_t aRxBuffer[117] = {0};
+
+  // HAL_SPI_TransmitReceive_IT(&hspi1, aTxBuffer, aRxBuffer, 2);
+
+  HAL_SPI_TransmitReceive(&hspi1, transferData, receiveData, 2, 1000);
+  // HAL_SPI_TransmitReceive_DMA(&hspi1, aTxBuffer, aRxBuffer, 2);
+  // HAL_SPI_TransmitReceive_IT(&hspi1, transferData, aRxBuffer, 2);
+ 
+  for (uint16_t i=1; i<size; i+=1)
+  {
+    HAL_GPIO_WritePin(  ACCL1_CS_GPIO_Port,   ACCL1_CS_Pin, GPIO_PIN_RESET); spiTxFinished = 0;spiRxFinished = 0;
+    // uint8_t res = HAL_SPI_TransmitReceive_DMA(&hspi1, (uint32_t)(transferData+i), (uint32_t)(receiveData+i), 1) ;
+    uint8_t res = HAL_SPI_TransmitReceive_IT(&hspi1, (transferData+i), (receiveData+i), 2) ;
+
+    if(res!= HAL_OK) // after we will use bytesize if we want to optimize
+         res = res;
+    HAL_Delay(1);
+    // LL_DMA_DisableChannel(DMA2, LL_DMA_CHANNEL_4);
+    // LL_DMA_DisableChannel(DMA2, LL_DMA_CHANNEL_5);
+    // LL_SPI_Disable(SPI1);
+    // LL_DMA_ConfigAddresses(DMA2, LL_DMA_CHANNEL_4, LL_SPI_DMA_GetRegAddr(SPI1), (uint32_t)(receiveData+i), LL_DMA_GetDataTransferDirection(DMA2, LL_DMA_CHANNEL_4));
+    // LL_DMA_ConfigAddresses(DMA2, LL_DMA_CHANNEL_5, (uint32_t)(transferData+i), LL_SPI_DMA_GetRegAddr(SPI1), LL_DMA_GetDataTransferDirection(DMA2, LL_DMA_CHANNEL_5));
+
+    // LL_SPI_Enable(SPI1);   
+    // LL_DMA_EnableChannel(DMA2, LL_DMA_CHANNEL_4);
+    // LL_DMA_EnableChannel(DMA2, LL_DMA_CHANNEL_5);
+
+  }
+}
+
+void SPI_Transfer_DMA(uint16_t* transferData, uint16_t size)
+{
+  for (uint16_t i=0; i<size; i++)
+  {
+    HAL_GPIO_WritePin(  ACCL1_CS_GPIO_Port,   ACCL1_CS_Pin, GPIO_PIN_RESET); spiTxFinished = 0;
+    uint8_t res = HAL_SPI_Transmit_DMA(&hspi1, (uint32_t)(transferData+i), 1) ;
+    if(res!= HAL_OK) // after we will use bytesize if we want to optimize
+        res = res;
+
+    // LL_DMA_DisableChannel(DMA2, LL_DMA_CHANNEL_5);
+    // LL_DMA_ConfigAddresses(DMA2, LL_DMA_CHANNEL_5, (uint32_t)(transferData+i), LL_SPI_DMA_GetRegAddr(SPI1), LL_DMA_GetDataTransferDirection(DMA2, LL_DMA_CHANNEL_5));
+
+    // HAL_GPIO_WritePin(  ACCL1_CS_GPIO_Port,   ACCL1_CS_Pin, GPIO_PIN_RESET); spiTxFinished = 0;
+    // LL_DMA_EnableChannel(DMA2, LL_DMA_CHANNEL_5);
+  }
+}
+
+void SPI_Receive_DMA(uint16_t* receiveData, uint16_t size)
+{
+  for (uint16_t i=0; i<size; i++)
+  {
+    HAL_GPIO_WritePin(  ACCL1_CS_GPIO_Port,   ACCL1_CS_Pin, GPIO_PIN_RESET); spiRxFinished = 0;
+    uint8_t res = HAL_SPI_Receive_DMA(&hspi1, (uint32_t)(receiveData+i), 1) ;
+    if(res!= HAL_OK) // after we will use bytesize if we want to optimize
+        res = res;
+    // LL_DMA_DisableChannel(DMA2, LL_DMA_CHANNEL_4);
+    // LL_DMA_ConfigAddresses(DMA2, LL_DMA_CHANNEL_4, LL_SPI_DMA_GetRegAddr(SPI1), (uint32_t)(receiveData+i), LL_DMA_GetDataTransferDirection(DMA2, LL_DMA_CHANNEL_4));
+
+    // HAL_GPIO_WritePin(  ACCL1_CS_GPIO_Port,   ACCL1_CS_Pin, GPIO_PIN_RESET); spiRxFinished = 0;
+    // LL_DMA_EnableChannel(DMA2, LL_DMA_CHANNEL_4);
+  }
+}
+
+void DMA1_ReceiveComplete(void)
+{
+    // TX Done .. Do Something ...
+  // LL_DMA_ClearFlag_TC4(DMA2);
+  if (spiTxFinished)
+    HAL_GPIO_WritePin(  ACCL1_CS_GPIO_Port,   ACCL1_CS_Pin, GPIO_PIN_SET);
+  spiRxFinished = 1;
+}
+
+void DMA1_TransmitComplete(void)
+{
+    // RX Done .. Do Something ...
+  // LL_DMA_ClearFlag_TC5(DMA2);
+  if (spiRxFinished)
+    HAL_GPIO_WritePin(  ACCL1_CS_GPIO_Port,   ACCL1_CS_Pin, GPIO_PIN_SET);
+  spiTxFinished = 1;
+}
+
+/**
+  * @brief  TxRx Transfer completed callback.
+  * @param  hspi: SPI handle
+  * @note   This example shows a simple way to report end of Interrupt TxRx transfer, and
+  *         you can add your own implementation.
+  * @retval None
+  */
+void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi)
+{
+  wTransferState = TRANSFER_COMPLETE;
+}
 
 /* USER CODE END 1 */

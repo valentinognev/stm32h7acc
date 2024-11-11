@@ -107,3 +107,4 @@ build/CMakeFiles/stm32ACC.dir/Project/Src/bma250e_fti.c.obj
 build/CMakeFiles/stm32ACC.dir/Project/Src/bma250e_fti.c.obj.d
 build/CMakeFiles/stm32ACC.dir/Project/Src/bma250e.c.obj
 build/CMakeFiles/stm32ACC.dir/Project/Src/bma250e.c.obj.d
+build/jlink-script

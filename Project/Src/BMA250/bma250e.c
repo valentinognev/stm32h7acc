@@ -240,7 +240,7 @@ uint16_t bma250e_read_reg(const bma250e_context dev, uint8_t reg)
     uint16_t pktout = 0;
 
     _csOn(dev);
-    SPI_TransmitReceive_DMA(&pktin, &pktout, 1);
+    SPI_TransmitReceive(&pktin, &pktout, 1);
     _csOff(dev);
 
     return pktout >> 8;
@@ -258,7 +258,7 @@ int16_t bma250e_read_regs(const bma250e_context dev, uint8_t reg, int16_t *buffe
     sbuf[0] = reg;
 
     _csOn(dev);
-    SPI_TransmitReceive_DMA((uint16_t*)sbuf, (uint16_t*)sbuf, len + 1);
+    SPI_TransmitReceive((uint16_t*)sbuf, (uint16_t*)sbuf, len + 1);
     _csOff(dev);
 
     // now copy it into user buffer
@@ -278,7 +278,7 @@ upm_result_t bma250e_write_reg(const bma250e_context dev,
     uint8_t pkt[2] = {reg, val}, buf[2];
 
     _csOn(dev);
-    SPI_TransmitReceive_DMA((uint16_t*)pkt, (uint16_t*)buf, 1);
+    SPI_TransmitReceive((uint16_t*)pkt, (uint16_t*)buf, 1);
     // if (mraa_spi_transfer_buf(dev->spi, pkt, NULL, 2))
     // {
     //     _csOff(dev);

@@ -10,7 +10,7 @@
                 "Drivers/STM32H5xx_HAL_Driver/Inc/Legacy/**",
                 "/usr/include/linux/**",
                 "/usr/include/**",
-                "${workspaceFolder}/Project/Inc"
+                "${workspaceFolder}/Project/Inc/**"
             ],
             "defines": [
                 "STM32H562xx",

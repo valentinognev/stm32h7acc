@@ -25,7 +25,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "bma250e.h"
+#include "bmi160.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -35,12 +35,13 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define COINES_SUCCESS                             0
 
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-static uint16_t Buffercmp(uint8_t *pBuffer1, uint8_t *pBuffer2, uint16_t BufferLength);
+
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -48,19 +49,8 @@ static uint16_t Buffercmp(uint8_t *pBuffer1, uint8_t *pBuffer2, uint16_t BufferL
 /* USER CODE BEGIN PV */
 extern SPI_HandleTypeDef hspi1;
 extern SPI_HandleTypeDef hspi2;
-/* Buffer used for transmission */
-uint8_t aTxBuffer[] = "****SPI - Two Boards communication based on Interrupt **** SPI Message ******** SPI Message ******** SPI Message ****";
-#define BUFFERSIZE                       (COUNTOF(aTxBuffer) - 1)
 
-/* Exported macro ------------------------------------------------------------*/
-#define COUNTOF(__BUFFER__)   (sizeof(__BUFFER__) / sizeof(*(__BUFFER__)))
-
-/* Buffer used for reception */
-uint8_t aRxBuffer[BUFFERSIZE] = {0};
-
-/* transfer state */
-__IO uint32_t wTransferState = TRANSFER_WAIT;
-
+int mainread();
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -115,24 +105,10 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
  
-  bma250e_context sensor = bma250e_init(BMA250E_DEFAULT_SPI_BUS,-1, 10);
-  float x, y, z;
+  mainread();
+  
   while (1)
   {
-    if (bma250e_update(sensor))
-    {
-        // printf("bma250e_update() failed\n");
-        return 1;
-    }
-
-    bma250e_get_accelerometer(sensor, &x, &y, &z);
-    // printf("Acceleration x: %f y: %f z: %f g\n",
-    //         x, y, z);
-
-    // printf("Compensation Temperature: %f C\n\n",
-    bma250e_get_temperature(sensor);
-
-    HAL_Delay(250);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -198,6 +174,243 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+/**
+ * Copyright (C) 2021 Bosch Sensortec GmbH. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+/*********************************************************************/
+/* system header files */
+/*********************************************************************/
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+/*********************************************************************/
+/* own header files */
+/*********************************************************************/
+#include "bmi160.h"
+
+/*********************************************************************/
+/* local macro definitions */
+/*! I2C interface communication, 1 - Enable; 0- Disable */
+#define BMI160_INTERFACE_I2C  1
+
+/*! SPI interface communication, 1 - Enable; 0- Disable */
+#define BMI160_INTERFACE_SPI  0
+
+#if (!((BMI160_INTERFACE_I2C == 1) && (BMI160_INTERFACE_SPI == 0)) && \
+    (!((BMI160_INTERFACE_I2C == 0) && (BMI160_INTERFACE_SPI == 1))))
+#error "Invalid value given for the macros BMI160_INTERFACE_I2C / BMI160_INTERFACE_SPI"
+#endif
+
+/*! bmi160 shuttle id */
+#define BMI160_SHUTTLE_ID     0x38
+
+/*! bmi160 Device address */
+#define BMI160_DEV_ADDR       BMI160_I2C_ADDR
+
+/*********************************************************************/
+/* global variables */
+/*********************************************************************/
+
+/*! @brief This structure containing relevant bmi160 info */
+struct bmi160_dev bmi160dev;
+
+/*! @brief variable to hold the bmi160 accel data */
+struct bmi160_sensor_data bmi160_accel;
+
+/*! @brief variable to hold the bmi160 gyro data */
+struct bmi160_sensor_data bmi160_gyro;
+
+/*********************************************************************/
+/* static function declarations */
+/*********************************************************************/
+
+/*!
+ * @brief   internal API is used to initialize the sensor interface
+ */
+static void init_sensor_interface(void);
+
+/*!
+ * @brief   This internal API is used to initialize the bmi160 sensor with default
+ */
+static void init_bmi160(void);
+
+/*!
+ * @brief   This internal API is used to initialize the sensor driver interface
+ */
+static void init_bmi160_sensor_driver_interface(void);
+
+/*********************************************************************/
+/* functions */
+/*********************************************************************/
+
+/*!
+ *  @brief This internal API is used to initialize the sensor interface depending
+ *   on selection either SPI or I2C.
+ *
+ *  @param[in] void
+ *
+ *  @return void
+ *
+ */
+static void init_sensor_interface(void)
+{
+    /* Switch VDD for sensor off */
+    //set_shuttleboard_vdd_vddio_config(0, 0);
+
+    /* wait until the sensor goes off */
+    //HAL_Delay(10);
+
+    /* CSB pin is made low for selecting SPI protocol*/
+    // set_pin_config(COINES_SHUTTLE_PIN_7, COINES_PIN_DIRECTION_OUT, COINES_PIN_VALUE_LOW);
+    // HAL_Delay(10);
+    LL_GPIO_ResetOutputPin(ACCL1_CS_GPIO_Port, ACCL1_CS_Pin);
+    LL_mDelay(10);
+    // config_spi_bus(COINES_SPI_BUS_0, COINES_SPI_SPEED_5_MHZ, COINES_SPI_MODE3);
+
+    // HAL_Delay(10);
+    LL_mDelay(10);
+
+    /* Switch VDD for sensor on */
+    //set_shuttleboard_vdd_vddio_config(3300, 3300);
+
+    //HAL_Delay(10);
+    //LL_mDelay(10);
+    
+    /* CSB pin is made high for selecting SPI protocol
+     * Note: CSB has to see rising after power up, to switch to SPI protocol */
+    // set_pin_config(COINES_SHUTTLE_PIN_7, COINES_PIN_DIRECTION_OUT, COINES_PIN_VALUE_HIGH);
+    LL_GPIO_SetOutputPin(ACCL1_CS_GPIO_Port, ACCL1_CS_Pin);
+}
+
+/*!
+ *  @brief This internal API is used to initializes the bmi160 sensor
+ *  settings like power mode and OSRS settings.
+ *
+ *  @param[in] void
+ *
+ *  @return void
+ *
+ */
+static void init_bmi160(void)
+{
+    int8_t rslt;
+
+    rslt = bmi160_init(&bmi160dev);
+
+    if (rslt == BMI160_OK)
+    {
+        printf("BMI160 initialization success !\n");
+        printf("Chip ID 0x%X\n", bmi160dev.chip_id);
+    }
+    else
+    {
+        printf("BMI160 initialization failure !\n");
+        // exit(COINES_E_FAILURE);
+    }
+
+    /* Select the Output data rate, range of accelerometer sensor */
+    bmi160dev.accel_cfg.odr = BMI160_ACCEL_ODR_1600HZ;
+    bmi160dev.accel_cfg.range = BMI160_ACCEL_RANGE_16G;
+    bmi160dev.accel_cfg.bw = BMI160_ACCEL_BW_NORMAL_AVG4;
+
+    /* Select the power mode of accelerometer sensor */
+    bmi160dev.accel_cfg.power = BMI160_ACCEL_NORMAL_MODE;
+
+    /* Select the Output data rate, range of Gyroscope sensor */
+    bmi160dev.gyro_cfg.odr = BMI160_GYRO_ODR_3200HZ;
+    bmi160dev.gyro_cfg.range = BMI160_GYRO_RANGE_2000_DPS;
+    bmi160dev.gyro_cfg.bw = BMI160_GYRO_BW_NORMAL_MODE;
+
+    /* Select the power mode of Gyroscope sensor */
+    bmi160dev.gyro_cfg.power = BMI160_GYRO_NORMAL_MODE;
+
+    /* Set the sensor configuration */
+    rslt = bmi160_set_sens_conf(&bmi160dev);
+}
+
+/*!
+ *  @brief This internal API is used to set the sensor driver interface to
+ *  read/write the data.
+ *
+ *  @param[in] void
+ *
+ *  @return void
+ *
+ */
+static void init_bmi160_sensor_driver_interface(void)
+{
+    /* SPI setup */
+
+    /* link read/write/delay function of host system to appropriate
+     *  bmi160 function call prototypes */
+}
+
+/*!
+ *  @brief Main Function where the execution getting started to test the code.
+ *
+ *  @param[in] argc
+ *  @param[in] argv
+ *
+ *  @return status
+ *
+ */
+int mainread()
+{
+    // struct board_info board_info;
+    int16_t rslt;
+    int times_to_read = 0;
+
+    init_bmi160_sensor_driver_interface();
+
+    // rslt = open_comm_intf(COINES_COMM_INTF_USB,NULL);
+
+    if (rslt < 0)
+    {
+        // printf(
+        //     "\n Unable to connect with Application Board ! \n" " 1. Check if the board is connected and powered on. \n" " 2. Check if Application Board USB driver is installed. \n"
+        //     " 3. Check if board is in use by another application. (Insufficient permissions to access USB) \n");
+        // exit(rslt);
+    }
+
+    // rslt = get_board_info(&board_info);
+
+    // if (rslt == COINES_SUCCESS)
+    // {
+    //     if (board_info.shuttle_id != BMI160_SHUTTLE_ID)
+    //     {
+
+    //         // printf("! Warning invalid sensor shuttle \n ," "This application will not support this sensor \n");
+    //         // exit(COINES_E_FAILURE);
+    //     }
+    // }
+
+    init_sensor_interface();
+
+    /* After sensor init introduce 200 msec sleep */
+    HAL_Delay(200);
+    init_bmi160();
+
+    while (times_to_read < 100)
+    {
+        /* To read both Accel and Gyro data */
+        bmi160_get_sensor_data((BMI160_ACCEL_SEL | BMI160_GYRO_SEL), &bmi160_accel, &bmi160_gyro, &bmi160dev);
+
+        // printf("ax:%d\tay:%d\taz:%d\n", bmi160_accel.x, bmi160_accel.y, bmi160_accel.z);
+        // printf("gx:%d\tgy:%d\tgz:%d\n", bmi160_gyro.x, bmi160_gyro.y, bmi160_gyro.z);
+        // fflush(stdout);
+
+        HAL_Delay(10);
+        times_to_read = times_to_read + 1;
+    }
+
+    // close_comm_intf(COINES_COMM_INTF_USB,NULL);
+
+    return EXIT_SUCCESS;
+}
 
 /* USER CODE END 4 */
 

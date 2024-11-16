@@ -108,3 +108,16 @@ build/CMakeFiles/stm32ACC.dir/Project/Src/bma250e_fti.c.obj.d
 build/CMakeFiles/stm32ACC.dir/Project/Src/bma250e.c.obj
 build/CMakeFiles/stm32ACC.dir/Project/Src/bma250e.c.obj.d
 build/jlink-script
+build/CMakeFiles/Progress/4
+build/CMakeFiles/Progress/38
+build/CMakeFiles/Progress/count.txt
+build/CMakeFiles/stm32ACC.dir/Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_ll_spi.c.obj
+build/CMakeFiles/stm32ACC.dir/Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_ll_spi.c.obj.d
+build/CMakeFiles/stm32ACC.dir/Project/Src/BMA250/bma250e_fti.c.obj
+build/CMakeFiles/stm32ACC.dir/Project/Src/BMA250/bma250e_fti.c.obj.d
+build/CMakeFiles/stm32ACC.dir/Project/Src/BMA250/bma250e.c.obj
+build/CMakeFiles/stm32ACC.dir/Project/Src/BMA250/bma250e.c.obj.d
+build/CMakeFiles/stm32ACC.dir/Project/Src/BMI160/bmi160.c.obj
+build/CMakeFiles/stm32ACC.dir/Project/Src/BMI160/bmi160.c.obj.d
+build/CMakeFiles/stm32ACC.dir/Project/Src/BMI160/BMI160.cpp.obj
+build/CMakeFiles/stm32ACC.dir/Project/Src/BMI160/BMI160.cpp.obj.d

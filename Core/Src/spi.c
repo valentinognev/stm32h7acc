@@ -26,7 +26,7 @@
 extern uint8_t* aTxBuffer;
 extern uint8_t* aRxBuffer;
 
-extern uint32_t wTransferState;
+uint32_t wTransferState;
 uint8_t spiTxFinished = 1;
 uint8_t spiRxFinished = 1;
 /* USER CODE END 0 */
@@ -34,7 +34,6 @@ uint8_t spiRxFinished = 1;
 SPI_HandleTypeDef hspi1;
 SPI_HandleTypeDef hspi2;
 SPI_HandleTypeDef hspi3;
-SPI_HandleTypeDef hspi6;
 
 /* SPI1 init function */
 void MX_SPI1_Init(void)
@@ -170,35 +169,62 @@ void MX_SPI6_Init(void)
 
   /* USER CODE END SPI6_Init 0 */
 
-  /* USER CODE BEGIN SPI6_Init 1 */
+  LL_SPI_InitTypeDef SPI_InitStruct = {0};
 
-  /* USER CODE END SPI6_Init 1 */
-  hspi6.Instance = SPI6;
-  hspi6.Init.Mode = SPI_MODE_MASTER;
-  hspi6.Init.Direction = SPI_DIRECTION_2LINES;
-  hspi6.Init.DataSize = SPI_DATASIZE_4BIT;
-  hspi6.Init.CLKPolarity = SPI_POLARITY_LOW;
-  hspi6.Init.CLKPhase = SPI_PHASE_1EDGE;
-  hspi6.Init.NSS = SPI_NSS_SOFT;
-  hspi6.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
-  hspi6.Init.FirstBit = SPI_FIRSTBIT_MSB;
-  hspi6.Init.TIMode = SPI_TIMODE_DISABLE;
-  hspi6.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
-  hspi6.Init.CRCPolynomial = 0x7;
-  hspi6.Init.NSSPMode = SPI_NSS_PULSE_ENABLE;
-  hspi6.Init.NSSPolarity = SPI_NSS_POLARITY_LOW;
-  hspi6.Init.FifoThreshold = SPI_FIFO_THRESHOLD_01DATA;
-  hspi6.Init.MasterSSIdleness = SPI_MASTER_SS_IDLENESS_00CYCLE;
-  hspi6.Init.MasterInterDataIdleness = SPI_MASTER_INTERDATA_IDLENESS_00CYCLE;
-  hspi6.Init.MasterReceiverAutoSusp = SPI_MASTER_RX_AUTOSUSP_DISABLE;
-  hspi6.Init.MasterKeepIOState = SPI_MASTER_KEEP_IO_STATE_DISABLE;
-  hspi6.Init.IOSwap = SPI_IO_SWAP_DISABLE;
-  hspi6.Init.ReadyMasterManagement = SPI_RDY_MASTER_MANAGEMENT_INTERNALLY;
-  hspi6.Init.ReadyPolarity = SPI_RDY_POLARITY_HIGH;
-  if (HAL_SPI_Init(&hspi6) != HAL_OK)
+  LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
+  RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
+
+  /** Initializes the peripherals clock
+  */
+  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_SPI6;
+  PeriphClkInitStruct.Spi6ClockSelection = RCC_SPI6CLKSOURCE_PCLK2;
+  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
   {
     Error_Handler();
   }
+
+  /* Peripheral clock enable */
+  LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SPI6);
+
+  LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_GPIOC);
+  LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_GPIOB);
+  /**SPI6 GPIO Configuration
+  PC12   ------> SPI6_SCK
+  PB4(NJTRST)   ------> SPI6_MISO
+  PB5   ------> SPI6_MOSI
+  */
+  GPIO_InitStruct.Pin = LL_GPIO_PIN_12;
+  GPIO_InitStruct.Mode = LL_GPIO_MODE_ALTERNATE;
+  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
+  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
+  GPIO_InitStruct.Alternate = LL_GPIO_AF_5;
+  LL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+  GPIO_InitStruct.Pin = LL_GPIO_PIN_4|LL_GPIO_PIN_5;
+  GPIO_InitStruct.Mode = LL_GPIO_MODE_ALTERNATE;
+  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
+  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
+  GPIO_InitStruct.Alternate = LL_GPIO_AF_8;
+  LL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /* USER CODE BEGIN SPI6_Init 1 */
+
+  /* USER CODE END SPI6_Init 1 */
+  SPI_InitStruct.TransferDirection = LL_SPI_FULL_DUPLEX;
+  SPI_InitStruct.Mode = LL_SPI_MODE_MASTER;
+  SPI_InitStruct.DataWidth = LL_SPI_DATAWIDTH_4BIT;
+  SPI_InitStruct.ClockPolarity = LL_SPI_POLARITY_LOW;
+  SPI_InitStruct.ClockPhase = LL_SPI_PHASE_1EDGE;
+  SPI_InitStruct.NSS = LL_SPI_NSS_SOFT;
+  SPI_InitStruct.BaudRate = LL_SPI_BAUDRATEPRESCALER_DIV2;
+  SPI_InitStruct.BitOrder = LL_SPI_MSB_FIRST;
+  SPI_InitStruct.CRCCalculation = LL_SPI_CRCCALCULATION_DISABLE;
+  SPI_InitStruct.CRCPoly = 0x7;
+  LL_SPI_Init(SPI6, &SPI_InitStruct);
+  LL_SPI_SetStandard(SPI6, LL_SPI_PROTOCOL_MOTOROLA);
+  LL_SPI_EnableNSSPulseMgt(SPI6);
   /* USER CODE BEGIN SPI6_Init 2 */
 
   /* USER CODE END SPI6_Init 2 */
@@ -334,49 +360,6 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* spiHandle)
 
   /* USER CODE END SPI3_MspInit 1 */
   }
-  else if(spiHandle->Instance==SPI6)
-  {
-  /* USER CODE BEGIN SPI6_MspInit 0 */
-
-  /* USER CODE END SPI6_MspInit 0 */
-
-  /** Initializes the peripherals clock
-  */
-    PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_SPI6;
-    PeriphClkInitStruct.Spi6ClockSelection = RCC_SPI6CLKSOURCE_PCLK2;
-    if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
-    {
-      Error_Handler();
-    }
-
-    /* SPI6 clock enable */
-    __HAL_RCC_SPI6_CLK_ENABLE();
-
-    __HAL_RCC_GPIOC_CLK_ENABLE();
-    __HAL_RCC_GPIOB_CLK_ENABLE();
-    /**SPI6 GPIO Configuration
-    PC12     ------> SPI6_SCK
-    PB4(NJTRST)     ------> SPI6_MISO
-    PB5     ------> SPI6_MOSI
-    */
-    GPIO_InitStruct.Pin = GPIO_PIN_12;
-    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    GPIO_InitStruct.Alternate = GPIO_AF5_SPI6;
-    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-
-    GPIO_InitStruct.Pin = GPIO_PIN_4|GPIO_PIN_5;
-    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    GPIO_InitStruct.Alternate = GPIO_AF8_SPI6;
-    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-
-  /* USER CODE BEGIN SPI6_MspInit 1 */
-
-  /* USER CODE END SPI6_MspInit 1 */
-  }
 }
 
 void HAL_SPI_MspDeInit(SPI_HandleTypeDef* spiHandle)
@@ -445,31 +428,10 @@ void HAL_SPI_MspDeInit(SPI_HandleTypeDef* spiHandle)
 
   /* USER CODE END SPI3_MspDeInit 1 */
   }
-  else if(spiHandle->Instance==SPI6)
-  {
-  /* USER CODE BEGIN SPI6_MspDeInit 0 */
-
-  /* USER CODE END SPI6_MspDeInit 0 */
-    /* Peripheral clock disable */
-    __HAL_RCC_SPI6_CLK_DISABLE();
-
-    /**SPI6 GPIO Configuration
-    PC12     ------> SPI6_SCK
-    PB4(NJTRST)     ------> SPI6_MISO
-    PB5     ------> SPI6_MOSI
-    */
-    HAL_GPIO_DeInit(GPIOC, GPIO_PIN_12);
-
-    HAL_GPIO_DeInit(GPIOB, GPIO_PIN_4|GPIO_PIN_5);
-
-  /* USER CODE BEGIN SPI6_MspDeInit 1 */
-
-  /* USER CODE END SPI6_MspDeInit 1 */
-  }
 }
 
 /* USER CODE BEGIN 1 */
-void SPI_TransmitReceive_DMA(uint16_t* transferData, uint16_t* receiveData, uint16_t size)
+void SPI_TransmitReceive(uint16_t* transferData, uint16_t* receiveData, uint16_t size)
 {
   // uint8_t aRxBuffer[117] = {0};
 
@@ -501,7 +463,7 @@ void SPI_TransmitReceive_DMA(uint16_t* transferData, uint16_t* receiveData, uint
   }
 }
 
-void SPI_Transfer_DMA(uint16_t* transferData, uint16_t size)
+void SPI_Transfer(uint16_t* transferData, uint16_t size)
 {
   for (uint16_t i=0; i<size; i++)
   {
@@ -518,7 +480,7 @@ void SPI_Transfer_DMA(uint16_t* transferData, uint16_t size)
   }
 }
 
-void SPI_Receive_DMA(uint16_t* receiveData, uint16_t size)
+void SPI_Receive(uint16_t* receiveData, uint16_t size)
 {
   for (uint16_t i=0; i<size; i++)
   {

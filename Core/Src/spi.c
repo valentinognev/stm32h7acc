@@ -431,7 +431,7 @@ void HAL_SPI_MspDeInit(SPI_HandleTypeDef* spiHandle)
 }
 
 /* USER CODE BEGIN 1 */
-void SPI_TransmitReceive(uint16_t* transferData, uint16_t* receiveData, uint16_t size)
+void SPI_TransmitReceive(uint8_t* transferData, uint8_t* receiveData, uint16_t size)
 {
   // uint8_t aRxBuffer[117] = {0};
 
@@ -463,12 +463,13 @@ void SPI_TransmitReceive(uint16_t* transferData, uint16_t* receiveData, uint16_t
   }
 }
 
-void SPI_Transfer(uint16_t* transferData, uint16_t size)
+void SPI_Transfer(uint8_t* transferData, uint16_t size)
 {
   for (uint16_t i=0; i<size; i++)
   {
     HAL_GPIO_WritePin(  ACCL1_CS_GPIO_Port,   ACCL1_CS_Pin, GPIO_PIN_RESET); spiTxFinished = 0;
-    uint8_t res = HAL_SPI_Transmit_DMA(&hspi1, (uint32_t)(transferData+i), 1) ;
+    // uint8_t res = HAL_SPI_Transmit_DMA(&hspi1, (uint32_t)(transferData+i), 1) ;
+    uint8_t res = HAL_SPI_Transmit_IT(&hspi1, (transferData+i), 1);
     if(res!= HAL_OK) // after we will use bytesize if we want to optimize
         res = res;
 
@@ -480,12 +481,13 @@ void SPI_Transfer(uint16_t* transferData, uint16_t size)
   }
 }
 
-void SPI_Receive(uint16_t* receiveData, uint16_t size)
+void SPI_Receive(uint8_t* receiveData, uint16_t size)
 {
   for (uint16_t i=0; i<size; i++)
   {
     HAL_GPIO_WritePin(  ACCL1_CS_GPIO_Port,   ACCL1_CS_Pin, GPIO_PIN_RESET); spiRxFinished = 0;
-    uint8_t res = HAL_SPI_Receive_DMA(&hspi1, (uint32_t)(receiveData+i), 1) ;
+    // uint8_t res = HAL_SPI_Receive_DMA(&hspi1, (uint32_t)(receiveData+i), 1) ;
+    uint8_t res = HAL_SPI_Receive_IT(&hspi1, (receiveData+i), 1);
     if(res!= HAL_OK) // after we will use bytesize if we want to optimize
         res = res;
     // LL_DMA_DisableChannel(DMA2, LL_DMA_CHANNEL_4);

@@ -38,7 +38,7 @@
 
 #ifndef BMI160_DEFS_H_
 #define BMI160_DEFS_H_
-
+#include "main.h"
 /*************************** C types headers *****************************/
 #ifdef __KERNEL__
 #include <linux/types.h>
@@ -702,13 +702,15 @@
  * @brief Bus communication function pointer which should be mapped to
  * the platform specific read functions of the user
  */
-typedef int8_t (*bmi160_read_fptr_t)(uint8_t dev_addr, uint8_t reg_addr, uint8_t *data, uint16_t len);
+typedef int8_t (*bmi160_read_fptr_t)(SPI_HandleTypeDef bus, uint8_t reg_addr, uint8_t *reg_data, uint16_t count);
+                                 // (uint8_t dev_addr, uint8_t reg_addr, uint8_t *data, uint16_t len);
 
 /*!
  * @brief Bus communication function pointer which should be mapped to
  * the platform specific write functions of the user
  */
-typedef int8_t (*bmi160_write_fptr_t)(uint8_t dev_addr, uint8_t reg_addr, uint8_t *read_data, uint16_t len);
+typedef int8_t (*bmi160_write_fptr_t)(SPI_HandleTypeDef bus, uint8_t reg_addr, uint8_t *reg_data, uint16_t count);
+                                   //(uint8_t dev_addr, uint8_t reg_addr, uint8_t *read_data, uint16_t len);
 typedef void (*bmi160_delay_fptr_t)(uint32_t period);
 
 /*************************** Data structures *********************************/
@@ -1594,7 +1596,7 @@ struct bmi160_dev
     uint8_t chip_id;
 
     /*! Device Id */
-    uint8_t id;
+    SPI_HandleTypeDef id;
 
     /*! 0 - I2C , 1 - SPI Interface */
     uint8_t intf;

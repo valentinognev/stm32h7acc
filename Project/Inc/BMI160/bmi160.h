@@ -72,7 +72,7 @@ extern "C" {
  *  @retval Any non zero value -> Fail
  *
  */
-int8_t write_spi(SPI_HandleTypeDef bus, uint8_t dev_addr, uint8_t reg_addr, uint8_t *reg_data, uint16_t count);
+int8_t write_spi(SPI_HandleTypeDef bus, uint8_t reg_addr, uint8_t *reg_data, uint16_t count);
 
 /*!
  *  @brief This API is used to read the data in SPI communication.
@@ -88,7 +88,7 @@ int8_t write_spi(SPI_HandleTypeDef bus, uint8_t dev_addr, uint8_t reg_addr, uint
  *  @retval Any non zero value -> Fail
  *
  */
-int8_t read_spi(SPI_HandleTypeDef bus, uint8_t dev_addr, uint8_t reg_addr, uint8_t *reg_data, uint16_t count);
+int8_t read_spi(SPI_HandleTypeDef bus, uint8_t reg_addr, uint8_t *reg_data, uint16_t count);
 
 /*!
  *  @brief This API is used for introducing a delay in milliseconds

@@ -1468,41 +1468,31 @@ int8_t bmi160_init(struct bmi160_dev *dev)
     int8_t rslt;
     uint8_t data;
     uint8_t try = 3;
+    dev->read = read_spi;
+    dev->write = write_spi;
 
-    /* Null-pointer check */
-    rslt = null_ptr_check(dev);
+    rslt = bmi160_get_regs(BMI160_SPI_COMM_TEST_ADDR, &data, 1, dev);
 
-    /* Dummy read of 0x7F register to enable SPI Interface
-     * if SPI is used */
-    if ((rslt == BMI160_OK) && (dev->intf == BMI160_SPI_INTF))
+    /* Assign chip id as zero */
+    dev->chip_id = 0;
+
+    while ((try--) && (dev->chip_id != BMI160_CHIP_ID))
     {
-        rslt = bmi160_get_regs(BMI160_SPI_COMM_TEST_ADDR, &data, 1, dev);
+        /* Read chip_id */
+        rslt = bmi160_get_regs(BMI160_CHIP_ID_ADDR, &dev->chip_id, 1, dev);
     }
 
-    if (rslt == BMI160_OK)
+    if ((rslt == BMI160_OK) && (dev->chip_id == BMI160_CHIP_ID))
     {
-        /* Assign chip id as zero */
-        dev->chip_id = 0;
+        dev->any_sig_sel = BMI160_BOTH_ANY_SIG_MOTION_DISABLED;
 
-        while ((try--) && (dev->chip_id != BMI160_CHIP_ID))
-        {
-            /* Read chip_id */
-            rslt = bmi160_get_regs(BMI160_CHIP_ID_ADDR, &dev->chip_id, 1, dev);
-        }
-
-        if ((rslt == BMI160_OK) && (dev->chip_id == BMI160_CHIP_ID))
-        {
-            dev->any_sig_sel = BMI160_BOTH_ANY_SIG_MOTION_DISABLED;
-
-            /* Soft reset */
-            rslt = bmi160_soft_reset(dev);
-        }
-        else
-        {
-            rslt = BMI160_E_DEV_NOT_FOUND;
-        }
+        /* Soft reset */
+        rslt = bmi160_soft_reset(dev);
     }
-
+    else
+    {
+        rslt = BMI160_E_DEV_NOT_FOUND;
+    }
     return rslt;
 }
 
@@ -6431,7 +6421,7 @@ static int8_t trigger_foc(struct bmi160_offsets *offset, struct bmi160_dev const
 /*!
  *  @brief This API is used to write the data in SPI communication.
  */
-int8_t write_spi(SPI_HandleTypeDef bus, uint8_t dev_addr, uint8_t reg_addr, uint8_t *reg_data, uint16_t count)
+int8_t write_spi(SPI_HandleTypeDef bus, uint8_t reg_addr, uint8_t *reg_data, uint16_t count)
 {
     int8_t error;
     uint8_t buffer[count + 1];
@@ -6493,7 +6483,7 @@ int8_t write_spi(SPI_HandleTypeDef bus, uint8_t dev_addr, uint8_t reg_addr, uint
 /*!
  *  @brief This API is used to read the data in SPI communication.
  */
-int8_t read_spi(SPI_HandleTypeDef bus, uint8_t dev_addr, uint8_t reg_addr, uint8_t *reg_data, uint16_t count)
+int8_t read_spi(SPI_HandleTypeDef bus, uint8_t reg_addr, uint8_t *reg_data, uint16_t count)
 {
     int8_t error;
     uint8_t buffer[count + 1];
@@ -6516,13 +6506,13 @@ int8_t read_spi(SPI_HandleTypeDef bus, uint8_t dev_addr, uint8_t reg_addr, uint8
             // spi_txrx_desc[bus].p_rx_buffer = reg_data;
             // spi_txrx_desc[bus].rx_length = count;
 
-            SPI_Receive(reg_data,count);
+            SPI_Receive(reg_data,count+1);
             // error = nrfx_spim_xfer(&spi_instance[bus], &spi_txrx_desc[bus], 0);
         }
 
         /* Deactivate CS pin */
         // nrf_gpio_pin_write(pin_num, 1);
-        LL_GPIO_ResetOutputPin(ACCL1_CS_GPIO_Port, ACCL1_CS_Pin);
+        LL_GPIO_SetOutputPin(ACCL1_CS_GPIO_Port, ACCL1_CS_Pin);
 
         // if (error == NRFX_SUCCESS)
         // {

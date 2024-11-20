@@ -298,7 +298,7 @@ static void init_sensor_interface(void)
 static void init_bmi160(void)
 {
     int8_t rslt;
-
+    bmi160dev.id = hspi1;
     rslt = bmi160_init(&bmi160dev);
 
     if (rslt == BMI160_OK)

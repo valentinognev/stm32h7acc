@@ -254,7 +254,7 @@ int16_t bma250e_read_regs(const bma250e_context dev, uint8_t reg, int16_t *buffe
     reg |= 0x80; // needed for read
 
     uint16_t sbuf[len + 1];
-    memset((uint16_t *)sbuf, 0, len + 1);
+    memset((uint16_t *)sbuf, 0, sizeof(uint16_t)*(len + 1));
     sbuf[0] = reg;
 
     _csOn(dev);

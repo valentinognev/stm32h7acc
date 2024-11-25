@@ -487,7 +487,8 @@ void SPI_TransmitReceive_DMA(uint16_t* transferData, uint16_t* receiveData, uint
 
     if(res!= HAL_OK) // after we will use bytesize if we want to optimize
          res = res;
-    HAL_Delay(1);
+    //HAL_Delay(1);
+    for (uint16_t j=1; j<1000; j+=1);
     // LL_DMA_DisableChannel(DMA2, LL_DMA_CHANNEL_4);
     // LL_DMA_DisableChannel(DMA2, LL_DMA_CHANNEL_5);
     // LL_SPI_Disable(SPI1);

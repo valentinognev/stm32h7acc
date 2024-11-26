@@ -168,7 +168,7 @@ upm_result_t bma250e_update(const bma250e_context dev)
 
     uint8_t buf[bufLen];
 
-    if (bma250e_read_regs(dev, startReg, buf, bufLen/2) != bufLen/2)
+    if (bma250e_read_regs(dev, startReg, buf, bufLen) != bufLen)
     {
         // printf("%s: bma250e_read_regs() failed to read %d bytes\n", __FUNCTION__, bufLen);
         return UPM_ERROR_OPERATION_FAILED;
@@ -231,38 +231,38 @@ void bma250e_enable_fifo(const bma250e_context dev, bool useFIFO)
         dev->useFIFO = useFIFO;
 }
 
-uint16_t bma250e_read_reg(const bma250e_context dev, uint8_t reg)
+uint8_t bma250e_read_reg(const bma250e_context dev, uint8_t reg)
 {
     assert(dev != NULL);
 
     reg |= 0x80; // needed for read
-    uint16_t pktin = reg; 
-    uint16_t pktout = 0;
+    uint8_t pktin[2] = {reg, 0};
+    uint8_t pktout[2] = {0, 0};
 
     _csOn(dev);
     SPI_TransmitReceive_DMA(&pktin, &pktout, 1);
     _csOff(dev);
 
-    return pktout >> 8;
+    return pktout[1];
 }
 
-int16_t bma250e_read_regs(const bma250e_context dev, uint8_t reg, int16_t *buffer, int len)
+int8_t bma250e_read_regs(const bma250e_context dev, uint8_t reg, int8_t *buffer, int len)
 {
     assert(dev != NULL);
 
     reg |= 0x80; // needed for read
 
-    uint16_t sbuf[len + 1];
-    memset((uint16_t *)sbuf, 0, sizeof(uint16_t)*(len + 1));
+    uint8_t sbuf[len + 2];
+    memset((uint8_t *)sbuf, 0, sizeof(uint8_t)*(len + 2));
     sbuf[0] = reg;
 
     _csOn(dev);
-    SPI_TransmitReceive_DMA((uint16_t*)sbuf, (uint16_t*)sbuf, len + 1);
+    SPI_TransmitReceive_DMA((uint16_t*)sbuf, (uint16_t*)sbuf, len/2 + 1);
     _csOff(dev);
 
     // now copy it into user buffer
     for (int i=0; i<len; i++)
-        buffer[i] = sbuf[i + 1];
+        buffer[i] = sbuf[2+i];
 
     return len;
 }

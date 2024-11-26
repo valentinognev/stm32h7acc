@@ -14,11 +14,6 @@
 
 #include <unistd.h>
 #include <string.h>
-
-// #include <mraa/i2c.h>
-// #include <mraa/spi.h>
-// #include <mraa/gpio.h>
-
 #include "upm_types.h"
 
 #include "bma250e_defs.h"
@@ -108,7 +103,7 @@ extern "C" {
      * @param dev The device context.
      * @return The chip ID.
      */
-    uint16_t bma250e_get_chip_id(const bma250e_context dev);
+    uint8_t bma250e_get_chip_id(const bma250e_context dev);
 
     /**
      * Return accelerometer data in gravities.  bma250e_update() must

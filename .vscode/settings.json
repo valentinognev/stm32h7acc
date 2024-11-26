@@ -39,7 +39,8 @@
         "tim.h": "c",
         "upm_fti.h": "c",
         "stdexcept": "cpp",
-        "cstdint": "c"
+        "cstdint": "c",
+        "bmg160.h": "c"
     },
     "cortex-debug.variableUseNaturalFormat": true
 }

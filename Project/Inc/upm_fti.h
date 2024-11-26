@@ -120,7 +120,7 @@ typedef struct _upm_sensor_ft* (*func_get_upm_sensor_ft)(upm_sensor_t sensor_typ
 // #include <fti/upm_rotaryencoder.h>
 // #include <fti/upm_pressure.h>
 // #include <fti/upm_compass.h>
-// #include <fti/upm_gyroscope.h>
+#include <upm_gyroscope.h>
 // #include <fti/upm_buttons.h>
 // #include <fti/upm_joystick.h>
 // #include <fti/upm_magnetometer.h>

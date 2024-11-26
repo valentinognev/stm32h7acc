@@ -250,7 +250,6 @@ int16_t bma250e_read_regs(const bma250e_context dev, uint8_t reg, int16_t *buffe
 {
     assert(dev != NULL);
 
-
     reg |= 0x80; // needed for read
 
     uint16_t sbuf[len + 1];
@@ -265,7 +264,6 @@ int16_t bma250e_read_regs(const bma250e_context dev, uint8_t reg, int16_t *buffe
     for (int i=0; i<len; i++)
         buffer[i] = sbuf[i + 1];
 
-
     return len;
 }
 
@@ -279,20 +277,12 @@ upm_result_t bma250e_write_reg(const bma250e_context dev,
 
     _csOn(dev);
     SPI_TransmitReceive_DMA((uint16_t*)pkt, (uint16_t*)buf, 1);
-    // if (mraa_spi_transfer_buf(dev->spi, pkt, NULL, 2))
-    // {
-    //     _csOff(dev);
-    //     printf("%s: mraa_spi_transfer_buf() failed.\n",
-    //            __FUNCTION__);
-
-    //     return UPM_ERROR_OPERATION_FAILED;
-    // }
     _csOff(dev);
 
     return UPM_SUCCESS;
 }
 
-uint16_t bma250e_get_chip_id(const bma250e_context dev)
+uint8_t bma250e_get_chip_id(const bma250e_context dev)
 {
     assert(dev != NULL);
 
@@ -413,7 +403,8 @@ upm_result_t bma250e_set_power_mode(const bma250e_context dev,
     reg &= ~(_BMA250E_PMU_LPW_POWER_MODE_MASK << _BMA250E_PMU_LPW_POWER_MODE_SHIFT);
     reg |= (power << _BMA250E_PMU_LPW_POWER_MODE_SHIFT);
 
-    if (bma250e_write_reg(dev, BMA250E_REG_PMU_LPW, power))
+//    if (bma250e_write_reg(dev, BMA250E_REG_PMU_LPW, power))
+    if (bma250e_write_reg(dev, BMA250E_REG_PMU_LPW, reg))
         return UPM_ERROR_OPERATION_FAILED;
 
     return UPM_SUCCESS;

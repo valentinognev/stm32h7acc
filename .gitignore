@@ -108,3 +108,11 @@ build/CMakeFiles/stm32ACC.dir/Project/Src/bma250e_fti.c.obj.d
 build/CMakeFiles/stm32ACC.dir/Project/Src/bma250e.c.obj
 build/CMakeFiles/stm32ACC.dir/Project/Src/bma250e.c.obj.d
 build/jlink-script
+build/CMakeFiles/stm32ACC.dir/Project/Src/bmg160_fti.c.obj
+build/CMakeFiles/stm32ACC.dir/Project/Src/bmg160_fti.c.obj.d
+build/CMakeFiles/stm32ACC.dir/Project/Src/bmg160.c.obj
+build/CMakeFiles/stm32ACC.dir/Project/Src/bmg160.c.obj.d
+build/CMakeFiles/stm32ACC.dir/Project/Src/bmi160.c.obj
+build/CMakeFiles/stm32ACC.dir/Project/Src/bmi160.c.obj.d
+build/CMakeFiles/stm32ACC.dir/Project/Src/bosch_bmi160.c.obj
+build/CMakeFiles/stm32ACC.dir/Project/Src/bosch_bmi160.c.obj.d

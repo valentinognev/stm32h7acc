@@ -26,6 +26,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "bma250e.h"
+#include "bmg160.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -115,22 +116,36 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
  
-  bma250e_context sensor = bma250e_init(BMA250E_DEFAULT_SPI_BUS,-1, 10);
+  bma250e_context bma250 = bma250e_init(BMA250E_DEFAULT_SPI_BUS,-1, 10);
+  bmg160_context bmg160 = bmg160_init(BMG160_DEFAULT_SPI_BUS,-1, 10);
   float x, y, z;
+  float gx, gy, gz;
   while (1)
   {
-    if (bma250e_update(sensor))
+    if (bma250e_update(bma250))
     {
         // printf("bma250e_update() failed\n");
         return 1;
     }
 
-    bma250e_get_accelerometer(sensor, &x, &y, &z);
+    bma250e_get_accelerometer(bma250, &x, &y, &z);
     // printf("Acceleration x: %f y: %f z: %f g\n",
     //         x, y, z);
 
     // printf("Compensation Temperature: %f C\n\n",
-    bma250e_get_temperature(sensor);
+    bma250e_get_temperature(bma250);
+
+    if (bmg160_update(bmg160))
+    {
+        // printf("bmg160_update() failed\n");
+        return 1;
+    }
+
+    bmg160_get_gyroscope(bmg160, &gx, &gy, &gz);
+    // printf("Gyroscope x: %f y: %f z: %f degrees/s\n",
+    //         gx, gy, gz);
+
+    bmg160_get_temperature(bmg160);
 
     HAL_Delay(250);
     /* USER CODE END WHILE */

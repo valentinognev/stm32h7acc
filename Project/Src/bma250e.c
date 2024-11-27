@@ -16,6 +16,9 @@
 
 //#include "upm_utilities.h"
 #include "bma250e.h"
+#include "main.h"
+
+calData calacc;
 
 extern SPI_HandleTypeDef hspi1;
 
@@ -115,10 +118,97 @@ void bma250e_close(bma250e_context dev)
     // free(dev);
 }
 
+void bma250e_calibrateAccel(bma250e_context dev, calData* calacc)
+{
+	uint8_t data[12]; // data array to hold accelerometer and gyro x, y, z, data
+	uint16_t packet_count = 64; // How many sets of full gyro and accelerometer data for averaging;
+	float accel_bias[3] = { 0, 0, 0 };
+
+	float  accelsensitivity = 2.f / 2048.f;				//ares value for full range (16g) readings (12 bit)
+
+    bma250e_reset(dev);
+
+    if (bma250e_set_power_mode(dev, BMA250E_POWER_MODE_NORMAL) // Setting the accelerometer into normal mode)
+    || bma250e_set_range(dev, BMA250E_RANGE_2G)   // Setting accelerometer into 2g range, maximum sensitivity
+    || bma250e_set_bandwidth(dev, BMA250E_BW_125)              // Setting the accelerometer lpf bandwidth to 125hz
+    || bma250e_enable_register_shadowing(dev, true)
+    || bma250e_enable_output_filtering(dev, true)
+    || bma250e_fifo_config(dev, BMA250E_FIFO_MODE_BYPASS, BMA250E_FIFO_DATA_SEL_XYZ)
+    || bma250e_set_interrupt_map1(dev, BMA250E_INT_MAP_1_INT1_DATA)
+    || bma250e_set_interrupt_enable1(dev, BMA250E_INT_STATUS_1_DATA)) // enable data ready interrupt
+    {
+        // printf("%s: failed to set configuration parameters.\n", __FUNCTION__);
+        return UPM_ERROR_OPERATION_FAILED;
+    }
+   
+	for (int i = 0; i < packet_count; i++)
+	{
+		int16_t accel_temp[3] = { 0, 0, 0 };
+        memset(data, 0, 12);
+
+		bma250e_read_regs(dev, BMA250E_REG_FIFO_DATA, &data[0], 6);       // Read the 7 raw accelerometer data registers into data array
+		
+		accel_temp[0] = ((data[1] << 8) | (data[0] & 0xF0)) >> 4;  // Form signed 16-bit integer for each sample
+		accel_temp[1] = ((data[3] << 8) | (data[2] & 0xF0)) >> 4;
+		accel_temp[2] = ((data[5] << 8) | (data[4] & 0xF0)) >> 4;
+
+        float x = accel_temp[0] * accelsensitivity;
+        float y = accel_temp[1] * accelsensitivity;
+        float z = accel_temp[2] * accelsensitivity;
+		accel_bias[0] += accel_temp[0] * accelsensitivity; // Sum individual signed 16-bit biases to get accumulated biases
+		accel_bias[1] += accel_temp[1] * accelsensitivity;
+		accel_bias[2] += accel_temp[2] * accelsensitivity;
+		HAL_Delay(20);
+	}
+
+	accel_bias[0] /= packet_count; // Normalize sums to get average count biases
+	accel_bias[1] /= packet_count;
+	accel_bias[2] /= packet_count;
+
+    int geometryIndex=3;
+	switch (geometryIndex) {
+	case 0:
+	case 1:
+	case 2:
+	case 3:
+		if (accel_bias[2] > 0.f) {
+			accel_bias[2] -= 1.f; // Remove gravity from the z-axis accelerometer bias calculation
+		}
+		else {
+			accel_bias[2] += 1.f;
+		}
+		break;
+	case 4:
+	case 6:
+		if (accel_bias[0] > 0.f) {
+			accel_bias[0] -= 1.f; // Remove gravity from the z-axis accelerometer bias calculation
+		}
+		else {
+			accel_bias[0] += 1.f;
+		}
+		break;
+	case 5:
+	case 7:
+		if (accel_bias[1] > 0.f) {
+			accel_bias[1] -= 1.f; // Remove gravity from the z-axis accelerometer bias calculation
+		}
+		else {
+			accel_bias[1] += 1.f;
+		}
+		break;
+	}
+	// Output scaled accelerometer biases for display in the main program
+	calacc->accelBias[0] = (float)accel_bias[0];
+	calacc->accelBias[1] = (float)accel_bias[1];
+	calacc->accelBias[2] = (float)accel_bias[2];
+}
+
 upm_result_t bma250e_devinit(const bma250e_context dev, BMA250E_POWER_MODE_T pwr, 
                                  BMA250E_RANGE_T range, BMA250E_BW_T bw)
 {
     assert(dev != NULL);
+
+    bma250e_calibrateAccel(dev, &calacc);
 
     if (bma250e_set_power_mode(dev, pwr))
     {
@@ -206,14 +296,15 @@ upm_result_t bma250e_update(const bma250e_context dev)
     }
 
     // x                       msb     lsb
-    dev->accX = INT16_TO_FLOAT(buf[1], (buf[0] & (mask << shift))) / divisor;
-
+    dev->accX = INT16_TO_FLOAT(buf[1], (buf[0] & (mask << shift)));
     // y
-    dev->accY = INT16_TO_FLOAT(buf[3], (buf[2] & (mask << shift))) / divisor;
-
+    dev->accY = INT16_TO_FLOAT(buf[3], (buf[2] & (mask << shift)));
     // z
-    dev->accZ = INT16_TO_FLOAT(buf[5], (buf[4] & (mask << shift))) / divisor;
+    dev->accZ = INT16_TO_FLOAT(buf[5], (buf[4] & (mask << shift)));
 
+    dev->accX/=divisor;
+    dev->accY/=divisor;
+    dev->accZ/=divisor;
     // get the temperature...
 
     int8_t temp = 0;
@@ -234,6 +325,76 @@ upm_result_t bma250e_update(const bma250e_context dev)
     return UPM_SUCCESS;
 }
 
+
+void bma250e_update2(const bma250e_context dev, float *ax, float *ay, float *az, float *temperature) 
+{
+	int16_t AccelCount[3];                                        // used to read all 6 bytes at once from the BMI055 accel
+	uint8_t rawDataAccel[7];                                          // x/y/z accel register data stored here
+
+	bma250e_read_regs(dev, BMA250E_REG_FIFO_DATA, &rawDataAccel[0], 7);       // Read the 7 raw accelerometer data registers into data array
+    uint8_t testRange = bma250e_read_reg(dev, BMA250E_REG_PMU_RANGE);
+    
+	//accel registers
+	AccelCount[0] = ((rawDataAccel[1] << 8) | (rawDataAccel[0] & 0xF0)) >> 4;		  // Turn the MSB and LSB into a signed 12-bit value
+	AccelCount[1] = ((rawDataAccel[3] << 8) | (rawDataAccel[2] & 0xF0)) >> 4;	      // praise sign extension, making this code clean and simple.
+	AccelCount[2] = ((rawDataAccel[5] << 8) | (rawDataAccel[4] & 0xF0)) >> 4;
+
+	// Calculate the accel value into actual g's per second
+    float ax_ = AccelCount[0] * (float)dev->accScale;
+    float ay_ = AccelCount[1] * (float)dev->accScale;
+    float az_ = AccelCount[2] * (float)dev->accScale;
+	*ax = AccelCount[0] * (float)dev->accScale - calacc.accelBias[0];
+	*ay = AccelCount[1] * (float)dev->accScale - calacc.accelBias[1];
+	*az = AccelCount[2] * (float)dev->accScale - calacc.accelBias[2];
+
+    int geometryIndex=3;
+	switch (geometryIndex) {
+	case 0:
+		*ax = *ax;
+		*ay = *ay;
+		*az = *az;
+		break;
+	case 1:
+		*ax = -*ay;
+		*ay = *ax;
+		*az = *az;
+		break;
+	case 2:
+		*ax = -*ax;
+		*ay = -*ay;
+		*az = *az;
+		break;
+	case 3:
+		*ax = *ay;
+		*ay = -*ax;
+		*az = *az;
+		break;
+	case 4:
+		*ax = -*az;
+		*ay = -*ay;
+		*az = -*ax;
+		break;
+	case 5:
+		*ax = -*az;
+		*ay = *ax;
+		*az = -*ay;
+		break;
+	case 6:
+		*ax = -*az;
+		*ay = *ay;
+		*az = *ax;
+		break;
+	case 7:
+		*ax = -*az;
+		*ay = -*ax;
+		*az = *ay;
+		break;
+	}
+
+	// Calculate the temperature value into actual deg c
+	*temperature = -((rawDataAccel[6] * -0.5f) * (86.5f - -40.5f) / (float)(128.f) - 40.5f) - 20.f;
+}
+
 void bma250e_enable_fifo(const bma250e_context dev, bool useFIFO)
 {
     assert(dev != NULL);
@@ -251,7 +412,7 @@ uint8_t bma250e_read_reg(const bma250e_context dev, const uint8_t reg_)
     uint8_t pktout[2] = {0, 0};
 
     _csOn(dev);
-    SPI_TransmitReceive_DMA(&pktin, &pktout, 1);
+    SPI_TransmitReceive_DMA(pktin, pktout, 2);
     _csOff(dev);
 
     return pktout[1];
@@ -268,12 +429,12 @@ int8_t bma250e_read_regs(const bma250e_context dev, const uint8_t reg_, int8_t *
     sbuf[0] = reg;
 
     _csOn(dev);
-    SPI_TransmitReceive_DMA((uint16_t*)sbuf, (uint16_t*)sbuf, len/2 + 1);
+    SPI_TransmitReceive_DMA(sbuf, sbuf, len + 1);
     _csOff(dev);
 
     // now copy it into user buffer
     for (int i=0; i<len; i++)
-        buffer[i] = sbuf[2+i];
+        buffer[i] = sbuf[1+i];
 
     return len;
 }
@@ -284,10 +445,10 @@ upm_result_t bma250e_write_reg(const bma250e_context dev,
     assert(dev != NULL);
 
     reg &= 0x7f; // mask off 0x80 for writing
-    uint8_t pkt[2] = {reg, val}, buf[2];
+    uint8_t pkt[2] = {reg, val}, buf[2]={0,0};
 
     _csOn(dev);
-    SPI_TransmitReceive_DMA((uint16_t*)pkt, (uint16_t*)buf, 1);
+    SPI_TransmitReceive_DMA(pkt, buf, 2);
     _csOff(dev);
 
     return UPM_SUCCESS;
@@ -348,19 +509,19 @@ upm_result_t bma250e_set_range(const bma250e_context dev,
         switch(range)
         {
         case BMA250E_RANGE_2G:
-            dev->accScale = 3.91; // milli-gravities
+            dev->accScale = 2.f/512.f; // milli-gravities
             break;
 
         case BMA250E_RANGE_4G:
-            dev->accScale = 7.81;
+            dev->accScale = 4.f/512.f;
             break;
 
         case BMA250E_RANGE_8G:
-            dev->accScale = 15.63;
+            dev->accScale = 8.f/512.f;
             break;
 
         case BMA250E_RANGE_16G:
-            dev->accScale = 31.25;
+            dev->accScale = 16.f/512.f;
             break;
         }
 
@@ -370,19 +531,19 @@ upm_result_t bma250e_set_range(const bma250e_context dev,
         switch(range)
         {
         case BMA250E_RANGE_2G:
-            dev->accScale = 0.98; // milli-gravities
+            dev->accScale = 2.f/2048.f; // milli-gravities
             break;
 
         case BMA250E_RANGE_4G:
-            dev->accScale = 1.95;
+            dev->accScale = 4.f/2048.f;
             break;
 
         case BMA250E_RANGE_8G:
-            dev->accScale = 3.91;
+            dev->accScale = 8.f/2048.f;
             break;
 
         case BMA250E_RANGE_16G:
-            dev->accScale = 7.81;
+            dev->accScale = 16.f/2048.f;
             break;
         }
 

@@ -469,7 +469,7 @@ void HAL_SPI_MspDeInit(SPI_HandleTypeDef* spiHandle)
 }
 
 /* USER CODE BEGIN 1 */
-void SPI_TransmitReceive_DMA(uint16_t* transferData, uint16_t* receiveData, uint16_t size)
+void SPI_TransmitReceive_DMA(uint8_t* transferData, uint8_t* receiveData, uint16_t size)
 {
   // uint8_t aRxBuffer[117] = {0};
 
@@ -483,7 +483,7 @@ void SPI_TransmitReceive_DMA(uint16_t* transferData, uint16_t* receiveData, uint
     res = res;
   while(wTransferState != TRANSFER_COMPLETE); // after we will use bytesize if we want to optimize
  
-  for (uint16_t i=1; i<size; i+=1)
+  for (uint16_t i=2; i<size; i+=2)
   {
     // uint8_t res = HAL_SPI_TransmitReceive_DMA(&hspi1, (uint32_t)(transferData+i), (uint32_t)(receiveData+i), 1) ;
     wTransferState = TRANSFER_WAIT;
@@ -506,7 +506,7 @@ void SPI_TransmitReceive_DMA(uint16_t* transferData, uint16_t* receiveData, uint
   }
 }
 
-void SPI_Transfer_DMA(uint16_t* transferData, uint16_t size)
+void SPI_Transfer_DMA(uint8_t* transferData, uint16_t size)
 {
   for (uint16_t i=0; i<size; i++)
   {
@@ -523,7 +523,7 @@ void SPI_Transfer_DMA(uint16_t* transferData, uint16_t size)
   }
 }
 
-void SPI_Receive_DMA(uint16_t* receiveData, uint16_t size)
+void SPI_Receive_DMA(uint8_t* receiveData, uint16_t size)
 {
   for (uint16_t i=0; i<size; i++)
   {

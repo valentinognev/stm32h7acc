@@ -17,6 +17,8 @@
 //#include "upm_utilities.h"
 #include "bmg160.h"
 
+calData calgyro;
+
 // macro for converting a uint8_t low/high pair into a float
 #define INT16_TO_FLOAT(h, l) \
     (float)( (int16_t)( (l) | ((h) << 8) ) )
@@ -63,9 +65,9 @@ bmg160_context bmg160_init(int bus, int addr, int cs)
         // bmg160_close(dev);
         return NULL;
     }
-
+    bmg160_reset(dev);
     // call devinit with default options
-    if (bmg160_devinit(dev, BMG160_POWER_MODE_NORMAL, BMG160_RANGE_250, BMG160_BW_400_47))
+    if (bmg160_devinit(dev, BMG160_POWER_MODE_NORMAL, BMG160_RANGE_2000, BMG160_BW_400_47))
     {
         // printf("%s: bmg160_devinit() failed.\n", __FUNCTION__);
         // bmg160_close(dev);
@@ -92,6 +94,86 @@ void bmg160_close(bmg160_context dev)
     // free(dev);
 }
 
+void bmg160_calibrateAccel(bmg160_context dev, calData* calgyro)
+{
+	uint8_t data[12]; // data array to hold gyro x, y, z, data
+	uint16_t packet_count = 64; // How many sets of full gyro and gyro data for averaging;
+	float gyro_bias[3] = { 0, 0, 0 };
+
+	float  gyrosensitivity = 125.f / 32768.f;			//gres value for full range (2000dps) readings (16 bit)
+
+    bmg160_reset(dev);
+
+    if (bmg160_set_power_mode(dev, BMG160_POWER_MODE_NORMAL) // Setting the gyro into normal mode)
+    || bmg160_set_range(dev, BMG160_RANGE_125)       // setting gyro into 125dps range, maximum sensitivity
+    || bmg160_set_bandwidth(dev, BMG160_BW_400_47)   // setting the gyro lpf bandwidth to 47hz ;;;;;;;;;;;; THIS LIMITS ODR TO 400HZ
+    || bmg160_enable_register_shadowing(dev, true)
+    || bmg160_enable_output_filtering(dev, true)
+    || bmg160_fifo_config(dev, BMG160_FIFO_MODE_BYPASS, BMG160_FIFO_DATA_SEL_XYZ)
+    || bmg160_set_interrupt_map1(dev, BMG160_INT_MAP_1_INT1_DATA)) // enable data ready interrupt
+    {
+        // printf("%s: failed to set configuration parameters.\n", __FUNCTION__);
+        return UPM_ERROR_OPERATION_FAILED;
+    }
+   
+	for (int i = 0; i < packet_count; i++)
+	{
+		int16_t gyro_temp[3] = { 0, 0, 0 };
+
+		bmg160_read_regs(dev, BMG160_REG_FIFO_DATA, &data[0], 6);       // Read the 7 raw gyro data registers into data array
+		
+		gyro_temp[0] = ((data[1] << 8) | (data[0] & 0xF0)) >> 4;  // Form signed 16-bit integer for each sample
+		gyro_temp[1] = ((data[3] << 8) | (data[2] & 0xF0)) >> 4;
+		gyro_temp[2] = ((data[5] << 8) | (data[4] & 0xF0)) >> 4;
+
+		gyro_bias[0] += gyro_temp[0] * gyrosensitivity; // Sum individual signed 16-bit biases to get accumulated biases
+		gyro_bias[1] += gyro_temp[1] * gyrosensitivity;
+		gyro_bias[2] += gyro_temp[2] * gyrosensitivity;
+		HAL_Delay(20);
+	}
+
+	gyro_bias[0] /= packet_count; // Normalize sums to get average count biases
+	gyro_bias[1] /= packet_count;
+	gyro_bias[2] /= packet_count;
+
+    int geometryIndex=3;
+	switch (geometryIndex) {
+	case 0:
+	case 1:
+	case 2:
+	case 3:
+		if (gyro_bias[2] > 0.f) {
+			gyro_bias[2] -= 1.f; // Remove gravity from the z-axis gyro bias calculation
+		}
+		else {
+			gyro_bias[2] += 1.f;
+		}
+		break;
+	case 4:
+	case 6:
+		if (gyro_bias[0] > 0.f) {
+			gyro_bias[0] -= 1.f; // Remove gravity from the z-axis gyro bias calculation
+		}
+		else {
+			gyro_bias[0] += 1.f;
+		}
+		break;
+	case 5:
+	case 7:
+		if (gyro_bias[1] > 0.f) {
+			gyro_bias[1] -= 1.f; // Remove gravity from the z-axis gyro bias calculation
+		}
+		else {
+			gyro_bias[1] += 1.f;
+		}
+		break;
+	}
+	// Output scaled gyro biases for display in the main program
+	calgyro->gyroBias[0] = (float)gyro_bias[0];
+	calgyro->gyroBias[1] = (float)gyro_bias[1];
+	calgyro->gyroBias[2] = (float)gyro_bias[2];
+}
+
 upm_result_t bmg160_devinit(const bmg160_context dev,
                             BMG160_POWER_MODE_T pwr,
                             BMG160_RANGE_T range,
@@ -106,6 +188,8 @@ upm_result_t bmg160_devinit(const bmg160_context dev,
     }
 
     HAL_Delay(50); // 50ms, in case we are waking up
+    
+    bmg160_calibrateAccel(dev, &calgyro);
 
     // set our range and bandwidth, make sure register shadowing is
     // enabled, enable output filtering, and set our FIFO config
@@ -180,6 +264,69 @@ upm_result_t bmg160_update(const bmg160_context dev)
     return UPM_SUCCESS;
 }
 
+void bmg160_update2(const bmg160_context dev, float *gx, float *gy, float *gz) 
+{
+	int16_t GyroCount[3];										  // used to read all 6 bytes at once from the BMI055 gyro
+	uint8_t rawDataGyro[6];
+
+	bmg160_read_regs(dev, BMG160_REG_FIFO_DATA, &rawDataGyro[0], 6);   // Read the 6 raw gyroscope data registers into data array
+
+	//gyro registers
+	GyroCount[0] = (rawDataGyro[1] << 8) | (rawDataGyro[0]);
+	GyroCount[1] = (rawDataGyro[3] << 8) | (rawDataGyro[2]);
+	GyroCount[2] = (rawDataGyro[5] << 8) | (rawDataGyro[4]);
+
+	// Calculate the gyro value into actual degrees per second
+	*gx = GyroCount[0] * (float)dev->gyrScale - calgyro.gyroBias[0];
+	*gy = GyroCount[1] * (float)dev->gyrScale - calgyro.gyroBias[1];
+	*gz = GyroCount[2] * (float)dev->gyrScale - calgyro.gyroBias[2];
+
+    int geometryIndex=3;
+	switch (geometryIndex) 
+    {
+	case 0:
+		*gx = *gx;
+		*gy = *gy;
+		*gz = *gz;
+		break;
+	case 1:
+		*gx = -*gy;
+		*gy = *gx;
+		*gz = *gz;
+		break;
+	case 2:
+		*gx = -*gx;
+		*gy = -*gy;
+		*gz = *gz;
+		break;
+	case 3:
+		*gx = *gy;
+		*gy = -*gx;
+		*gz = *gz;
+		break;
+	case 4:
+		*gx = -*gz;
+		*gy = -*gy;
+		*gz = -*gx;
+		break;
+	case 5:
+		*gx = -*gz;
+		*gy = *gx;
+		*gz = -*gy;
+		break;
+	case 6:
+		*gx = -*gz;
+		*gy = *gy;
+		*gz = *gx;
+		break;
+	case 7:
+		*gx = -*gz;
+		*gy = -*gx;
+		*gz = *gy;
+		break;
+    }
+}
+
 void bmg160_enable_fifo(const bmg160_context dev, bool useFIFO)
 {
     assert(dev != NULL);
@@ -219,12 +366,12 @@ int bmg160_read_regs(const bmg160_context dev, uint8_t reg, uint8_t *buffer, int
     // it goes.
 
     _csOn(dev);
-    SPI_TransmitReceive_DMA((uint16_t*)sbuf, (uint16_t*)sbuf, len/2 + 1);
+    SPI_TransmitReceive_DMA(sbuf, sbuf, len + 1);
     _csOff(dev);
 
     // now copy it into user buffer
     for (int i=0; i<len; i++)
-        buffer[i] = sbuf[2+i];
+        buffer[i] = sbuf[1+i];
  
     return len;
 }
@@ -235,10 +382,10 @@ upm_result_t bmg160_write_reg(const bmg160_context dev,
     assert(dev != NULL);
 
     reg &= 0x7f; // mask off 0x80 for writing
-    uint8_t pkt[2] = {reg, val}, buf[2];
+    uint8_t pkt[2] = {reg, val}, buf[2]={0,0};
 
     _csOn(dev);
-    SPI_TransmitReceive_DMA((uint16_t*)pkt, (uint16_t*)buf, 1);
+    SPI_TransmitReceive_DMA(pkt, buf, 1);
     _csOff(dev);
 
     return UPM_SUCCESS;
@@ -257,13 +404,13 @@ void bmg160_get_gyroscope(const bmg160_context dev,
     assert(dev != NULL);
 
     if (x)
-        *x = (dev->gyrX * dev->gyrScale) / 1000.0;
+        *x = (dev->gyrX * dev->gyrScale);
 
     if (y)
-        *y = (dev->gyrY * dev->gyrScale) / 1000.0;
+        *y = (dev->gyrY * dev->gyrScale);
 
     if (z)
-        *z = (dev->gyrZ * dev->gyrScale) / 1000.0;
+        *z = (dev->gyrZ * dev->gyrScale);
 }
 
 float bmg160_get_temperature(const bmg160_context dev)
@@ -280,7 +427,7 @@ upm_result_t bmg160_reset(const bmg160_context dev)
     if (bmg160_write_reg(dev, BMG160_REG_SOFTRESET, BMG160_RESET_BYTE))
         return UPM_ERROR_OPERATION_FAILED;
 
-    upm_delay(1);
+    HAL_Delay(1);
 
     return UPM_SUCCESS;
 }
@@ -299,23 +446,23 @@ upm_result_t bmg160_set_range(const bmg160_context dev,
     switch(range)
     {
     case BMG160_RANGE_125:
-        dev->gyrScale = 3.8; // milli-degrees
+        dev->gyrScale = 125.f / 32768.f; // milli-degrees
         break;
 
     case BMG160_RANGE_250:
-        dev->gyrScale = 7.6;
+        dev->gyrScale = 250.f / 32768.f;
         break;
 
     case BMG160_RANGE_500:
-        dev->gyrScale = 15.3;
+        dev->gyrScale = 500.f / 32768.f;
         break;
 
     case BMG160_RANGE_1000:
-        dev->gyrScale = 30.5;
+        dev->gyrScale = 1000.f / 32768.f;
         break;
 
     case BMG160_RANGE_2000:
-        dev->gyrScale = 61.0;
+        dev->gyrScale = 2000.f / 32768.f;
         break;
     }
 

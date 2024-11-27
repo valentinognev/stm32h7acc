@@ -116,3 +116,8 @@ build/CMakeFiles/stm32ACC.dir/Project/Src/bmi160.c.obj
 build/CMakeFiles/stm32ACC.dir/Project/Src/bmi160.c.obj.d
 build/CMakeFiles/stm32ACC.dir/Project/Src/bosch_bmi160.c.obj
 build/CMakeFiles/stm32ACC.dir/Project/Src/bosch_bmi160.c.obj.d
+build/CMakeFiles/stm32ACC.dir/Core/Src/tim.c.obj
+build/CMakeFiles/stm32ACC.dir/Project/Src/Madgwick.c.obj
+build/CMakeFiles/stm32ACC.dir/Project/Src/Madgwick.c.obj.d
+build/CMakeFiles/stm32ACC.dir/Project/Src/Madgwick.cpp.obj
+build/CMakeFiles/stm32ACC.dir/Project/Src/Madgwick.cpp.obj.d

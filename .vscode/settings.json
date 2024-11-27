@@ -40,7 +40,11 @@
         "upm_fti.h": "c",
         "stdexcept": "cpp",
         "cstdint": "c",
-        "bmg160.h": "c"
+        "bmg160.h": "c",
+        "array": "c",
+        "string": "c",
+        "string_view": "c",
+        "span": "c"
     },
     "cortex-debug.variableUseNaturalFormat": true
 }

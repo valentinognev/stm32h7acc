@@ -1,9 +1,9 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file    spi.h
+  * @file    tim.h
   * @brief   This file contains all the function prototypes for
-  *          the spi.c file
+  *          the tim.c file
   ******************************************************************************
   * @attention
   *
@@ -18,8 +18,8 @@
   */
 /* USER CODE END Header */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __SPI_H__
-#define __SPI_H__
+#ifndef __TIM_H__
+#define __TIM_H__
 
 #ifdef __cplusplus
 extern "C" {
@@ -32,36 +32,21 @@ extern "C" {
 
 /* USER CODE END Includes */
 
-extern SPI_HandleTypeDef hspi1;
-
-extern SPI_HandleTypeDef hspi2;
-
-extern SPI_HandleTypeDef hspi3;
-
-extern SPI_HandleTypeDef hspi6;
+extern TIM_HandleTypeDef htim5;
 
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
 
-void MX_SPI1_Init(void);
-void MX_SPI2_Init(void);
-void MX_SPI3_Init(void);
-void MX_SPI6_Init(void);
+void MX_TIM5_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-void SPI_TransmitReceive_DMA(uint8_t* transferData, uint8_t* receiveData, uint16_t size);
-void SPI_Transfer_DMA(uint8_t* transferData, uint16_t size);
-void SPI_Receive_DMA(uint8_t* receiveData, uint16_t size);
-void DMA1_ReceiveComplete(void);
-void DMA1_TransmitComplete(void);
-void SPI1_TransferError_Callback(void);
-
+uint32_t micros(void);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* __SPI_H__ */
+#endif /* __TIM_H__ */
 

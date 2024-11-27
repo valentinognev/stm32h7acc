@@ -43,7 +43,7 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "stdbool.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -53,6 +53,14 @@ enum {
   TRANSFER_COMPLETE,
   TRANSFER_ERROR
 };
+
+typedef struct {
+	bool valid;
+	float accelBias[3];
+	float gyroBias[3];
+	float magBias[3];
+	float magScale[3];
+} calData;
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/

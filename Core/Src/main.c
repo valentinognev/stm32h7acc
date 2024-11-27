@@ -20,6 +20,7 @@
 #include "main.h"
 #include "memorymap.h"
 #include "spi.h"
+#include "tim.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -27,6 +28,7 @@
 /* USER CODE BEGIN Includes */
 #include "bma250e.h"
 #include "bmg160.h"
+#include "Madgwick.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -109,6 +111,7 @@ int main(void)
   MX_SPI3_Init();
   MX_SPI6_Init();
   MX_USART1_UART_Init();
+  MX_TIM5_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -118,35 +121,13 @@ int main(void)
  
   bma250e_context bma250 = bma250e_init(BMA250E_DEFAULT_SPI_BUS,-1, 10);
   bmg160_context bmg160 = bmg160_init(BMG160_DEFAULT_SPI_BUS,-1, 10);
-  float x, y, z;
+  float ax, ay, az, temperature;
   float gx, gy, gz;
   while (1)
   {
-    if (bma250e_update(bma250))
-    {
-        // printf("bma250e_update() failed\n");
-        return 1;
-    }
-
-    bma250e_get_accelerometer(bma250, &x, &y, &z);
-    // printf("Acceleration x: %f y: %f z: %f g\n",
-    //         x, y, z);
-
-    // printf("Compensation Temperature: %f C\n\n",
-    bma250e_get_temperature(bma250);
-
-    if (bmg160_update(bmg160))
-    {
-        // printf("bmg160_update() failed\n");
-        return 1;
-    }
-
-    bmg160_get_gyroscope(bmg160, &gx, &gy, &gz);
-    // printf("Gyroscope x: %f y: %f z: %f degrees/s\n",
-    //         gx, gy, gz);
-
-    bmg160_get_temperature(bmg160);
-
+    bma250e_update2(bma250, &ax, &ay, &az, &temperature);
+    bmg160_update2(bmg160, &gx, &gy, &gz);
+    Madgwick_updateIMU(gx, gy, gz, ax, ay, az);
     HAL_Delay(250);
     /* USER CODE END WHILE */
 

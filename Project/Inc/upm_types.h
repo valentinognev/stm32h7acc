@@ -15,15 +15,8 @@
 extern "C" {
 #endif
 
-#ifdef C99
 #include <stdbool.h>
-#elif __cplusplus
-#else
-typedef enum {
-    false = 0,
-    true = 1
-} bool;
-#endif
+
 
 typedef enum {
     UPM_SUCCESS = 0,                        /* Operation is successful, expected response */

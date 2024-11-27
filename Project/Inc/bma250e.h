@@ -587,7 +587,7 @@ extern "C" {
      * @param reg The register to read.
      * @return The value of the register.
      */
-    uint8_t bma250e_read_reg(const bma250e_context dev, uint8_t reg);
+    uint8_t bma250e_read_reg(const bma250e_context dev, const uint8_t reg);
 
     /**
      * Read contiguous registers into a buffer.
@@ -597,7 +597,7 @@ extern "C" {
      * @param len The number of registers to read.
      * @return The number of bytes read, or -1 on error.
      */
-    int8_t bma250e_read_regs(const bma250e_context dev, uint8_t reg, int8_t *buffer, int len);
+    int8_t bma250e_read_regs(const bma250e_context dev, const uint8_t reg, int8_t *buffer, int len);
 
     /**
      * Write to a register.

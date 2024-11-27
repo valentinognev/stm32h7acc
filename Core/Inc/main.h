@@ -83,6 +83,9 @@ void Error_Handler(void);
 #define IMU1_MISO_GPIO_Port GPIOA
 #define IMU1_MOSI_Pin GPIO_PIN_7
 #define IMU1_MOSI_GPIO_Port GPIOA
+#define ACCL1_IT_Pin GPIO_PIN_4
+#define ACCL1_IT_GPIO_Port GPIOC
+#define ACCL1_IT_EXTI_IRQn EXTI4_IRQn
 
 /* USER CODE BEGIN Private defines */
 

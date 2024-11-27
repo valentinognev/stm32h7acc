@@ -190,7 +190,7 @@ extern "C" {
         // 0x01-0x10 reserved
         BMA250E_INT_STATUS_1_FIFO_FULL           = 0x20,
         BMA250E_INT_STATUS_1_FIFO_WM             = 0x40,
-        BMA250E_INT_STATUS_1_DATA                = 0x80 // data ready int
+        BMA250E_INT_STATUS_1_DATA                = 0x10 // data ready int
     } BMA250E_INT_STATUS_1_BITS_T;
 
     /**

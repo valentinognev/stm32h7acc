@@ -55,7 +55,7 @@ bma250e_context bma250e_init(int bus, int addr, int cs)
         dev->isSPI = true;
 
     // check the chip id
-    uint16_t chipID = bma250e_get_chip_id(dev);   
+    uint16_t chipID = bma250e_get_chip_id(dev);  
 
     // check the various chips id's and set appropriate capabilities.
     // Bail if the chip id is unknown.
@@ -85,8 +85,10 @@ bma250e_context bma250e_init(int bus, int addr, int cs)
         return NULL;
     }
 
+    bma250e_reset(dev);
+ 
     // call devinit with default options
-    if (bma250e_devinit(dev, BMA250E_POWER_MODE_NORMAL, BMA250E_RANGE_2G, BMA250E_BW_250))
+    if (bma250e_devinit(dev, BMA250E_POWER_MODE_NORMAL, BMA250E_RANGE_16G, BMA250E_BW_62_5))
     {
         printf("%s: bma250e_devinit() failed.\n", __FUNCTION__);
         bma250e_close(dev);
@@ -128,24 +130,33 @@ upm_result_t bma250e_devinit(const bma250e_context dev, BMA250E_POWER_MODE_T pwr
 
     // set our range and bandwidth, make sure register shadowing is
     // enabled, enable output filtering, and set our FIFO config
-
     if (bma250e_set_range(dev, range)
         || bma250e_set_bandwidth(dev, bw)
         || bma250e_enable_register_shadowing(dev, true)
         || bma250e_enable_output_filtering(dev, true)
-        || bma250e_fifo_config(dev, BMA250E_FIFO_MODE_BYPASS, BMA250E_FIFO_DATA_SEL_XYZ))
+        || bma250e_fifo_config(dev, BMA250E_FIFO_MODE_BYPASS, BMA250E_FIFO_DATA_SEL_XYZ)
+        || bma250e_set_interrupt_map1(dev, BMA250E_INT_MAP_1_INT1_DATA)
+        || bma250e_set_interrupt_enable1(dev, BMA250E_INT_STATUS_1_DATA)) // enable data ready interrupt
     {
         // printf("%s: failed to set configuration parameters.\n", __FUNCTION__);
         return UPM_ERROR_OPERATION_FAILED;
     }
 
-    bma250e_enable_fifo(dev, true);
+     bma250e_enable_fifo(dev, true);
 
     // make sure low power mode LPM2 is enabled in case we go to low
     // power or suspend mode. LPM1 mode (the default) requires register
     // writes to be drastically slowed down when enabled, which we
     // cannot handle.
-    bma250e_set_low_power_mode2(dev);
+    //bma250e_set_low_power_mode2(dev);
+
+    uint8_t testRange = bma250e_read_reg(dev, BMA250E_REG_PMU_RANGE);
+    uint8_t testBandwidth = bma250e_read_reg(dev, BMA250E_REG_PMU_BW);
+    uint8_t testShadowFilter = bma250e_read_reg(dev, BMA250E_REG_ACC_HBW);
+    uint8_t testFIFOConfig = bma250e_read_reg(dev, BMA250E_REG_FIFO_CONFIG_0);
+    uint8_t testIntMap1 = bma250e_get_interrupt_map1(dev);
+    uint8_t testInt1 = bma250e_get_interrupt_enable1(dev);
+
 
     // settle
     HAL_Delay(50);
@@ -231,11 +242,11 @@ void bma250e_enable_fifo(const bma250e_context dev, bool useFIFO)
         dev->useFIFO = useFIFO;
 }
 
-uint8_t bma250e_read_reg(const bma250e_context dev, uint8_t reg)
+uint8_t bma250e_read_reg(const bma250e_context dev, const uint8_t reg_)
 {
     assert(dev != NULL);
 
-    reg |= 0x80; // needed for read
+    uint8_t reg = reg_| 0x80; // needed for read
     uint8_t pktin[2] = {reg, 0};
     uint8_t pktout[2] = {0, 0};
 
@@ -246,11 +257,11 @@ uint8_t bma250e_read_reg(const bma250e_context dev, uint8_t reg)
     return pktout[1];
 }
 
-int8_t bma250e_read_regs(const bma250e_context dev, uint8_t reg, int8_t *buffer, int len)
+int8_t bma250e_read_regs(const bma250e_context dev, const uint8_t reg_, int8_t *buffer, int len)
 {
     assert(dev != NULL);
 
-    reg |= 0x80; // needed for read
+    uint8_t reg = reg_| 0x80; // needed for read
 
     uint8_t sbuf[len + 2];
     memset((uint8_t *)sbuf, 0, sizeof(uint8_t)*(len + 2));
@@ -318,7 +329,7 @@ upm_result_t bma250e_reset(const bma250e_context dev)
     if (bma250e_write_reg(dev, BMA250E_REG_SOFTRESET, BMA250E_RESET_BYTE))
         return UPM_ERROR_OPERATION_FAILED;
 
-    upm_delay(1);
+    HAL_Delay(1);
 
     return UPM_SUCCESS;
 }
@@ -489,8 +500,7 @@ uint8_t bma250e_get_interrupt_enable1(const bma250e_context dev)
 {
     assert(dev != NULL);
 
-    return (bma250e_read_reg(dev, BMA250E_REG_INT_EN_1)
-            & ~_BMA250E_INT_EN_1_RESERVED_BITS);
+    return (bma250e_read_reg(dev, BMA250E_REG_INT_EN_1) & ~_BMA250E_INT_EN_1_RESERVED_BITS);
 }
 
 upm_result_t bma250e_set_interrupt_enable1(const bma250e_context dev,
@@ -548,8 +558,7 @@ uint8_t bma250e_get_interrupt_map1(const bma250e_context dev)
 {
     assert(dev != NULL);
 
-    return (bma250e_read_reg(dev, BMA250E_REG_INT_MAP_1)
-            & ~_BMA250E_INT_MAP_1_INT1_RESERVED_BITS);
+    return (bma250e_read_reg(dev, BMA250E_REG_INT_MAP_1) & ~_BMA250E_INT_MAP_1_INT1_RESERVED_BITS);
 }
 
 upm_result_t bma250e_set_interrupt_map1(const bma250e_context dev, uint8_t bits)
@@ -669,14 +678,11 @@ upm_result_t bma250e_set_interrupt_latch_behavior(const bma250e_context dev,
     return UPM_SUCCESS;
 }
 
-upm_result_t bma250e_enable_register_shadowing(const bma250e_context dev,
-                                               bool shadow)
+upm_result_t bma250e_enable_register_shadowing(const bma250e_context dev, bool shadow)
 {
     assert(dev != NULL);
 
-    uint8_t reg =
-        (bma250e_read_reg(dev, BMA250E_REG_ACC_HBW)
-         & ~_BMA250E_ACC_HBW_RESERVED_BITS);
+    uint8_t reg = (bma250e_read_reg(dev, BMA250E_REG_ACC_HBW) & ~_BMA250E_ACC_HBW_RESERVED_BITS);
 
     if (shadow)
         reg &= ~BMA250E_ACC_HBW_SHADOW_DIS;
@@ -694,9 +700,7 @@ upm_result_t bma250e_enable_output_filtering(const bma250e_context dev,
 {
     assert(dev != NULL);
 
-    uint8_t reg =
-        (bma250e_read_reg(dev, BMA250E_REG_ACC_HBW)
-         & ~_BMA250E_ACC_HBW_RESERVED_BITS);
+    uint8_t reg = (bma250e_read_reg(dev, BMA250E_REG_ACC_HBW) & ~_BMA250E_ACC_HBW_RESERVED_BITS);
 
     if (filter)
         reg &= ~BMA250E_ACC_HBW_DATA_HIGH_BW;
@@ -720,8 +724,7 @@ uint8_t bma250e_get_interrupt_status1(const bma250e_context dev)
 {
     assert(dev != NULL);
 
-    return (bma250e_read_reg(dev, BMA250E_REG_INT_STATUS_1)
-            & ~_BMA250E_INT_STATUS_1_RESERVED_BITS);
+    return (bma250e_read_reg(dev, BMA250E_REG_INT_STATUS_1) & ~_BMA250E_INT_STATUS_1_RESERVED_BITS);
 }
 
 uint8_t bma250e_get_interrupt_status2(const bma250e_context dev)
@@ -736,9 +739,7 @@ uint8_t bma250e_get_interrupt_status3_bits(const bma250e_context dev)
     assert(dev != NULL);
 
     // filter out the orientation bitfield..
-    return (bma250e_read_reg(dev, BMA250E_REG_INT_STATUS_3)
-            & ~(_BMA250E_INT_STATUS_3_ORIENT_MASK
-                << _BMA250E_INT_STATUS_3_ORIENT_SHIFT));
+    return (bma250e_read_reg(dev, BMA250E_REG_INT_STATUS_3) & ~(_BMA250E_INT_STATUS_3_ORIENT_MASK << _BMA250E_INT_STATUS_3_ORIENT_SHIFT));
 }
 
 BMA250E_ORIENT_T bma250e_get_interrupt_status3_orientation(

@@ -63,6 +63,7 @@ extern "C" {
         float gyrScale;
     } *bmg160_context;
 
+    void bmg160_update(const bmg160_context dev, float *gx, float *gy, float *gz);
     /**
      * BMG160 initialization.
      *
@@ -87,14 +88,6 @@ extern "C" {
      * @param dev The device context.
      */
     void bmg160_close(bmg160_context dev);
-
-    /**
-     * Update the internal stored values from sensor data.
-     *
-     * @param dev The device context.
-     * @return UPM result.
-     */
-    upm_result_t bmg160_update(const bmg160_context dev);
 
     /**
      * Return the chip ID.

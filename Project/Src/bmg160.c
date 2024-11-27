@@ -213,58 +213,7 @@ upm_result_t bmg160_devinit(const bmg160_context dev,
     return UPM_SUCCESS;
 }
 
-upm_result_t bmg160_update(const bmg160_context dev)
-{
-    assert(dev != NULL);
-
-    int bufLen = 7; // max, non-FIFO
-    uint8_t startReg = BMG160_REG_RATE_X_LSB;
-
-    if (dev->useFIFO)
-    {
-        bufLen = 6;
-        startReg = BMG160_REG_FIFO_DATA;
-    }
-
-    uint8_t buf[bufLen];
-
-    if (bmg160_read_regs(dev, startReg, buf, bufLen) != bufLen)
-    {
-        printf("%s: bmg160_read_regs() failed to read %d bytes\n",
-               __FUNCTION__, bufLen);
-        return UPM_ERROR_OPERATION_FAILED;
-    }
-
-    // x                       msb     lsb
-    dev->gyrX = INT16_TO_FLOAT(buf[1], buf[0]);
-
-    // y
-    dev->gyrY = INT16_TO_FLOAT(buf[3], buf[2]);
-
-    // z
-    dev->gyrZ = INT16_TO_FLOAT(buf[5], buf[4]);
-
-    // get the temperature...
-
-    int8_t temp = 0;
-    if (dev->useFIFO)
-    {
-        // we have to read temperature separately...
-        temp = (int8_t)bmg160_read_reg(dev, BMG160_REG_TEMP);
-    }
-    else
-    {
-        // we already got it
-        temp = (int8_t)buf[6];
-    }
-
-    // .5K/LSB, 23C center point
-    dev->temperature = ((float)temp / 2.0) + 23.0;
-
-    return UPM_SUCCESS;
-}
-
-void bmg160_update2(const bmg160_context dev, float *gx, float *gy, float *gz) 
+void bmg160_update(const bmg160_context dev, float *gx, float *gy, float *gz) 
 {
 	int16_t GyroCount[3];										  // used to read all 6 bytes at once from the BMI055 gyro
 	uint8_t rawDataGyro[6];

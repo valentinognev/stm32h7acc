@@ -91,7 +91,7 @@ bma250e_context bma250e_init(int bus, int addr, int cs)
     bma250e_reset(dev);
  
     // call devinit with default options
-    if (bma250e_devinit(dev, BMA250E_POWER_MODE_NORMAL, BMA250E_RANGE_16G, BMA250E_BW_62_5))
+    if (bma250e_devinit(dev, BMA250E_POWER_MODE_NORMAL, BMA250E_RANGE_2G, BMA250E_BW_62_5))
     {
         printf("%s: bma250e_devinit() failed.\n", __FUNCTION__);
         bma250e_close(dev);
@@ -247,93 +247,20 @@ upm_result_t bma250e_devinit(const bma250e_context dev, BMA250E_POWER_MODE_T pwr
     uint8_t testIntMap1 = bma250e_get_interrupt_map1(dev);
     uint8_t testInt1 = bma250e_get_interrupt_enable1(dev);
 
-
     // settle
     HAL_Delay(50);
 
     return UPM_SUCCESS;
 }
 
-upm_result_t bma250e_update(const bma250e_context dev)
-{
-    assert(dev != NULL);
-
-    int bufLen = 7; // max, non-FIFO
-    uint8_t startReg = BMA250E_REG_ACCD_X_LSB;
-
-    if (dev->useFIFO)
-    {
-        bufLen = 6;
-        startReg = BMA250E_REG_FIFO_DATA;
-    }
-
-    uint8_t buf[bufLen];
-
-    if (bma250e_read_regs(dev, startReg, buf, bufLen) != bufLen)
-    {
-        // printf("%s: bma250e_read_regs() failed to read %d bytes\n", __FUNCTION__, bufLen);
-        return UPM_ERROR_OPERATION_FAILED;
-    }
-
-    uint8_t mask = 0, shift = 0;
-    float divisor = 1;
-
-    switch (dev->resolution)
-    {
-    case BMA250E_RESOLUTION_10BITS:
-        mask = _BMA250E_ACCD10_LSB_MASK;
-        shift = _BMA250E_ACCD10_LSB_SHIFT;
-        divisor = 64.0;
-
-        break;
-
-    case BMA250E_RESOLUTION_12BITS:
-        mask = _BMA250E_ACCD12_LSB_MASK;
-        shift = _BMA250E_ACCD12_LSB_SHIFT;
-        divisor = 16.0;
-
-        break;
-    }
-
-    // x                       msb     lsb
-    dev->accX = INT16_TO_FLOAT(buf[1], (buf[0] & (mask << shift)));
-    // y
-    dev->accY = INT16_TO_FLOAT(buf[3], (buf[2] & (mask << shift)));
-    // z
-    dev->accZ = INT16_TO_FLOAT(buf[5], (buf[4] & (mask << shift)));
-
-    dev->accX/=divisor;
-    dev->accY/=divisor;
-    dev->accZ/=divisor;
-    // get the temperature...
-
-    int8_t temp = 0;
-    if (dev->useFIFO)
-    {
-        // we have to read temperature separately...
-        temp = (int8_t)bma250e_read_reg(dev, BMA250E_REG_TEMP);
-    }
-    else
-    {
-        // we already got it
-        temp = (int8_t)buf[6];
-    }
-
-    // .5K/LSB, 23C center point
-    dev->temperature = ((float)temp / 2.0) + 23.0;
-
-    return UPM_SUCCESS;
-}
-
-
-void bma250e_update2(const bma250e_context dev, float *ax, float *ay, float *az, float *temperature) 
+void bma250e_update(const bma250e_context dev, float *ax, float *ay, float *az, float *temperature) 
 {
 	int16_t AccelCount[3];                                        // used to read all 6 bytes at once from the BMI055 accel
 	uint8_t rawDataAccel[7];                                          // x/y/z accel register data stored here
 
 	bma250e_read_regs(dev, BMA250E_REG_FIFO_DATA, &rawDataAccel[0], 7);       // Read the 7 raw accelerometer data registers into data array
     uint8_t testRange = bma250e_read_reg(dev, BMA250E_REG_PMU_RANGE);
-    
+
 	//accel registers
 	AccelCount[0] = ((rawDataAccel[1] << 8) | (rawDataAccel[0] & 0xF0)) >> 4;		  // Turn the MSB and LSB into a signed 12-bit value
 	AccelCount[1] = ((rawDataAccel[3] << 8) | (rawDataAccel[2] & 0xF0)) >> 4;	      // praise sign extension, making this code clean and simple.

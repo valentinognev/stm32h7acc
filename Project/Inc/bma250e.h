@@ -95,7 +95,7 @@ extern "C" {
      * @param dev The device context.
      * @return UPM result.
      */
-    upm_result_t bma250e_update(const bma250e_context dev);
+    void bma250e_update(const bma250e_context dev, float *ax, float *ay, float *az, float *temperature);
 
     /**
      * Return the chip ID.

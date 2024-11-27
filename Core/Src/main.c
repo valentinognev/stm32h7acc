@@ -125,8 +125,8 @@ int main(void)
   float gx, gy, gz;
   while (1)
   {
-    bma250e_update2(bma250, &ax, &ay, &az, &temperature);
-    bmg160_update2(bmg160, &gx, &gy, &gz);
+    bma250e_update(bma250, &ax, &ay, &az, &temperature);
+    bmg160_update(bmg160, &gx, &gy, &gz);
     Madgwick_updateIMU(gx, gy, gz, ax, ay, az);
     HAL_Delay(250);
     /* USER CODE END WHILE */

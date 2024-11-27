@@ -54,7 +54,7 @@ void MX_SPI1_Init(void)
   hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi1.Init.NSS = SPI_NSS_SOFT;
-  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_64;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_32;
   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -475,20 +475,24 @@ void SPI_TransmitReceive_DMA(uint16_t* transferData, uint16_t* receiveData, uint
 
   // HAL_SPI_TransmitReceive_IT(&hspi1, aTxBuffer, aRxBuffer, 2);
 
-  HAL_SPI_TransmitReceive(&hspi1, transferData, receiveData, 2, 1000);
+  //uint8_t res = HAL_SPI_TransmitReceive(&hspi1, transferData, receiveData, 2, 1000);
   // HAL_SPI_TransmitReceive_DMA(&hspi1, aTxBuffer, aRxBuffer, 2);
-  // HAL_SPI_TransmitReceive_IT(&hspi1, transferData, aRxBuffer, 2);
+  wTransferState = TRANSFER_WAIT;
+  uint8_t res = HAL_SPI_TransmitReceive_IT(&hspi1, transferData, receiveData, 2);
+  if (res!= HAL_OK) // after we will use bytesize if we want to optimize
+    res = res;
+  while(wTransferState != TRANSFER_COMPLETE); // after we will use bytesize if we want to optimize
  
   for (uint16_t i=1; i<size; i+=1)
   {
-    HAL_GPIO_WritePin(  ACCL1_CS_GPIO_Port,   ACCL1_CS_Pin, GPIO_PIN_RESET); spiTxFinished = 0;spiRxFinished = 0;
     // uint8_t res = HAL_SPI_TransmitReceive_DMA(&hspi1, (uint32_t)(transferData+i), (uint32_t)(receiveData+i), 1) ;
-    uint8_t res = HAL_SPI_TransmitReceive_IT(&hspi1, (transferData+i), (receiveData+i), 2) ;
-
-    if(res!= HAL_OK) // after we will use bytesize if we want to optimize
-         res = res;
+    wTransferState = TRANSFER_WAIT;
+    res = HAL_SPI_TransmitReceive_IT(&hspi1, (transferData+i), (receiveData+i), 2) ;
+    if (res!= HAL_OK) // after we will use bytesize if we want to optimize
+      res = res;
+    while(wTransferState != TRANSFER_COMPLETE); // after we will use bytesize if we want to optimize
     //HAL_Delay(1);
-    for (uint16_t j=1; j<1000; j+=1);
+    for (uint16_t j=1; j<10; j+=1);
     // LL_DMA_DisableChannel(DMA2, LL_DMA_CHANNEL_4);
     // LL_DMA_DisableChannel(DMA2, LL_DMA_CHANNEL_5);
     // LL_SPI_Disable(SPI1);

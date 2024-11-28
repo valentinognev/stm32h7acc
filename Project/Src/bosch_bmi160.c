@@ -110,15 +110,12 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_init_bus(struct bmi160_t *bmi160)
 	uint8_t v_pmu_data_u8 = BMI160_INIT_VALUE;
 	/* assign bmi160 ptr */
 	p_bmi160 = bmi160;
-	com_rslt =
-	p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
-	BMI160_USER_CHIP_ID__REG,
-	&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+	bmi160_bus_read(p_bmi160->dev_addr, BMI160_USER_CHIP_ID__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+	// com_rslt =	p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr, BMI160_USER_CHIP_ID__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 	/* read Chip Id */
 	p_bmi160->chip_id = v_data_u8;
 	/* To avoid gyro wakeup it is required to write 0x00 to 0x6C*/
-	com_rslt += bmi160_write_reg(BMI160_USER_PMU_TRIGGER_ADDR,
-	&v_pmu_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+	com_rslt += bmi160_write_reg(BMI160_USER_PMU_TRIGGER_ADDR, &v_pmu_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 	return com_rslt;
 }
 /*!
@@ -138,19 +135,19 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_init_bus(struct bmi160_t *bmi160)
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_write_reg(uint8_t v_addr_u8,
-uint8_t *v_data_u8, uint8_t v_len_u8)
+BMI160_RETURN_FUNCTION_TYPE bmi160_write_reg(uint8_t v_addr_u8, uint8_t *v_data_u8, uint8_t v_len_u8)
 {
 	/* variable used for return the status of communication result*/
 	BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
 	/* check the p_bmi160 structure as NULL*/
-	if (p_bmi160 == BMI160_NULL) {
+	if (p_bmi160 == BMI160_NULL) 
+	{
 		return E_BMI160_NULL_PTR;
-		} else {
+		} 
+		else 
+		{
 			/* write data from register*/
-			com_rslt =
-			p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->dev_addr,
-			v_addr_u8, v_data_u8, v_len_u8);
+			com_rslt = p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->dev_addr, v_addr_u8, v_data_u8, v_len_u8);
 		}
 	return com_rslt;
 }
@@ -171,8 +168,7 @@ uint8_t *v_data_u8, uint8_t v_len_u8)
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_reg(uint8_t v_addr_u8,
-uint8_t *v_data_u8, uint8_t v_len_u8)
+BMI160_RETURN_FUNCTION_TYPE bmi160_read_reg(uint8_t v_addr_u8, uint8_t *v_data_u8, uint8_t v_len_u8)
 {
 	/* variable used for return the status of communication result*/
 	BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
@@ -203,8 +199,7 @@ uint8_t *v_data_u8, uint8_t v_len_u8)
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_fatal_err(uint8_t
-*v_fatal_err_u8)
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_fatal_err(uint8_t *v_fatal_err_u8)
 {
 	/* variable used for return the status of communication result*/
 	BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
@@ -247,8 +242,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_fatal_err(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_err_code(uint8_t
-*v_err_code_u8)
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_err_code(uint8_t *v_err_code_u8)
 {
 	/* variable used for return the status of communication result*/
 	BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
@@ -266,40 +260,39 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_err_code(uint8_t
 		}
 	return com_rslt;
 }
-/*!
- *	@brief This API Reads the i2c error code from the
- *	Register 0x02 bit 5.
- *	This error occurred in I2C master detected
- *
- *  @param v_i2c_err_code_u8 : The status of i2c fail error
- *
- *
- *
- *	@return results of bus communication function
- *	@retval 0 -> Success
- *	@retval -1 -> Error
- *
- *
-*/
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_i2c_fail_err(uint8_t
-*v_i2c_err_code_u8)
-{
-	/* variable used for return the status of communication result*/
-	BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
-	uint8_t v_data_u8 = BMI160_INIT_VALUE;
-	/* check the p_bmi160 structure as NULL*/
-	if (p_bmi160 == BMI160_NULL) {
-		return E_BMI160_NULL_PTR;
-		} else {
-			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
-			BMI160_USER_I2C_FAIL_ERR__REG,
-			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
-			*v_i2c_err_code_u8 = BMI160_GET_BITSLICE(v_data_u8,
-			BMI160_USER_I2C_FAIL_ERR);
-		}
-	return com_rslt;
-}
+// /*!
+//  *	@brief This API Reads the i2c error code from the
+//  *	Register 0x02 bit 5.
+//  *	This error occurred in I2C master detected
+//  *
+//  *  @param v_i2c_err_code_u8 : The status of i2c fail error
+//  *
+//  *
+//  *
+//  *	@return results of bus communication function
+//  *	@retval 0 -> Success
+//  *	@retval -1 -> Error
+//  *
+//  *
+// */
+// BMI160_RETURN_FUNCTION_TYPE bmi160_get_i2c_fail_err(uint8_t *v_i2c_err_code_u8)
+// {
+// 	/* variable used for return the status of communication result*/
+// 	BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+// 	uint8_t v_data_u8 = BMI160_INIT_VALUE;
+// 	/* check the p_bmi160 structure as NULL*/
+// 	if (p_bmi160 == BMI160_NULL) {
+// 		return E_BMI160_NULL_PTR;
+// 		} else {
+// 			com_rslt =
+// 			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+// 			BMI160_USER_I2C_FAIL_ERR__REG,
+// 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+// 			*v_i2c_err_code_u8 = BMI160_GET_BITSLICE(v_data_u8,
+// 			BMI160_USER_I2C_FAIL_ERR);
+// 		}
+// 	return com_rslt;
+// }
  /*!
  *	@brief This API Reads the dropped command error
  *	from the register 0x02 bit 6
@@ -315,8 +308,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_i2c_fail_err(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_drop_cmd_err(uint8_t
-*v_drop_cmd_err_u8)
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_drop_cmd_err(uint8_t *v_drop_cmd_err_u8)
 {
 	/* variable used for return the status of communication result*/
 	BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
@@ -354,8 +346,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_drop_cmd_err(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_dada_rdy_err(
-uint8_t *v_mag_data_rdy_err_u8)
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_dada_rdy_err(uint8_t *v_mag_data_rdy_err_u8)
 {
 	/* variable used for return the status of communication result*/
 	BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
@@ -459,8 +450,7 @@ uint8_t *v_drop_cmd_err_u8, uint8_t *v_mag_data_rdy_err_u8)
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_power_mode_stat(uint8_t
-*v_mag_power_mode_stat_u8)
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_power_mode_stat(uint8_t *v_mag_power_mode_stat_u8)
 {
 	/* variable used for return the status of communication result*/
 	BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
@@ -504,8 +494,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_power_mode_stat(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_power_mode_stat(uint8_t
-*v_gyro_power_mode_stat_u8)
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_power_mode_stat(uint8_t *v_gyro_power_mode_stat_u8)
 {
 	/* variable used for return the status of communication result*/
 	BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
@@ -550,8 +539,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_power_mode_stat(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_power_mode_stat(uint8_t
-*v_accel_power_mode_stat_u8)
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_power_mode_stat(uint8_t *v_accel_power_mode_stat_u8)
 {
 	/* variable used for return the status of communication result*/
 	BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
@@ -626,8 +614,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_mag_interface_normal(void)
  *	@retval -1 -> Error
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_mag_x(int16_t *v_mag_x_s16,
-uint8_t v_sensor_select_u8)
+BMI160_RETURN_FUNCTION_TYPE bmi160_read_mag_x(int16_t *v_mag_x_s16, uint8_t v_sensor_select_u8)
 {
 	/* variable used for return the status of communication result*/
 	BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
@@ -694,8 +681,7 @@ uint8_t v_sensor_select_u8)
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_mag_y(int16_t *v_mag_y_s16,
-uint8_t v_sensor_select_u8)
+BMI160_RETURN_FUNCTION_TYPE bmi160_read_mag_y(int16_t *v_mag_y_s16, uint8_t v_sensor_select_u8)
 {
 	BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_OUT_OF_RANGE;
 	/* Array contains the mag Y lSB and MSB data
@@ -762,8 +748,7 @@ uint8_t v_sensor_select_u8)
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_mag_z(int16_t *v_mag_z_s16,
-uint8_t v_sensor_select_u8)
+BMI160_RETURN_FUNCTION_TYPE bmi160_read_mag_z(int16_t *v_mag_z_s16, uint8_t v_sensor_select_u8)
 {
 	/* variable used for return the status of communication result*/
 	BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
@@ -1415,8 +1400,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_read_accel_z(int16_t *v_accel_z_s16)
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_accel_xyz(
-struct bmi160_accel_t *accel)
+BMI160_RETURN_FUNCTION_TYPE bmi160_read_accel_xyz(struct bmi160_accel_t *accel)
 {
 	/* variable used for return the status of communication result*/
 	BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;

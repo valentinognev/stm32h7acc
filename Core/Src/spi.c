@@ -475,13 +475,13 @@ void SPI_TransmitReceive_DMA(uint8_t* transferData, uint8_t* receiveData, uint16
 
   // HAL_SPI_TransmitReceive_IT(&hspi1, aTxBuffer, aRxBuffer, 2);
 
-  //uint8_t res = HAL_SPI_TransmitReceive(&hspi1, transferData, receiveData, 2, 1000);
   // HAL_SPI_TransmitReceive_DMA(&hspi1, aTxBuffer, aRxBuffer, 2);
-  wTransferState = TRANSFER_WAIT;
-  uint8_t res = HAL_SPI_TransmitReceive_IT(&hspi1, transferData, receiveData, 2);
+  uint8_t res = HAL_SPI_TransmitReceive(&hspi1, transferData, receiveData, 2, 1000);
+  //wTransferState = TRANSFER_WAIT;
+  //uint8_t res = HAL_SPI_TransmitReceive_IT(&hspi1, transferData, receiveData, 2);
   if (res!= HAL_OK) // after we will use bytesize if we want to optimize
     res = res;
-  while(wTransferState != TRANSFER_COMPLETE); // after we will use bytesize if we want to optimize
+//  while(wTransferState != TRANSFER_COMPLETE); // after we will use bytesize if we want to optimize
  
   for (uint16_t i=2; i<size; i+=2)
   {

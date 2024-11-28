@@ -377,13 +377,6 @@ uint8_t *, uint8_t)
     for reading BMI160 addresses.
 
 */
-#define BMI160_BUS_READ_FUNC(dev_addr, reg_addr, reg_data, r_len)\
-                bus_read(dev_addr, reg_addr, reg_data, r_len)
-
-#define BMI160_BURST_READ_FUNC(device_addr, \
-register_addr, register_data, rd_len)\
-burst_read(device_addr, register_addr, register_data, rd_len)
-
 
 #define BMI160_MDELAY_DATA_TYPE                 uint32_t
 
@@ -1119,10 +1112,6 @@ struct bmi160_t {
 uint8_t chip_id;/**< chip id of BMI160 */
 uint8_t dev_addr;/**< device address of BMI160 */
 int8_t mag_manual_enable;/**< used for check the mag manual/auto mode status */
-BMI160_WR_FUNC_PTR;/**< bus write function pointer */
-BMI160_RD_FUNC_PTR;/**< bus read function pointer */
-BMI160_BRD_FUNC_PTR;/**< burst write function pointer */
-void (*delay_msec)(BMI160_MDELAY_DATA_TYPE);/**< delay function pointer */
 };
 /*!
  * @brief Structure containing bmm150 and akm09911

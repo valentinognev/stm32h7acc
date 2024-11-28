@@ -110,12 +110,15 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_init_bus(struct bmi160_t *bmi160)
 	uint8_t v_pmu_data_u8 = BMI160_INIT_VALUE;
 	/* assign bmi160 ptr */
 	p_bmi160 = bmi160;
-	bmi160_bus_read(p_bmi160->dev_addr, BMI160_USER_CHIP_ID__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
-	// com_rslt =	p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr, BMI160_USER_CHIP_ID__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+	com_rslt = bmi160_read_reg(BMI160_USER_CHIP_ID__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+	// com_rslt =	bmi160_bus_read(p_bmi160->dev_addr, BMI160_USER_CHIP_ID__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 	/* read Chip Id */
 	p_bmi160->chip_id = v_data_u8;
 	/* To avoid gyro wakeup it is required to write 0x00 to 0x6C*/
 	com_rslt += bmi160_write_reg(BMI160_USER_PMU_TRIGGER_ADDR, &v_pmu_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+	uint8_t v_nv_data_u8 = BMI160_USER_NV_CONFIG_SPI_ENABLE__MSK;
+
+	com_rslt += bmi160_write_reg(BMI160_USER_NV_CONFIG_ADDR, &v_nv_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 	return com_rslt;
 }
 /*!
@@ -143,12 +146,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_write_reg(uint8_t v_addr_u8, uint8_t *v_data_
 	if (p_bmi160 == BMI160_NULL) 
 	{
 		return E_BMI160_NULL_PTR;
-		} 
-		else 
-		{
-			/* write data from register*/
-			com_rslt = p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->dev_addr, v_addr_u8, v_data_u8, v_len_u8);
-		}
+	} 
+	else 
+	{   /* write data from register*/			                     
+		com_rslt = bmi160_bus_write(p_bmi160->dev_addr, v_addr_u8, v_data_u8, v_len_u8);
+	}
 	return com_rslt;
 }
 /*!
@@ -173,14 +175,14 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_read_reg(uint8_t v_addr_u8, uint8_t *v_data_u
 	/* variable used for return the status of communication result*/
 	BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
 	/* check the p_bmi160 structure as NULL*/
-	if (p_bmi160 == BMI160_NULL) {
+	if (p_bmi160 == BMI160_NULL) 
+	{
 		return E_BMI160_NULL_PTR;
-		} else {
-			/* Read data from register*/
-			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
-			v_addr_u8, v_data_u8, v_len_u8);
-		}
+	} 
+	else 
+	{   /* Read data from register*/;
+		com_rslt = bmi160_bus_read(p_bmi160->dev_addr, v_addr_u8, v_data_u8, v_len_u8);
+	}
 	return com_rslt;
 }
 /*!
@@ -209,10 +211,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_fatal_err(uint8_t *v_fatal_err_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* reading the fatal error status*/
-			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
-			BMI160_USER_FATAL_ERR__REG,
-			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+			com_rslt = bmi160_bus_read(p_bmi160->dev_addr, BMI160_USER_FATAL_ERR__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_fatal_err_u8 = BMI160_GET_BITSLICE(v_data_u8,
 			BMI160_USER_FATAL_ERR);
 		}
@@ -251,10 +250,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_err_code(uint8_t *v_err_code_u8)
 	if (p_bmi160 == BMI160_NULL) {
 		return E_BMI160_NULL_PTR;
 		} else {
-			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
-			BMI160_USER_ERR_CODE__REG,
-			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+			com_rslt = bmi160_bus_read(p_bmi160->dev_addr, BMI160_USER_ERR_CODE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_err_code_u8 = BMI160_GET_BITSLICE(v_data_u8,
 			BMI160_USER_ERR_CODE);
 		}
@@ -285,7 +281,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_err_code(uint8_t *v_err_code_u8)
 // 		return E_BMI160_NULL_PTR;
 // 		} else {
 // 			com_rslt =
-// 			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+// 			bmi160_bus_read(p_bmi160->dev_addr,
 // 			BMI160_USER_I2C_FAIL_ERR__REG,
 // 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 // 			*v_i2c_err_code_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -318,7 +314,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_drop_cmd_err(uint8_t *v_drop_cmd_err_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(
+			bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_DROP_CMD_ERR__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -356,7 +352,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_dada_rdy_err(uint8_t *v_mag_data_rdy_
 		return E_BMI160_NULL_PTR;
 		} else {
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(
+			bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_MAG_DADA_RDY_ERR__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -397,7 +393,7 @@ uint8_t *v_drop_cmd_err_u8, uint8_t *v_mag_data_rdy_err_u8)
 		} else {
 			/* read the error codes*/
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(
+			bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_ERR_STAT__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -460,7 +456,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_power_mode_stat(uint8_t *v_mag_power_
 		return E_BMI160_NULL_PTR;
 		} else {
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_MAG_POWER_MODE_STAT__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_mag_power_mode_stat_u8 =
@@ -504,7 +500,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_power_mode_stat(uint8_t *v_gyro_powe
 		return E_BMI160_NULL_PTR;
 		} else {
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_GYRO_POWER_MODE_STAT__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_gyro_power_mode_stat_u8 =
@@ -549,7 +545,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_power_mode_stat(uint8_t *v_accel_po
 		return E_BMI160_NULL_PTR;
 		} else {
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_ACCEL_POWER_MODE_STAT__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_accel_power_mode_stat_u8 =
@@ -575,14 +571,14 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_mag_interface_normal(void)
 	uint8_t v_try_times_u8 = BMI160_MAG_NOAMRL_SWITCH_TIMES;
 	uint8_t v_mag_pum_status_u8 = BMI160_INIT_VALUE;
 
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	com_rslt = bmi160_set_command_register(MAG_MODE_NORMAL);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	while (v_try_times_u8) {
 		com_rslt = bmi160_get_mag_power_mode_stat(&v_mag_pum_status_u8);
 		if (v_mag_pum_status_u8 == MAG_INTERFACE_PMU_ENABLE)
 			break;
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 		v_try_times_u8--;
 	}
 	if (v_mag_pum_status_u8 == MAG_INTERFACE_PMU_ENABLE)
@@ -630,7 +626,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_read_mag_x(int16_t *v_mag_x_s16, uint8_t v_se
 		switch (v_sensor_select_u8) {
 		case BST_BMM:
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(
+			bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_DATA_MAG_X_LSB__REG,
 			v_data_u8, BMI160_MAG_X_DATA_LENGTH);
@@ -645,7 +641,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_read_mag_x(int16_t *v_mag_x_s16, uint8_t v_se
 		break;
 		case BST_AKM:
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_DATA_0_MAG_X_LSB__REG,
 			v_data_u8, BMI160_MAG_X_DATA_LENGTH);
 			*v_mag_x_s16 = (int16_t)
@@ -696,7 +692,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_read_mag_y(int16_t *v_mag_y_s16, uint8_t v_se
 		switch (v_sensor_select_u8) {
 		case BST_BMM:
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(
+			bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_DATA_MAG_Y_LSB__REG,
 			v_data_u8, BMI160_MAG_Y_DATA_LENGTH);
@@ -711,7 +707,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_read_mag_y(int16_t *v_mag_y_s16, uint8_t v_se
 		break;
 		case BST_AKM:
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(
+			bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_DATA_2_MAG_Y_LSB__REG,
 			v_data_u8, BMI160_MAG_Y_DATA_LENGTH);
@@ -764,7 +760,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_read_mag_z(int16_t *v_mag_z_s16, uint8_t v_se
 		switch (v_sensor_select_u8) {
 		case BST_BMM:
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(
+			bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_DATA_MAG_Z_LSB__REG,
 			v_data_u8, BMI160_MAG_Z_DATA_LENGTH);
@@ -779,7 +775,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_read_mag_z(int16_t *v_mag_z_s16, uint8_t v_se
 		break;
 		case BST_AKM:
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(
+			bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_DATA_4_MAG_Z_LSB__REG,
 			v_data_u8, BMI160_MAG_Z_DATA_LENGTH);
@@ -824,7 +820,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_read_mag_r(int16_t *v_mag_r_s16)
 		return E_BMI160_NULL_PTR;
 		} else {
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_DATA_6_RHALL_LSB__REG,
 			v_data_u8, BMI160_MAG_R_DATA_LENGTH);
 			/*R-axis lsb value shifting*/
@@ -883,7 +879,7 @@ struct bmi160_mag_t *mag, uint8_t v_sensor_select_u8)
 		switch (v_sensor_select_u8) {
 		case BST_BMM:
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(
+			bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_DATA_MAG_X_LSB__REG,
 			v_data_u8, BMI160_MAG_XYZ_DATA_LENGTH);
@@ -923,10 +919,7 @@ struct bmi160_mag_t *mag, uint8_t v_sensor_select_u8)
 			(v_data_u8[BMI160_DATA_FRAME_MAG_Z_LSB_BYTE]));
 		break;
 		case BST_AKM:
-			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
-			BMI160_USER_DATA_0_MAG_X_LSB__REG,
-			v_data_u8, BMI160_MAG_XYZ_DATA_LENGTH);
+			com_rslt = bmi160_bus_read(p_bmi160->dev_addr, BMI160_USER_DATA_0_MAG_X_LSB__REG, v_data_u8, BMI160_MAG_XYZ_DATA_LENGTH);
 			/* Data X */
 			mag->x = (int16_t)
 			((((int32_t)((int8_t)v_data_u8[
@@ -983,7 +976,7 @@ struct bmi160_mag_xyzr_t *mag)
 		return E_BMI160_NULL_PTR;
 		} else {
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_DATA_MAG_X_LSB__REG,
 			v_data_u8, BMI160_MAG_XYZR_DATA_LENGTH);
 
@@ -1070,7 +1063,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_read_gyro_x(int16_t *v_gyro_x_s16)
 		return E_BMI160_NULL_PTR;
 		} else {
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_DATA_8_GYRO_X_LSB__REG,
 			v_data_u8, BMI160_GYRO_DATA_LENGTH);
 
@@ -1116,7 +1109,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_read_gyro_y(int16_t *v_gyro_y_s16)
 		} else {
 			/* read gyro y data*/
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_DATA_10_GYRO_Y_LSB__REG,
 			v_data_u8, BMI160_GYRO_DATA_LENGTH);
 
@@ -1162,7 +1155,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_read_gyro_z(int16_t *v_gyro_z_s16)
 		} else {
 			/* read gyro z data */
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_DATA_12_GYRO_Z_LSB__REG,
 			v_data_u8, BMI160_GYRO_DATA_LENGTH);
 
@@ -1215,7 +1208,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_read_gyro_xyz(struct bmi160_gyro_t *gyro)
 		} else {
 			/* read the gyro xyz data*/
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_DATA_8_GYRO_X_LSB__REG,
 			v_data_u8, BMI160_GYRO_XYZ_DATA_LENGTH);
 
@@ -1276,7 +1269,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_read_accel_x(int16_t *v_accel_x_s16)
 		return E_BMI160_NULL_PTR;
 		} else {
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_DATA_14_ACCEL_X_LSB__REG,
 			v_data_u8, BMI160_ACCEL_DATA_LENGTH);
 
@@ -1322,7 +1315,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_read_accel_y(int16_t *v_accel_y_s16)
 		return E_BMI160_NULL_PTR;
 		} else {
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_DATA_16_ACCEL_Y_LSB__REG,
 			v_data_u8, BMI160_ACCEL_DATA_LENGTH);
 
@@ -1368,7 +1361,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_read_accel_z(int16_t *v_accel_z_s16)
 		return E_BMI160_NULL_PTR;
 		} else {
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_DATA_18_ACCEL_Z_LSB__REG,
 			a_data_u8r, BMI160_ACCEL_DATA_LENGTH);
 
@@ -1421,7 +1414,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_read_accel_xyz(struct bmi160_accel_t *accel)
 		return E_BMI160_NULL_PTR;
 		} else {
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_DATA_14_ACCEL_X_LSB__REG,
 			a_data_u8r, BMI160_ACCEL_XYZ_DATA_LENGTH);
 
@@ -1478,7 +1471,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_sensor_time(uint32_t *v_sensor_time_u32)
 		return E_BMI160_NULL_PTR;
 		} else {
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_SENSORTIME_0_SENSOR_TIME_LSB__REG,
 			a_data_u8r, BMI160_SENSOR_TIME_LENGTH);
 
@@ -1520,7 +1513,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_selftest(uint8_t
 		return E_BMI160_NULL_PTR;
 		} else {
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_STAT_GYRO_SELFTEST_OK__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_gyro_selftest_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -1560,7 +1553,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_manual_operation_stat(uint8_t
 		} else {
 			/* read manual operation*/
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_STAT_MAG_MANUAL_OPERATION__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_mag_manual_stat_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -1595,7 +1588,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_foc_rdy(uint8_t
 		} else {
 			/* read the FOC status*/
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_STAT_FOC_RDY__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_foc_rdy_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -1633,7 +1626,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_nvm_rdy(uint8_t
 		} else {
 			/* read the nvm ready status*/
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_STAT_NVM_RDY__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_nvm_rdy_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -1667,7 +1660,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_data_rdy_mag(uint8_t
 		return E_BMI160_NULL_PTR;
 		} else {
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_STAT_DATA_RDY_MAG__REG, &v_data_u8,
 			BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_data_rdy_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -1702,7 +1695,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_data_rdy(uint8_t
 		return E_BMI160_NULL_PTR;
 		} else {
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_STAT_DATA_RDY_GYRO__REG, &v_data_u8,
 			BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_data_rdy_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -1738,7 +1731,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_data_rdy(uint8_t
 		} else {
 			/*reads the status of accel data ready*/
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_STAT_DATA_RDY_ACCEL__REG, &v_data_u8,
 			BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_data_rdy_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -1781,7 +1774,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_step_intr(uint8_t
 		return E_BMI160_NULL_PTR;
 		} else {
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_INTR_STAT_0_STEP_INTR__REG, &v_data_u8,
 			BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_step_intr_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -1827,7 +1820,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_significant_intr(uint8_t
 		return E_BMI160_NULL_PTR;
 		} else {
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_INTR_STAT_0_SIGNIFICANT_INTR__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_significant_intr_u8  = BMI160_GET_BITSLICE(v_data_u8,
@@ -1869,7 +1862,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_any_motion_intr(uint8_t
 		return E_BMI160_NULL_PTR;
 		} else {
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_INTR_STAT_0_ANY_MOTION__REG, &v_data_u8,
 			BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_any_motion_intr_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -1913,7 +1906,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_pmu_trigger_intr(uint8_t
 		return E_BMI160_NULL_PTR;
 		} else {
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_INTR_STAT_0_PMU_TRIGGER__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_pmu_trigger_intr_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -1972,7 +1965,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_double_tap_intr(uint8_t
 		return E_BMI160_NULL_PTR;
 		} else {
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_INTR_STAT_0_DOUBLE_TAP_INTR__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_double_tap_intr_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -2031,7 +2024,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_single_tap_intr(uint8_t
 		return E_BMI160_NULL_PTR;
 		} else {
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_INTR_STAT_0_SINGLE_TAP_INTR__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_single_tap_intr_u8 =
@@ -2093,7 +2086,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_orient_intr(uint8_t
 		return E_BMI160_NULL_PTR;
 		} else {
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_INTR_STAT_0_ORIENT__REG, &v_data_u8,
 			BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_orient_intr_u8 =
@@ -2148,7 +2141,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_flat_intr(uint8_t
 		return E_BMI160_NULL_PTR;
 		} else {
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_INTR_STAT_0_FLAT__REG, &v_data_u8,
 			BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_flat_intr_u8 =
@@ -2208,7 +2201,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat1_high_g_intr(uint8_t
 		return E_BMI160_NULL_PTR;
 		} else {
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_INTR_STAT_1_HIGH_G_INTR__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_high_g_intr_u8 =
@@ -2265,7 +2258,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat1_low_g_intr(uint8_t
 		return E_BMI160_NULL_PTR;
 		} else {
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_INTR_STAT_1_LOW_G_INTR__REG, &v_data_u8,
 			 BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_low_g_intr_u8 =
@@ -2312,7 +2305,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat1_data_rdy_intr(uint8_t
 		return E_BMI160_NULL_PTR;
 		} else {
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_INTR_STAT_1_DATA_RDY_INTR__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_data_rdy_intr_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -2356,7 +2349,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat1_fifo_full_intr(uint8_t
 		return E_BMI160_NULL_PTR;
 		} else {
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_INTR_STAT_1_FIFO_FULL_INTR__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_fifo_full_intr_u8 =
@@ -2402,7 +2395,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat1_fifo_wm_intr(uint8_t
 		return E_BMI160_NULL_PTR;
 		} else {
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_INTR_STAT_1_FIFO_WM_INTR__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_fifo_wm_intr_u8 =
@@ -2456,7 +2449,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat1_nomotion_intr(uint8_t
 		} else {
 			/* read the no motion interrupt*/
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_INTR_STAT_1_NOMOTION_INTR__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_nomotion_intr_u8 =
@@ -2494,7 +2487,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_any_motion_first_x(uint8_t
 		} else {
 			/* read the any motion first x interrupt*/
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_INTR_STAT_2_ANY_MOTION_FIRST_X__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_anymotion_first_x_u8 =
@@ -2535,7 +2528,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_any_motion_first_y(uint8_t
 		} else {
 			/* read the any motion first y interrupt*/
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_INTR_STAT_2_ANY_MOTION_FIRST_Y__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_any_motion_first_y_u8 =
@@ -2577,7 +2570,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_any_motion_first_z(uint8_t
 		} else {
 			/* read the any motion first z interrupt*/
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_INTR_STAT_2_ANY_MOTION_FIRST_Z__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_any_motion_first_z_u8 =
@@ -2618,7 +2611,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_any_motion_sign(uint8_t
 		} else {
 			/* read any motion sign interrupt status */
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_INTR_STAT_2_ANY_MOTION_SIGN__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_anymotion_sign_u8 =
@@ -2658,7 +2651,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_tap_first_x(uint8_t
 		} else {
 			/* read tap first x interrupt status */
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_INTR_STAT_2_TAP_FIRST_X__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_tap_first_x_u8 =
@@ -2700,7 +2693,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_tap_first_y(uint8_t
 		} else {
 			/* read tap first y interrupt status */
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_INTR_STAT_2_TAP_FIRST_Y__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_tap_first_y_u8 =
@@ -2742,7 +2735,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_tap_first_z(uint8_t
 		} else {
 			/* read tap first z interrupt status */
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_INTR_STAT_2_TAP_FIRST_Z__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_tap_first_z_u8 =
@@ -2783,7 +2776,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_tap_sign(uint8_t
 		} else {
 			/* read tap_sign interrupt status */
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_INTR_STAT_2_TAP_SIGN__REG, &v_data_u8,
 			BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_tap_sign_u8 =
@@ -2825,7 +2818,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat3_high_g_first_x(uint8_t
 		} else {
 			/* read highg_x interrupt status */
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_INTR_STAT_3_HIGH_G_FIRST_X__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_high_g_first_x_u8 =
@@ -2867,7 +2860,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat3_high_g_first_y(uint8_t
 		} else {
 			/* read highg_y interrupt status */
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_INTR_STAT_3_HIGH_G_FIRST_Y__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_high_g_first_y_u8 =
@@ -2909,7 +2902,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat3_high_g_first_z(uint8_t
 		} else {
 			/* read highg_z interrupt status */
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_INTR_STAT_3_HIGH_G_FIRST_Z__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_high_g_first_z_u8 =
@@ -2951,7 +2944,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat3_high_g_sign(uint8_t
 		} else {
 			/* read highg_sign interrupt status */
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_INTR_STAT_3_HIGH_G_SIGN__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_high_g_sign_u8 =
@@ -2992,7 +2985,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat3_orient_xy(uint8_t
 		} else {
 			/* read orient plane xy interrupt status */
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_INTR_STAT_3_ORIENT_XY__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_orient_xy_u8 =
@@ -3030,7 +3023,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat3_orient_z(uint8_t
 		} else {
 			/* read orient z plane interrupt status */
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_INTR_STAT_3_ORIENT_Z__REG, &v_data_u8,
 			BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_orient_z_u8 =
@@ -3069,7 +3062,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat3_flat(uint8_t
 		} else {
 			/* read flat interrupt status */
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_INTR_STAT_3_FLAT__REG, &v_data_u8,
 			BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_flat_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -3109,7 +3102,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_temp(int16_t
 		} else {
 			/* read temperature data */
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_TEMP_LSB_VALUE__REG, v_data_u8,
 			BMI160_TEMP_DATA_LENGTH);
 			*v_temp_s16 =
@@ -3150,7 +3143,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_fifo_length(uint32_t *v_fifo_length_u32)
 		} else {
 			/* read fifo length*/
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_FIFO_BYTE_COUNTER_LSB__REG, a_data_u8r,
 			 BMI160_FIFO_DATA_LENGTH);
 
@@ -3192,16 +3185,16 @@ uint8_t *v_fifodata_u8, uint16_t v_fifo_length_u16)
 	/* variable used for return the status of communication result*/
 	BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
 	/* check the p_bmi160 structure as NULL*/
-	if (p_bmi160 == BMI160_NULL) {
+	if (p_bmi160 == BMI160_NULL) 
+	{
 		return E_BMI160_NULL_PTR;
-		} else {
-			/* read fifo data*/
-			com_rslt =
-			p_bmi160->BMI160_BURST_READ_FUNC(p_bmi160->dev_addr,
-			BMI160_USER_FIFO_DATA__REG,
-			v_fifodata_u8, v_fifo_length_u16);
+	} 
+	else 
+	{
+		/* read fifo data*/
+		com_rslt = bmi160_bus_read(p_bmi160->dev_addr, BMI160_USER_FIFO_DATA__REG, v_fifodata_u8, v_fifo_length_u16);
 
-		}
+	}
 	return com_rslt;
 }
 /*!
@@ -3245,7 +3238,7 @@ uint8_t *v_output_data_rate_u8)
 		} else {
 			/* read the accel output data rate*/
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_ACCEL_CONFIG_OUTPUT_DATA_RATE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_output_data_rate_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -3470,7 +3463,7 @@ uint8_t v_output_data_rate_u8, uint8_t v_accel_bw_u8)
 		if (v_assign_bw == SUCCESS_BMI160) {
 			/* write accel output data rate */
 			com_rslt +=
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_ACCEL_CONFIG_OUTPUT_DATA_RATE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			if (com_rslt == SUCCESS_BMI160) {
@@ -3478,7 +3471,7 @@ uint8_t v_output_data_rate_u8, uint8_t v_accel_bw_u8)
 				BMI160_USER_ACCEL_CONFIG_OUTPUT_DATA_RATE,
 				v_odr_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(
+				bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_ACCEL_CONFIG_OUTPUT_DATA_RATE__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -3545,7 +3538,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_bw(uint8_t *v_bw_u8)
 		} else {
 			/* read the accel bandwidth */
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_ACCEL_CONFIG_ACCEL_BW__REG, &v_data_u8,
 			BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_bw_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -3611,7 +3604,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_bw(uint8_t v_bw_u8)
 		if (v_bw_u8 <= BMI160_MAX_ACCEL_BW) {
 			/* write accel bandwidth*/
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_ACCEL_CONFIG_ACCEL_BW__REG, &v_data_u8,
 			BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			if (com_rslt == SUCCESS_BMI160) {
@@ -3619,7 +3612,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_bw(uint8_t v_bw_u8)
 				BMI160_USER_ACCEL_CONFIG_ACCEL_BW,
 				v_bw_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(
+				bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_ACCEL_CONFIG_ACCEL_BW__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -3663,7 +3656,7 @@ uint8_t *v_accel_under_sampling_u8)
 		} else {
 			/* read the accel under sampling parameter */
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_ACCEL_CONFIG_ACCEL_UNDER_SAMPLING__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_accel_under_sampling_u8 =
@@ -3705,7 +3698,7 @@ if (p_bmi160 == BMI160_NULL) {
 	} else {
 	if (v_accel_under_sampling_u8 <= BMI160_MAX_UNDER_SAMPLING) {
 		com_rslt =
-		p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+		bmi160_bus_read(p_bmi160->dev_addr,
 		BMI160_USER_ACCEL_CONFIG_ACCEL_UNDER_SAMPLING__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		if (com_rslt == SUCCESS_BMI160) {
@@ -3714,7 +3707,7 @@ if (p_bmi160 == BMI160_NULL) {
 			BMI160_USER_ACCEL_CONFIG_ACCEL_UNDER_SAMPLING,
 			v_accel_under_sampling_u8);
 			com_rslt +=
-			p_bmi160->BMI160_BUS_WRITE_FUNC(
+			bmi160_bus_write(
 			p_bmi160->dev_addr,
 			BMI160_USER_ACCEL_CONFIG_ACCEL_UNDER_SAMPLING__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -3760,7 +3753,7 @@ uint8_t *v_range_u8)
 		} else {
 			/* read the accel range*/
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_ACCEL_RANGE__REG, &v_data_u8,
 			BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_range_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -3805,7 +3798,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_range(uint8_t v_range_u8)
 			(v_range_u8 == BMI160_ACCEL_RANGE3) ||
 			(v_range_u8 == BMI160_ACCEL_RANGE4)) {
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_ACCEL_RANGE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			if (com_rslt == SUCCESS_BMI160) {
@@ -3814,7 +3807,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_range(uint8_t v_range_u8)
 				v_range_u8);
 				/* write the accel range*/
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(
+				bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_ACCEL_RANGE__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -3870,7 +3863,7 @@ uint8_t *v_output_data_rate_u8)
 		} else {
 			/* read the gyro output data rate*/
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_GYRO_CONFIG_OUTPUT_DATA_RATE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_output_data_rate_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -3932,7 +3925,7 @@ uint8_t v_output_data_rate_u8)
 		&& (v_output_data_rate_u8 !=  BMI160_OUTPUT_DATA_RATE6)
 		&& (v_output_data_rate_u8 !=  BMI160_OUTPUT_DATA_RATE7)) {
 			/* write the gyro output data rate */
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+			com_rslt = bmi160_bus_read
 			(p_bmi160->dev_addr,
 			BMI160_USER_GYRO_CONFIG_OUTPUT_DATA_RATE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -3940,7 +3933,7 @@ uint8_t v_output_data_rate_u8)
 				v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_GYRO_CONFIG_OUTPUT_DATA_RATE,
 				v_output_data_rate_u8);
-				com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC
+				com_rslt += bmi160_bus_write
 				(p_bmi160->dev_addr,
 				BMI160_USER_GYRO_CONFIG_OUTPUT_DATA_RATE__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -3984,7 +3977,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_bw(uint8_t *v_bw_u8)
 		} else {
 			/* read gyro bandwidth*/
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_GYRO_CONFIG_BW__REG, &v_data_u8,
 			BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_bw_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -4026,14 +4019,14 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_bw(uint8_t v_bw_u8)
 		if (v_bw_u8 <= BMI160_MAX_GYRO_BW) {
 			/* write the gyro bandwidth*/
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_GYRO_CONFIG_BW__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			if (com_rslt == SUCCESS_BMI160) {
 				v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_GYRO_CONFIG_BW, v_bw_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(
+				bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_GYRO_CONFIG_BW__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -4073,7 +4066,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_range(uint8_t *v_range_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read the gyro range */
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+			com_rslt = bmi160_bus_read
 			(p_bmi160->dev_addr,
 			BMI160_USER_GYRO_RANGE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -4113,7 +4106,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_range(uint8_t v_range_u8)
 		} else {
 		if (v_range_u8 <= BMI160_MAX_GYRO_RANGE) {
 			/* write the gyro range value */
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+			com_rslt = bmi160_bus_read
 			(p_bmi160->dev_addr,
 			BMI160_USER_GYRO_RANGE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -4121,7 +4114,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_range(uint8_t v_range_u8)
 				v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_GYRO_RANGE,
 				v_range_u8);
-				com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC
+				com_rslt += bmi160_bus_write
 				(p_bmi160->dev_addr,
 				BMI160_USER_GYRO_RANGE__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -4179,7 +4172,7 @@ uint8_t *v_output_data_rat_u8e)
 		} else {
 			/* read the mag data output rate*/
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_MAG_CONFIG_OUTPUT_DATA_RATE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_output_data_rat_u8e = BMI160_GET_BITSLICE(v_data_u8,
@@ -4243,7 +4236,7 @@ uint8_t v_output_data_rat_u8e)
 		!=  BMI160_OUTPUT_DATA_RATE7)) {
 			/* write the mag data output rate*/
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_MAG_CONFIG_OUTPUT_DATA_RATE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			if (com_rslt == SUCCESS_BMI160) {
@@ -4251,7 +4244,7 @@ uint8_t v_output_data_rat_u8e)
 				BMI160_USER_MAG_CONFIG_OUTPUT_DATA_RATE,
 				v_output_data_rat_u8e);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(
+				bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_MAG_CONFIG_OUTPUT_DATA_RATE__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -4290,7 +4283,7 @@ uint8_t *v_fifo_down_gyro_u8)
 		} else {
 			/* read the gyro fifo down*/
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_FIFO_DOWN_GYRO__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_fifo_down_gyro_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -4326,7 +4319,7 @@ uint8_t v_fifo_down_gyro_u8)
 		} else {
 			/* write the gyro fifo down*/
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_FIFO_DOWN_GYRO__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			if (com_rslt == SUCCESS_BMI160) {
@@ -4335,7 +4328,7 @@ uint8_t v_fifo_down_gyro_u8)
 				BMI160_USER_FIFO_DOWN_GYRO,
 				v_fifo_down_gyro_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(
+				bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_FIFO_DOWN_GYRO__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -4373,7 +4366,7 @@ uint8_t *v_gyro_fifo_filter_data_u8)
 		} else {
 			/* read the gyro fifo filter data */
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_FIFO_FILTER_GYRO__REG, &v_data_u8,
 			BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_gyro_fifo_filter_data_u8 =
@@ -4414,7 +4407,7 @@ uint8_t v_gyro_fifo_filter_data_u8)
 		<= BMI160_MAX_VALUE_FIFO_FILTER) {
 			/* write the gyro fifo filter data */
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_FIFO_FILTER_GYRO__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			if (com_rslt == SUCCESS_BMI160) {
@@ -4423,7 +4416,7 @@ uint8_t v_gyro_fifo_filter_data_u8)
 				BMI160_USER_FIFO_FILTER_GYRO,
 				v_gyro_fifo_filter_data_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(
+				bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_FIFO_FILTER_GYRO__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -4463,7 +4456,7 @@ uint8_t *v_fifo_down_u8)
 		} else {
 			/* read the accel fifo down data */
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_FIFO_DOWN_ACCEL__REG, &v_data_u8,
 			BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_fifo_down_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -4500,14 +4493,14 @@ uint8_t v_fifo_down_u8)
 		} else {
 			/* write the accel fifo down data */
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_FIFO_DOWN_ACCEL__REG, &v_data_u8,
 			BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			if (com_rslt == SUCCESS_BMI160) {
 				v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_FIFO_DOWN_ACCEL, v_fifo_down_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(
+				bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_FIFO_DOWN_ACCEL__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -4546,7 +4539,7 @@ uint8_t *accel_fifo_filter_u8)
 		} else {
 			/* read the accel fifo filter data */
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_FIFO_FILTER_ACCEL__REG, &v_data_u8,
 			BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*accel_fifo_filter_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -4585,7 +4578,7 @@ uint8_t v_accel_fifo_filter_u8)
 		} else {
 		if (v_accel_fifo_filter_u8 <= BMI160_MAX_VALUE_FIFO_FILTER) {
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_FIFO_FILTER_ACCEL__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			if (com_rslt == SUCCESS_BMI160) {
@@ -4594,7 +4587,7 @@ uint8_t v_accel_fifo_filter_u8)
 				BMI160_USER_FIFO_FILTER_ACCEL,
 				v_accel_fifo_filter_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(
+				bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_FIFO_FILTER_ACCEL__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -4633,7 +4626,7 @@ uint8_t *v_fifo_wm_u8)
 		} else {
 			/* read the fifo water mark level*/
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_FIFO_WM__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_fifo_wm_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -4668,7 +4661,7 @@ uint8_t v_fifo_wm_u8)
 		} else {
 			/* write the fifo water mark level*/
 			com_rslt =
-			p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_write(p_bmi160->dev_addr,
 			BMI160_USER_FIFO_WM__REG,
 			&v_fifo_wm_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		}
@@ -4705,7 +4698,7 @@ uint8_t *v_fifo_time_enable_u8)
 		} else {
 			/* read the fifo sensor time*/
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_FIFO_TIME_ENABLE__REG, &v_data_u8,
 			BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_fifo_time_enable_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -4745,7 +4738,7 @@ uint8_t v_fifo_time_enable_u8)
 		if (v_fifo_time_enable_u8 <= BMI160_MAX_VALUE_FIFO_TIME) {
 			/* write the fifo sensor time*/
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_FIFO_TIME_ENABLE__REG, &v_data_u8,
 			BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			if (com_rslt == SUCCESS_BMI160) {
@@ -4753,7 +4746,7 @@ uint8_t v_fifo_time_enable_u8)
 				BMI160_USER_FIFO_TIME_ENABLE,
 				v_fifo_time_enable_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(
+				bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_FIFO_TIME_ENABLE__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -4795,7 +4788,7 @@ uint8_t *v_fifo_tag_intr2_u8)
 		} else {
 			/* read the fifo tag interrupt2*/
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_FIFO_TAG_INTR2_ENABLE__REG, &v_data_u8,
 			BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_fifo_tag_intr2_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -4837,7 +4830,7 @@ uint8_t v_fifo_tag_intr2_u8)
 			com_rslt = bmi160_set_input_enable(1,
 			v_fifo_tag_intr2_u8);
 			com_rslt +=
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_FIFO_TAG_INTR2_ENABLE__REG, &v_data_u8,
 			BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			if (com_rslt == SUCCESS_BMI160) {
@@ -4845,7 +4838,7 @@ uint8_t v_fifo_tag_intr2_u8)
 				BMI160_USER_FIFO_TAG_INTR2_ENABLE,
 				v_fifo_tag_intr2_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(
+				bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_FIFO_TAG_INTR2_ENABLE__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -4884,7 +4877,7 @@ uint8_t *v_fifo_tag_intr1_u8)
 		} else {
 			/* read fifo tag interrupt*/
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_FIFO_TAG_INTR1_ENABLE__REG, &v_data_u8,
 			BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_fifo_tag_intr1_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -4923,7 +4916,7 @@ uint8_t v_fifo_tag_intr1_u8)
 			com_rslt = bmi160_set_input_enable(BMI160_INIT_VALUE,
 			v_fifo_tag_intr1_u8);
 			com_rslt +=
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_FIFO_TAG_INTR1_ENABLE__REG, &v_data_u8,
 			BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			if (com_rslt == SUCCESS_BMI160) {
@@ -4931,7 +4924,7 @@ uint8_t v_fifo_tag_intr1_u8)
 				BMI160_USER_FIFO_TAG_INTR1_ENABLE,
 				v_fifo_tag_intr1_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(
+				bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_FIFO_TAG_INTR1_ENABLE__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -4970,7 +4963,7 @@ uint8_t *v_fifo_header_u8)
 		} else {
 			/* read fifo header */
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_FIFO_HEADER_ENABLE__REG, &v_data_u8,
 			BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_fifo_header_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -5007,7 +5000,7 @@ uint8_t v_fifo_header_u8)
 		if (v_fifo_header_u8 <= BMI160_MAX_VALUE_FIFO_HEADER) {
 			/* write the fifo header */
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_FIFO_HEADER_ENABLE__REG, &v_data_u8,
 			BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			if (com_rslt == SUCCESS_BMI160) {
@@ -5015,7 +5008,7 @@ uint8_t v_fifo_header_u8)
 				BMI160_USER_FIFO_HEADER_ENABLE,
 				v_fifo_header_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(
+				bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_FIFO_HEADER_ENABLE__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -5054,7 +5047,7 @@ uint8_t *v_fifo_mag_u8)
 		} else {
 			/* read the fifo mag enable*/
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_FIFO_MAG_ENABLE__REG, &v_data_u8,
 			BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_fifo_mag_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -5091,7 +5084,7 @@ uint8_t v_fifo_mag_u8)
 			if (v_fifo_mag_u8 <= BMI160_MAX_VALUE_FIFO_MAG) {
 				/* write the fifo mag enable*/
 				com_rslt =
-				p_bmi160->BMI160_BUS_READ_FUNC
+				bmi160_bus_read
 				(p_bmi160->dev_addr,
 				BMI160_USER_FIFO_MAG_ENABLE__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -5101,7 +5094,7 @@ uint8_t v_fifo_mag_u8)
 					BMI160_USER_FIFO_MAG_ENABLE,
 					v_fifo_mag_u8);
 					com_rslt +=
-					p_bmi160->BMI160_BUS_WRITE_FUNC
+					bmi160_bus_write
 					(p_bmi160->dev_addr,
 					BMI160_USER_FIFO_MAG_ENABLE__REG,
 					&v_data_u8,
@@ -5143,7 +5136,7 @@ uint8_t *v_fifo_accel_u8)
 		} else {
 			/* read the accel fifo enable*/
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_FIFO_ACCEL_ENABLE__REG, &v_data_u8,
 			BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_fifo_accel_u8 =
@@ -5183,14 +5176,14 @@ uint8_t v_fifo_accel_u8)
 		if (v_fifo_accel_u8 <= BMI160_MAX_VALUE_FIFO_ACCEL) {
 			/* write the fifo mag enables*/
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_FIFO_ACCEL_ENABLE__REG, &v_data_u8,
 			BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			if (com_rslt == SUCCESS_BMI160) {
 				v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_FIFO_ACCEL_ENABLE, v_fifo_accel_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(
+				bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_FIFO_ACCEL_ENABLE__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -5231,7 +5224,7 @@ uint8_t *v_fifo_gyro_u8)
 		} else {
 			/* read fifo gyro enable */
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_FIFO_GYRO_ENABLE__REG, &v_data_u8,
 			BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_fifo_gyro_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -5270,14 +5263,14 @@ uint8_t v_fifo_gyro_u8)
 		if (v_fifo_gyro_u8 <= BMI160_MAX_VALUE_FIFO_GYRO) {
 			/* write fifo gyro enable*/
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_FIFO_GYRO_ENABLE__REG, &v_data_u8,
 			BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			if (com_rslt == SUCCESS_BMI160) {
 				v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_FIFO_GYRO_ENABLE, v_fifo_gyro_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(
+				bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_FIFO_GYRO_ENABLE__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -5316,7 +5309,7 @@ uint8_t *v_i2c_device_addr_u8)
 		} else {
 			/* read the mag I2C device address*/
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_I2C_DEVICE_ADDR__REG, &v_data_u8,
 			BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_i2c_device_addr_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -5352,7 +5345,7 @@ uint8_t v_i2c_device_addr_u8)
 		} else {
 			/* write the mag I2C device address*/
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_I2C_DEVICE_ADDR__REG, &v_data_u8,
 			BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			if (com_rslt == SUCCESS_BMI160) {
@@ -5360,7 +5353,7 @@ uint8_t v_i2c_device_addr_u8)
 				BMI160_USER_I2C_DEVICE_ADDR,
 				v_i2c_device_addr_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(
+				bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_I2C_DEVICE_ADDR__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -5397,7 +5390,7 @@ uint8_t *v_mag_burst_u8)
 		} else {
 			/* read mag burst mode length*/
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_MAG_BURST__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_mag_burst_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -5434,7 +5427,7 @@ uint8_t v_mag_burst_u8)
 		} else {
 			/* write mag burst mode length*/
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_MAG_BURST__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			if (com_rslt == SUCCESS_BMI160) {
@@ -5442,7 +5435,7 @@ uint8_t v_mag_burst_u8)
 				BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_MAG_BURST, v_mag_burst_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(
+				bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_MAG_BURST__REG, &v_data_u8,
 				BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -5480,7 +5473,7 @@ uint8_t *v_mag_offset_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_MAG_OFFSET__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_mag_offset_u8 =
@@ -5519,7 +5512,7 @@ if (p_bmi160 == BMI160_NULL) {
 	return E_BMI160_NULL_PTR;
 	} else {
 		com_rslt =
-		p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+		bmi160_bus_read(p_bmi160->dev_addr,
 		BMI160_USER_MAG_OFFSET__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		if (com_rslt == SUCCESS_BMI160) {
@@ -5527,7 +5520,7 @@ if (p_bmi160 == BMI160_NULL) {
 			BMI160_SET_BITSLICE(v_data_u8,
 			BMI160_USER_MAG_OFFSET, v_mag_offset_u8);
 			com_rslt +=
-			p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_write(p_bmi160->dev_addr,
 			BMI160_USER_MAG_OFFSET__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		}
@@ -5570,7 +5563,7 @@ uint8_t *v_mag_manual_u8)
 		} else {
 			/* read mag manual */
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_MAG_MANUAL_ENABLE__REG, &v_data_u8,
 			BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_mag_manual_u8 =
@@ -5615,17 +5608,17 @@ if (p_bmi160 == BMI160_NULL) {
 	} else {
 		/* write the mag manual*/
 		com_rslt =
-		p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+		bmi160_bus_read(p_bmi160->dev_addr,
 		BMI160_USER_MAG_MANUAL_ENABLE__REG, &v_data_u8,
 		BMI160_GEN_READ_WRITE_DATA_LENGTH);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 		if (com_rslt == SUCCESS_BMI160) {
 			/* set the bit of mag manual enable*/
 			v_data_u8 =
 			BMI160_SET_BITSLICE(v_data_u8,
 			BMI160_USER_MAG_MANUAL_ENABLE, v_mag_manual_u8);
 			com_rslt +=
-			p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_write(p_bmi160->dev_addr,
 			BMI160_USER_MAG_MANUAL_ENABLE__REG, &v_data_u8,
 			BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		}
@@ -5666,7 +5659,7 @@ uint8_t *v_mag_read_addr_u8)
 		} else {
 			/* read the written address*/
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_READ_ADDR__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_mag_read_addr_u8 =
@@ -5703,7 +5696,7 @@ uint8_t v_mag_read_addr_u8)
 		} else {
 			/* write the mag read address*/
 			com_rslt =
-			p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_write(p_bmi160->dev_addr,
 			BMI160_USER_READ_ADDR__REG, &v_mag_read_addr_u8,
 			BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		}
@@ -5738,7 +5731,7 @@ uint8_t *v_mag_write_addr_u8)
 		} else {
 			/* read the address of last written */
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_WRITE_ADDR__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_mag_write_addr_u8 =
@@ -5775,7 +5768,7 @@ uint8_t v_mag_write_addr_u8)
 		} else {
 			/* write the data of mag address to write data */
 			com_rslt =
-			p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_write(p_bmi160->dev_addr,
 			BMI160_USER_WRITE_ADDR__REG, &v_mag_write_addr_u8,
 			BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		}
@@ -5809,7 +5802,7 @@ uint8_t *v_mag_write_data_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_WRITE_DATA__REG, &v_data_u8,
 			BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_mag_write_data_u8 =
@@ -5845,7 +5838,7 @@ uint8_t v_mag_write_data_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			com_rslt =
-			p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_write(p_bmi160->dev_addr,
 			BMI160_USER_WRITE_DATA__REG, &v_mag_write_data_u8,
 			BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		}
@@ -5898,7 +5891,7 @@ uint8_t v_enable_u8, uint8_t *v_intr_enable_zero_u8)
 		case BMI160_ANY_MOTION_X_ENABLE:
 			/* read the any motion interrupt x data */
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			bmi160_bus_read(p_bmi160->
 			dev_addr,
 			BMI160_USER_INTR_ENABLE_0_ANY_MOTION_X_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -5909,7 +5902,7 @@ uint8_t v_enable_u8, uint8_t *v_intr_enable_zero_u8)
 		case BMI160_ANY_MOTION_Y_ENABLE:
 			/* read the any motion interrupt y data */
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			bmi160_bus_read(p_bmi160->
 			dev_addr,
 			BMI160_USER_INTR_ENABLE_0_ANY_MOTION_Y_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -5920,7 +5913,7 @@ uint8_t v_enable_u8, uint8_t *v_intr_enable_zero_u8)
 		case BMI160_ANY_MOTION_Z_ENABLE:
 			/* read the any motion interrupt z data */
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			bmi160_bus_read(p_bmi160->
 			dev_addr,
 			BMI160_USER_INTR_ENABLE_0_ANY_MOTION_Z_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -5931,7 +5924,7 @@ uint8_t v_enable_u8, uint8_t *v_intr_enable_zero_u8)
 		case BMI160_DOUBLE_TAP_ENABLE:
 			/* read the double tap interrupt data */
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			bmi160_bus_read(p_bmi160->
 			dev_addr,
 			BMI160_USER_INTR_ENABLE_0_DOUBLE_TAP_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -5942,7 +5935,7 @@ uint8_t v_enable_u8, uint8_t *v_intr_enable_zero_u8)
 		case BMI160_SINGLE_TAP_ENABLE:
 			/* read the single tap interrupt data */
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			bmi160_bus_read(p_bmi160->
 			dev_addr,
 			BMI160_USER_INTR_ENABLE_0_SINGLE_TAP_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -5953,7 +5946,7 @@ uint8_t v_enable_u8, uint8_t *v_intr_enable_zero_u8)
 		case BMI160_ORIENT_ENABLE:
 			/* read the orient interrupt data */
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR_ENABLE_0_ORIENT_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_intr_enable_zero_u8 =
@@ -5963,7 +5956,7 @@ uint8_t v_enable_u8, uint8_t *v_intr_enable_zero_u8)
 		case BMI160_FLAT_ENABLE:
 			/* read the flat interrupt data */
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR_ENABLE_0_FLAT_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_intr_enable_zero_u8 =
@@ -6022,7 +6015,7 @@ if (p_bmi160 == BMI160_NULL) {
 	switch (v_enable_u8) {
 	case BMI160_ANY_MOTION_X_ENABLE:
 		/* write any motion x*/
-		com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+		com_rslt = bmi160_bus_read(p_bmi160->
 		dev_addr, BMI160_USER_INTR_ENABLE_0_ANY_MOTION_X_ENABLE__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		if (com_rslt == SUCCESS_BMI160) {
@@ -6030,7 +6023,7 @@ if (p_bmi160 == BMI160_NULL) {
 			BMI160_USER_INTR_ENABLE_0_ANY_MOTION_X_ENABLE,
 			v_intr_enable_zero_u8);
 			com_rslt +=
-			p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+			bmi160_bus_write(p_bmi160->
 			dev_addr,
 			BMI160_USER_INTR_ENABLE_0_ANY_MOTION_X_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -6038,7 +6031,7 @@ if (p_bmi160 == BMI160_NULL) {
 		break;
 	case BMI160_ANY_MOTION_Y_ENABLE:
 		/* write any motion y*/
-		com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+		com_rslt = bmi160_bus_read(p_bmi160->
 		dev_addr, BMI160_USER_INTR_ENABLE_0_ANY_MOTION_Y_ENABLE__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		if (com_rslt == SUCCESS_BMI160) {
@@ -6046,7 +6039,7 @@ if (p_bmi160 == BMI160_NULL) {
 			BMI160_USER_INTR_ENABLE_0_ANY_MOTION_Y_ENABLE,
 			v_intr_enable_zero_u8);
 			com_rslt +=
-			p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+			bmi160_bus_write(p_bmi160->
 			dev_addr,
 			BMI160_USER_INTR_ENABLE_0_ANY_MOTION_Y_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -6054,7 +6047,7 @@ if (p_bmi160 == BMI160_NULL) {
 		break;
 	case BMI160_ANY_MOTION_Z_ENABLE:
 		/* write any motion z*/
-		com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+		com_rslt = bmi160_bus_read(p_bmi160->
 		dev_addr, BMI160_USER_INTR_ENABLE_0_ANY_MOTION_Z_ENABLE__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		if (com_rslt == SUCCESS_BMI160) {
@@ -6062,7 +6055,7 @@ if (p_bmi160 == BMI160_NULL) {
 			BMI160_USER_INTR_ENABLE_0_ANY_MOTION_Z_ENABLE,
 			v_intr_enable_zero_u8);
 			com_rslt +=
-			p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+			bmi160_bus_write(p_bmi160->
 			dev_addr,
 			BMI160_USER_INTR_ENABLE_0_ANY_MOTION_Z_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -6070,7 +6063,7 @@ if (p_bmi160 == BMI160_NULL) {
 		break;
 	case BMI160_DOUBLE_TAP_ENABLE:
 		/* write double tap*/
-		com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+		com_rslt = bmi160_bus_read(p_bmi160->
 		dev_addr, BMI160_USER_INTR_ENABLE_0_DOUBLE_TAP_ENABLE__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		if (com_rslt == SUCCESS_BMI160) {
@@ -6078,7 +6071,7 @@ if (p_bmi160 == BMI160_NULL) {
 			BMI160_USER_INTR_ENABLE_0_DOUBLE_TAP_ENABLE,
 			v_intr_enable_zero_u8);
 			com_rslt +=
-			p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+			bmi160_bus_write(p_bmi160->
 			dev_addr,
 			BMI160_USER_INTR_ENABLE_0_DOUBLE_TAP_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -6086,7 +6079,7 @@ if (p_bmi160 == BMI160_NULL) {
 		break;
 	case BMI160_SINGLE_TAP_ENABLE:
 		/* write single tap */
-		com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+		com_rslt = bmi160_bus_read(p_bmi160->
 		dev_addr, BMI160_USER_INTR_ENABLE_0_SINGLE_TAP_ENABLE__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		if (com_rslt == SUCCESS_BMI160) {
@@ -6094,7 +6087,7 @@ if (p_bmi160 == BMI160_NULL) {
 			BMI160_USER_INTR_ENABLE_0_SINGLE_TAP_ENABLE,
 			v_intr_enable_zero_u8);
 			com_rslt +=
-			p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+			bmi160_bus_write(p_bmi160->
 			dev_addr,
 			BMI160_USER_INTR_ENABLE_0_SINGLE_TAP_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -6102,7 +6095,7 @@ if (p_bmi160 == BMI160_NULL) {
 		break;
 	case BMI160_ORIENT_ENABLE:
 		/* write orient interrupt*/
-		com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+		com_rslt = bmi160_bus_read(p_bmi160->
 		dev_addr, BMI160_USER_INTR_ENABLE_0_ORIENT_ENABLE__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		if (com_rslt == SUCCESS_BMI160) {
@@ -6110,7 +6103,7 @@ if (p_bmi160 == BMI160_NULL) {
 			BMI160_USER_INTR_ENABLE_0_ORIENT_ENABLE,
 			v_intr_enable_zero_u8);
 			com_rslt +=
-			p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+			bmi160_bus_write(p_bmi160->
 			dev_addr,
 			BMI160_USER_INTR_ENABLE_0_ORIENT_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -6118,7 +6111,7 @@ if (p_bmi160 == BMI160_NULL) {
 		break;
 	case BMI160_FLAT_ENABLE:
 		/* write flat interrupt*/
-		com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+		com_rslt = bmi160_bus_read(p_bmi160->
 		dev_addr, BMI160_USER_INTR_ENABLE_0_FLAT_ENABLE__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		if (com_rslt == SUCCESS_BMI160) {
@@ -6126,7 +6119,7 @@ if (p_bmi160 == BMI160_NULL) {
 			BMI160_USER_INTR_ENABLE_0_FLAT_ENABLE,
 			v_intr_enable_zero_u8);
 			com_rslt +=
-			p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+			bmi160_bus_write(p_bmi160->
 			dev_addr,
 			BMI160_USER_INTR_ENABLE_0_FLAT_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -6186,7 +6179,7 @@ uint8_t v_enable_u8, uint8_t *v_intr_enable_1_u8)
 		switch (v_enable_u8) {
 		case BMI160_HIGH_G_X_ENABLE:
 			/* read high_g_x interrupt*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr,
 			BMI160_USER_INTR_ENABLE_1_HIGH_G_X_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -6195,7 +6188,7 @@ uint8_t v_enable_u8, uint8_t *v_intr_enable_1_u8)
 			break;
 		case BMI160_HIGH_G_Y_ENABLE:
 			/* read high_g_y interrupt*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr,
 			BMI160_USER_INTR_ENABLE_1_HIGH_G_Y_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -6204,7 +6197,7 @@ uint8_t v_enable_u8, uint8_t *v_intr_enable_1_u8)
 			break;
 		case BMI160_HIGH_G_Z_ENABLE:
 			/* read high_g_z interrupt*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr,
 			BMI160_USER_INTR_ENABLE_1_HIGH_G_Z_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -6213,7 +6206,7 @@ uint8_t v_enable_u8, uint8_t *v_intr_enable_1_u8)
 			break;
 		case BMI160_LOW_G_ENABLE:
 			/* read low_g interrupt */
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR_ENABLE_1_LOW_G_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_intr_enable_1_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -6221,7 +6214,7 @@ uint8_t v_enable_u8, uint8_t *v_intr_enable_1_u8)
 			break;
 		case BMI160_DATA_RDY_ENABLE:
 			/* read data ready interrupt */
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr,
 			BMI160_USER_INTR_ENABLE_1_DATA_RDY_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -6230,7 +6223,7 @@ uint8_t v_enable_u8, uint8_t *v_intr_enable_1_u8)
 			break;
 		case BMI160_FIFO_FULL_ENABLE:
 			/* read fifo full interrupt */
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr,
 			BMI160_USER_INTR_ENABLE_1_FIFO_FULL_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -6239,7 +6232,7 @@ uint8_t v_enable_u8, uint8_t *v_intr_enable_1_u8)
 			break;
 		case BMI160_FIFO_WM_ENABLE:
 			/* read fifo water mark interrupt */
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr,
 			BMI160_USER_INTR_ENABLE_1_FIFO_WM_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -6300,7 +6293,7 @@ uint8_t v_enable_u8, uint8_t v_intr_enable_1_u8)
 		switch (v_enable_u8) {
 		case BMI160_HIGH_G_X_ENABLE:
 			/* write high_g_x interrupt*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr,
 			BMI160_USER_INTR_ENABLE_1_HIGH_G_X_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -6309,7 +6302,7 @@ uint8_t v_enable_u8, uint8_t v_intr_enable_1_u8)
 				BMI160_USER_INTR_ENABLE_1_HIGH_G_X_ENABLE,
 				v_intr_enable_1_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+				bmi160_bus_write(p_bmi160->
 				dev_addr,
 				BMI160_USER_INTR_ENABLE_1_HIGH_G_X_ENABLE__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -6317,7 +6310,7 @@ uint8_t v_enable_u8, uint8_t v_intr_enable_1_u8)
 		break;
 		case BMI160_HIGH_G_Y_ENABLE:
 			/* write high_g_y interrupt*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr,
 			BMI160_USER_INTR_ENABLE_1_HIGH_G_Y_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -6326,7 +6319,7 @@ uint8_t v_enable_u8, uint8_t v_intr_enable_1_u8)
 				BMI160_USER_INTR_ENABLE_1_HIGH_G_Y_ENABLE,
 				v_intr_enable_1_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+				bmi160_bus_write(p_bmi160->
 				dev_addr,
 				BMI160_USER_INTR_ENABLE_1_HIGH_G_Y_ENABLE__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -6334,7 +6327,7 @@ uint8_t v_enable_u8, uint8_t v_intr_enable_1_u8)
 		break;
 		case BMI160_HIGH_G_Z_ENABLE:
 			/* write high_g_z interrupt*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr,
 			BMI160_USER_INTR_ENABLE_1_HIGH_G_Z_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -6343,7 +6336,7 @@ uint8_t v_enable_u8, uint8_t v_intr_enable_1_u8)
 				BMI160_USER_INTR_ENABLE_1_HIGH_G_Z_ENABLE,
 				v_intr_enable_1_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+				bmi160_bus_write(p_bmi160->
 				dev_addr,
 				BMI160_USER_INTR_ENABLE_1_HIGH_G_Z_ENABLE__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -6351,7 +6344,7 @@ uint8_t v_enable_u8, uint8_t v_intr_enable_1_u8)
 		break;
 		case BMI160_LOW_G_ENABLE:
 			/* write low_g interrupt*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr,
 			BMI160_USER_INTR_ENABLE_1_LOW_G_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -6360,7 +6353,7 @@ uint8_t v_enable_u8, uint8_t v_intr_enable_1_u8)
 				BMI160_USER_INTR_ENABLE_1_LOW_G_ENABLE,
 				v_intr_enable_1_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+				bmi160_bus_write(p_bmi160->
 				dev_addr,
 				BMI160_USER_INTR_ENABLE_1_LOW_G_ENABLE__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -6368,7 +6361,7 @@ uint8_t v_enable_u8, uint8_t v_intr_enable_1_u8)
 		break;
 		case BMI160_DATA_RDY_ENABLE:
 			/* write data ready interrupt*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr,
 			BMI160_USER_INTR_ENABLE_1_DATA_RDY_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -6377,7 +6370,7 @@ uint8_t v_enable_u8, uint8_t v_intr_enable_1_u8)
 				BMI160_USER_INTR_ENABLE_1_DATA_RDY_ENABLE,
 				v_intr_enable_1_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+				bmi160_bus_write(p_bmi160->
 				dev_addr,
 				BMI160_USER_INTR_ENABLE_1_DATA_RDY_ENABLE__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -6385,7 +6378,7 @@ uint8_t v_enable_u8, uint8_t v_intr_enable_1_u8)
 		break;
 		case BMI160_FIFO_FULL_ENABLE:
 			/* write fifo full interrupt*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr,
 			BMI160_USER_INTR_ENABLE_1_FIFO_FULL_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -6394,7 +6387,7 @@ uint8_t v_enable_u8, uint8_t v_intr_enable_1_u8)
 				BMI160_USER_INTR_ENABLE_1_FIFO_FULL_ENABLE,
 				v_intr_enable_1_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+				bmi160_bus_write(p_bmi160->
 				dev_addr,
 				BMI160_USER_INTR_ENABLE_1_FIFO_FULL_ENABLE__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -6402,7 +6395,7 @@ uint8_t v_enable_u8, uint8_t v_intr_enable_1_u8)
 		break;
 		case BMI160_FIFO_WM_ENABLE:
 			/* write fifo water mark interrupt*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR_ENABLE_1_FIFO_WM_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			if (com_rslt == SUCCESS_BMI160) {
@@ -6410,7 +6403,7 @@ uint8_t v_enable_u8, uint8_t v_intr_enable_1_u8)
 				BMI160_USER_INTR_ENABLE_1_FIFO_WM_ENABLE,
 				v_intr_enable_1_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+				bmi160_bus_write(p_bmi160->
 				dev_addr,
 				BMI160_USER_INTR_ENABLE_1_FIFO_WM_ENABLE__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -6464,7 +6457,7 @@ uint8_t v_enable_u8, uint8_t *v_intr_enable_2_u8)
 		switch (v_enable_u8) {
 		case BMI160_NOMOTION_X_ENABLE:
 			/* read no motion x */
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr,
 			BMI160_USER_INTR_ENABLE_2_NOMOTION_X_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -6474,7 +6467,7 @@ uint8_t v_enable_u8, uint8_t *v_intr_enable_2_u8)
 		case BMI160_NOMOTION_Y_ENABLE:
 			/* read no motion y */
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			bmi160_bus_read(p_bmi160->
 			dev_addr,
 			BMI160_USER_INTR_ENABLE_2_NOMOTION_Y_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -6483,7 +6476,7 @@ uint8_t v_enable_u8, uint8_t *v_intr_enable_2_u8)
 			break;
 		case BMI160_NOMOTION_Z_ENABLE:
 			/* read no motion z */
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr,
 			BMI160_USER_INTR_ENABLE_2_NOMOTION_Z_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -6538,7 +6531,7 @@ if (p_bmi160 == BMI160_NULL) {
 	switch (v_enable_u8) {
 	case BMI160_NOMOTION_X_ENABLE:
 		/* write no motion x */
-		com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+		com_rslt = bmi160_bus_read(p_bmi160->
 		dev_addr,
 		BMI160_USER_INTR_ENABLE_2_NOMOTION_X_ENABLE__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -6547,7 +6540,7 @@ if (p_bmi160 == BMI160_NULL) {
 			BMI160_USER_INTR_ENABLE_2_NOMOTION_X_ENABLE,
 			v_intr_enable_2_u8);
 			com_rslt +=
-			p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+			bmi160_bus_write(p_bmi160->
 			dev_addr,
 			BMI160_USER_INTR_ENABLE_2_NOMOTION_X_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -6555,7 +6548,7 @@ if (p_bmi160 == BMI160_NULL) {
 		break;
 	case BMI160_NOMOTION_Y_ENABLE:
 		/* write no motion y */
-		com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+		com_rslt = bmi160_bus_read(p_bmi160->
 		dev_addr,
 		BMI160_USER_INTR_ENABLE_2_NOMOTION_Y_ENABLE__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -6564,7 +6557,7 @@ if (p_bmi160 == BMI160_NULL) {
 			BMI160_USER_INTR_ENABLE_2_NOMOTION_Y_ENABLE,
 			v_intr_enable_2_u8);
 			com_rslt +=
-			p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+			bmi160_bus_write(p_bmi160->
 			dev_addr,
 			BMI160_USER_INTR_ENABLE_2_NOMOTION_Y_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -6572,7 +6565,7 @@ if (p_bmi160 == BMI160_NULL) {
 		break;
 	case BMI160_NOMOTION_Z_ENABLE:
 		/* write no motion z */
-		com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+		com_rslt = bmi160_bus_read(p_bmi160->
 		dev_addr,
 		BMI160_USER_INTR_ENABLE_2_NOMOTION_Z_ENABLE__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -6581,7 +6574,7 @@ if (p_bmi160 == BMI160_NULL) {
 			BMI160_USER_INTR_ENABLE_2_NOMOTION_Z_ENABLE,
 			v_intr_enable_2_u8);
 			com_rslt +=
-			p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+			bmi160_bus_write(p_bmi160->
 			dev_addr,
 			BMI160_USER_INTR_ENABLE_2_NOMOTION_Z_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -6623,7 +6616,7 @@ uint8_t *v_step_intr_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read the step detector interrupt*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr,
 			BMI160_USER_INTR_ENABLE_2_STEP_DETECTOR_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -6660,7 +6653,7 @@ uint8_t v_step_intr_u8)
 	if (p_bmi160 == BMI160_NULL) {
 		return E_BMI160_NULL_PTR;
 		} else {
-		com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+		com_rslt = bmi160_bus_read(p_bmi160->
 		dev_addr,
 		BMI160_USER_INTR_ENABLE_2_STEP_DETECTOR_ENABLE__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -6669,7 +6662,7 @@ uint8_t v_step_intr_u8)
 			BMI160_USER_INTR_ENABLE_2_STEP_DETECTOR_ENABLE,
 			v_step_intr_u8);
 			com_rslt +=
-			p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+			bmi160_bus_write(p_bmi160->
 			dev_addr,
 			BMI160_USER_INTR_ENABLE_2_STEP_DETECTOR_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -6714,7 +6707,7 @@ uint8_t v_channel_u8, uint8_t *v_intr_edge_ctrl_u8)
 		switch (v_channel_u8) {
 		case BMI160_INTR1_EDGE_CTRL:
 			/* read the edge trigger interrupt1*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR1_EDGE_CTRL__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_intr_edge_ctrl_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -6722,7 +6715,7 @@ uint8_t v_channel_u8, uint8_t *v_intr_edge_ctrl_u8)
 			break;
 		case BMI160_INTR2_EDGE_CTRL:
 			/* read the edge trigger interrupt2*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR2_EDGE_CTRL__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_intr_edge_ctrl_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -6772,7 +6765,7 @@ uint8_t v_channel_u8, uint8_t v_intr_edge_ctrl_u8)
 		switch (v_channel_u8) {
 		case BMI160_INTR1_EDGE_CTRL:
 			/* write the edge trigger interrupt1*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR1_EDGE_CTRL__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			if (com_rslt == SUCCESS_BMI160) {
@@ -6780,14 +6773,14 @@ uint8_t v_channel_u8, uint8_t v_intr_edge_ctrl_u8)
 				BMI160_USER_INTR1_EDGE_CTRL,
 				v_intr_edge_ctrl_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+				bmi160_bus_write(p_bmi160->
 				dev_addr, BMI160_USER_INTR1_EDGE_CTRL__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			}
 			break;
 		case BMI160_INTR2_EDGE_CTRL:
 			/* write the edge trigger interrupt2*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR2_EDGE_CTRL__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			if (com_rslt == SUCCESS_BMI160) {
@@ -6795,7 +6788,7 @@ uint8_t v_channel_u8, uint8_t v_intr_edge_ctrl_u8)
 				BMI160_USER_INTR2_EDGE_CTRL,
 				v_intr_edge_ctrl_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+				bmi160_bus_write(p_bmi160->
 				dev_addr, BMI160_USER_INTR2_EDGE_CTRL__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			}
@@ -6844,7 +6837,7 @@ uint8_t v_channel_u8, uint8_t *v_intr_level_u8)
 		switch (v_channel_u8) {
 		case BMI160_INTR1_LEVEL:
 			/* read the interrupt1 level*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR1_LEVEL__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_intr_level_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -6852,7 +6845,7 @@ uint8_t v_channel_u8, uint8_t *v_intr_level_u8)
 			break;
 		case BMI160_INTR2_LEVEL:
 			/* read the interrupt2 level*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR2_LEVEL__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_intr_level_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -6902,28 +6895,28 @@ uint8_t v_channel_u8, uint8_t v_intr_level_u8)
 		switch (v_channel_u8) {
 		case BMI160_INTR1_LEVEL:
 			/* write the interrupt1 level*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR1_LEVEL__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			if (com_rslt == SUCCESS_BMI160) {
 				v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_INTR1_LEVEL, v_intr_level_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+				bmi160_bus_write(p_bmi160->
 				dev_addr, BMI160_USER_INTR1_LEVEL__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			}
 			break;
 		case BMI160_INTR2_LEVEL:
 			/* write the interrupt2 level*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR2_LEVEL__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			if (com_rslt == SUCCESS_BMI160) {
 				v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_INTR2_LEVEL, v_intr_level_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+				bmi160_bus_write(p_bmi160->
 				dev_addr, BMI160_USER_INTR2_LEVEL__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			}
@@ -6975,7 +6968,7 @@ uint8_t v_channel_u8, uint8_t *v_intr_output_type_u8)
 		switch (v_channel_u8) {
 		case BMI160_INTR1_OUTPUT_TYPE:
 			/* read the output type of interrupt1*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR1_OUTPUT_TYPE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_intr_output_type_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -6983,7 +6976,7 @@ uint8_t v_channel_u8, uint8_t *v_intr_output_type_u8)
 			break;
 		case BMI160_INTR2_OUTPUT_TYPE:
 			/* read the output type of interrupt2*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR2_OUTPUT_TYPE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_intr_output_type_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -7036,7 +7029,7 @@ uint8_t v_channel_u8, uint8_t v_intr_output_type_u8)
 		switch (v_channel_u8) {
 		case BMI160_INTR1_OUTPUT_TYPE:
 			/* write the output type of interrupt1*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR1_OUTPUT_TYPE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			if (com_rslt == SUCCESS_BMI160) {
@@ -7044,14 +7037,14 @@ uint8_t v_channel_u8, uint8_t v_intr_output_type_u8)
 				BMI160_USER_INTR1_OUTPUT_TYPE,
 				v_intr_output_type_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+				bmi160_bus_write(p_bmi160->
 				dev_addr, BMI160_USER_INTR1_OUTPUT_TYPE__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			}
 			break;
 		case BMI160_INTR2_OUTPUT_TYPE:
 			/* write the output type of interrupt2*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR2_OUTPUT_TYPE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			if (com_rslt == SUCCESS_BMI160) {
@@ -7059,7 +7052,7 @@ uint8_t v_channel_u8, uint8_t v_intr_output_type_u8)
 				BMI160_USER_INTR2_OUTPUT_TYPE,
 				v_intr_output_type_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+				bmi160_bus_write(p_bmi160->
 				dev_addr, BMI160_USER_INTR2_OUTPUT_TYPE__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			}
@@ -7111,7 +7104,7 @@ uint8_t v_channel_u8, uint8_t *v_output_enable_u8)
 		switch (v_channel_u8) {
 		case BMI160_INTR1_OUTPUT_ENABLE:
 			/* read the output enable of interrupt1*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR1_OUTPUT_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_output_enable_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -7119,7 +7112,7 @@ uint8_t v_channel_u8, uint8_t *v_output_enable_u8)
 			break;
 		case BMI160_INTR2_OUTPUT_ENABLE:
 			/* read the output enable of interrupt2*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR2_OUTPUT_EN__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_output_enable_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -7172,7 +7165,7 @@ uint8_t v_channel_u8, uint8_t v_output_enable_u8)
 		switch (v_channel_u8) {
 		case BMI160_INTR1_OUTPUT_ENABLE:
 			/* write the output enable of interrupt1*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR1_OUTPUT_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			if (com_rslt == SUCCESS_BMI160) {
@@ -7180,14 +7173,14 @@ uint8_t v_channel_u8, uint8_t v_output_enable_u8)
 				BMI160_USER_INTR1_OUTPUT_ENABLE,
 				v_output_enable_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+				bmi160_bus_write(p_bmi160->
 				dev_addr, BMI160_USER_INTR1_OUTPUT_ENABLE__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			}
 		break;
 		case BMI160_INTR2_OUTPUT_ENABLE:
 			/* write the output enable of interrupt2*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR2_OUTPUT_EN__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			if (com_rslt == SUCCESS_BMI160) {
@@ -7195,7 +7188,7 @@ uint8_t v_channel_u8, uint8_t v_output_enable_u8)
 				BMI160_USER_INTR2_OUTPUT_EN,
 				v_output_enable_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+				bmi160_bus_write(p_bmi160->
 				dev_addr, BMI160_USER_INTR2_OUTPUT_EN__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			}
@@ -7254,7 +7247,7 @@ uint8_t *v_latch_intr_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read the latch duration value */
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR_LATCH__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_latch_intr_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -7309,14 +7302,14 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_latch_intr(uint8_t v_latch_intr_u8)
 		} else {
 		if (v_latch_intr_u8 <= BMI160_MAX_LATCH_INTR) {
 			/* write the latch duration value */
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR_LATCH__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			if (com_rslt == SUCCESS_BMI160) {
 				v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_INTR_LATCH, v_latch_intr_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+				bmi160_bus_write(p_bmi160->
 				dev_addr, BMI160_USER_INTR_LATCH__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			}
@@ -7366,14 +7359,14 @@ uint8_t v_channel_u8, uint8_t *v_input_en_u8)
 		switch (v_channel_u8) {
 		/* read input enable of interrup1 and interrupt2*/
 		case BMI160_INTR1_INPUT_ENABLE:
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR1_INPUT_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_input_en_u8 = BMI160_GET_BITSLICE(v_data_u8,
 			BMI160_USER_INTR1_INPUT_ENABLE);
 			break;
 		case BMI160_INTR2_INPUT_ENABLE:
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR2_INPUT_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_input_en_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -7426,25 +7419,25 @@ if (p_bmi160 == BMI160_NULL) {
 	switch (v_channel_u8) {
 	/* write input enable of interrup1 and interrupt2*/
 	case BMI160_INTR1_INPUT_ENABLE:
-		com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+		com_rslt = bmi160_bus_read(p_bmi160->
 		dev_addr, BMI160_USER_INTR1_INPUT_ENABLE__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		if (com_rslt == SUCCESS_BMI160) {
 			v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 			BMI160_USER_INTR1_INPUT_ENABLE, v_input_en_u8);
-			com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+			com_rslt += bmi160_bus_write(p_bmi160->
 			dev_addr, BMI160_USER_INTR1_INPUT_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		}
 	break;
 	case BMI160_INTR2_INPUT_ENABLE:
-		com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+		com_rslt = bmi160_bus_read(p_bmi160->
 		dev_addr, BMI160_USER_INTR2_INPUT_ENABLE__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		if (com_rslt == SUCCESS_BMI160) {
 			v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 			BMI160_USER_INTR2_INPUT_ENABLE, v_input_en_u8);
-			com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+			com_rslt += bmi160_bus_write(p_bmi160->
 			dev_addr, BMI160_USER_INTR2_INPUT_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		}
@@ -7496,14 +7489,14 @@ uint8_t v_channel_u8, uint8_t *v_intr_low_g_u8)
 		switch (v_channel_u8) {
 		/* read the low_g interrupt */
 		case BMI160_INTR1_MAP_LOW_G:
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_0_INTR1_LOW_G__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_intr_low_g_u8 = BMI160_GET_BITSLICE(v_data_u8,
 			BMI160_USER_INTR_MAP_0_INTR1_LOW_G);
 			break;
 		case BMI160_INTR2_MAP_LOW_G:
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_2_INTR2_LOW_G__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_intr_low_g_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -7570,25 +7563,25 @@ if (p_bmi160 == BMI160_NULL) {
 	switch (v_channel_u8) {
 	/* write the low_g interrupt*/
 	case BMI160_INTR1_MAP_LOW_G:
-		com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+		com_rslt = bmi160_bus_read(p_bmi160->
 		dev_addr, BMI160_USER_INTR_MAP_0_INTR1_LOW_G__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		if (com_rslt == SUCCESS_BMI160) {
 			v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 			BMI160_USER_INTR_MAP_0_INTR1_LOW_G, v_intr_low_g_u8);
-			com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+			com_rslt += bmi160_bus_write(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_0_INTR1_LOW_G__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		}
 		break;
 	case BMI160_INTR2_MAP_LOW_G:
-		com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+		com_rslt = bmi160_bus_read(p_bmi160->
 		dev_addr, BMI160_USER_INTR_MAP_2_INTR2_LOW_G__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		if (com_rslt == SUCCESS_BMI160) {
 			v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 			BMI160_USER_INTR_MAP_2_INTR2_LOW_G, v_intr_low_g_u8);
-			com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+			com_rslt += bmi160_bus_write(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_2_INTR2_LOW_G__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		}
@@ -7641,14 +7634,14 @@ uint8_t v_channel_u8, uint8_t *v_intr_high_g_u8)
 		/* read the high_g interrupt*/
 		switch (v_channel_u8) {
 		case BMI160_INTR1_MAP_HIGH_G:
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_0_INTR1_HIGH_G__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_intr_high_g_u8 = BMI160_GET_BITSLICE(v_data_u8,
 			BMI160_USER_INTR_MAP_0_INTR1_HIGH_G);
 		break;
 		case BMI160_INTR2_MAP_HIGH_G:
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_2_INTR2_HIGH_G__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_intr_high_g_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -7702,25 +7695,25 @@ if (p_bmi160 == BMI160_NULL) {
 	switch (v_channel_u8) {
 	/* write the high_g interrupt*/
 	case BMI160_INTR1_MAP_HIGH_G:
-		com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+		com_rslt = bmi160_bus_read(p_bmi160->
 		dev_addr, BMI160_USER_INTR_MAP_0_INTR1_HIGH_G__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		if (com_rslt == SUCCESS_BMI160) {
 			v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 			BMI160_USER_INTR_MAP_0_INTR1_HIGH_G, v_intr_high_g_u8);
-			com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+			com_rslt += bmi160_bus_write(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_0_INTR1_HIGH_G__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		}
 	break;
 	case BMI160_INTR2_MAP_HIGH_G:
-		com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+		com_rslt = bmi160_bus_read(p_bmi160->
 		dev_addr, BMI160_USER_INTR_MAP_2_INTR2_HIGH_G__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		if (com_rslt == SUCCESS_BMI160) {
 			v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 			BMI160_USER_INTR_MAP_2_INTR2_HIGH_G, v_intr_high_g_u8);
-			com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+			com_rslt += bmi160_bus_write(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_2_INTR2_HIGH_G__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		}
@@ -7773,14 +7766,14 @@ uint8_t v_channel_u8, uint8_t *v_intr_any_motion_u8)
 		switch (v_channel_u8) {
 		/* read the any motion interrupt */
 		case BMI160_INTR1_MAP_ANY_MOTION:
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_0_INTR1_ANY_MOTION__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_intr_any_motion_u8 = BMI160_GET_BITSLICE(v_data_u8,
 			BMI160_USER_INTR_MAP_0_INTR1_ANY_MOTION);
 		break;
 		case BMI160_INTR2_MAP_ANY_MOTION:
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_2_INTR2_ANY_MOTION__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_intr_any_motion_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -7841,27 +7834,27 @@ if (p_bmi160 == BMI160_NULL) {
 	switch (v_channel_u8) {
 	/* write the any motion interrupt */
 	case BMI160_INTR1_MAP_ANY_MOTION:
-		com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+		com_rslt = bmi160_bus_read(p_bmi160->
 		dev_addr, BMI160_USER_INTR_MAP_0_INTR1_ANY_MOTION__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		if (com_rslt == SUCCESS_BMI160) {
 			v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 			BMI160_USER_INTR_MAP_0_INTR1_ANY_MOTION,
 			v_intr_any_motion_u8);
-			com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+			com_rslt += bmi160_bus_write(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_0_INTR1_ANY_MOTION__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		}
 	break;
 	case BMI160_INTR2_MAP_ANY_MOTION:
-		com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+		com_rslt = bmi160_bus_read(p_bmi160->
 		dev_addr, BMI160_USER_INTR_MAP_2_INTR2_ANY_MOTION__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		if (com_rslt == SUCCESS_BMI160) {
 			v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 			BMI160_USER_INTR_MAP_2_INTR2_ANY_MOTION,
 			v_intr_any_motion_u8);
-			com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+			com_rslt += bmi160_bus_write(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_2_INTR2_ANY_MOTION__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		}
@@ -7913,14 +7906,14 @@ uint8_t v_channel_u8, uint8_t *v_intr_nomotion_u8)
 		switch (v_channel_u8) {
 		/* read the no motion interrupt*/
 		case BMI160_INTR1_MAP_NOMO:
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_0_INTR1_NOMOTION__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_intr_nomotion_u8 = BMI160_GET_BITSLICE(v_data_u8,
 			BMI160_USER_INTR_MAP_0_INTR1_NOMOTION);
 			break;
 		case BMI160_INTR2_MAP_NOMO:
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_2_INTR2_NOMOTION__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_intr_nomotion_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -7973,27 +7966,27 @@ if (p_bmi160 == BMI160_NULL) {
 	switch (v_channel_u8) {
 	/* write the no motion interrupt*/
 	case BMI160_INTR1_MAP_NOMO:
-		com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+		com_rslt = bmi160_bus_read(p_bmi160->
 		dev_addr, BMI160_USER_INTR_MAP_0_INTR1_NOMOTION__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		if (com_rslt == SUCCESS_BMI160) {
 			v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 			BMI160_USER_INTR_MAP_0_INTR1_NOMOTION,
 			v_intr_nomotion_u8);
-			com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+			com_rslt += bmi160_bus_write(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_0_INTR1_NOMOTION__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		}
 		break;
 	case BMI160_INTR2_MAP_NOMO:
-		com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+		com_rslt = bmi160_bus_read(p_bmi160->
 		dev_addr, BMI160_USER_INTR_MAP_2_INTR2_NOMOTION__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		if (com_rslt == SUCCESS_BMI160) {
 			v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 			BMI160_USER_INTR_MAP_2_INTR2_NOMOTION,
 			v_intr_nomotion_u8);
-			com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+			com_rslt += bmi160_bus_write(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_2_INTR2_NOMOTION__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		}
@@ -8043,14 +8036,14 @@ uint8_t v_channel_u8, uint8_t *v_intr_double_tap_u8)
 		} else {
 		switch (v_channel_u8) {
 		case BMI160_INTR1_MAP_DOUBLE_TAP:
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_0_INTR1_DOUBLE_TAP__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_intr_double_tap_u8 = BMI160_GET_BITSLICE(v_data_u8,
 			BMI160_USER_INTR_MAP_0_INTR1_DOUBLE_TAP);
 			break;
 		case BMI160_INTR2_MAP_DOUBLE_TAP:
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_2_INTR2_DOUBLE_TAP__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_intr_double_tap_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -8102,27 +8095,27 @@ if (p_bmi160 == BMI160_NULL) {
 	switch (v_channel_u8) {
 	/* set the double tap interrupt */
 	case BMI160_INTR1_MAP_DOUBLE_TAP:
-		com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+		com_rslt = bmi160_bus_read(p_bmi160->
 		dev_addr, BMI160_USER_INTR_MAP_0_INTR1_DOUBLE_TAP__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		if (com_rslt == SUCCESS_BMI160) {
 			v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 			BMI160_USER_INTR_MAP_0_INTR1_DOUBLE_TAP,
 			v_intr_double_tap_u8);
-			com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+			com_rslt += bmi160_bus_write(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_0_INTR1_DOUBLE_TAP__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		}
 		break;
 	case BMI160_INTR2_MAP_DOUBLE_TAP:
-		com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+		com_rslt = bmi160_bus_read(p_bmi160->
 		dev_addr, BMI160_USER_INTR_MAP_2_INTR2_DOUBLE_TAP__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		if (com_rslt == SUCCESS_BMI160) {
 			v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 			BMI160_USER_INTR_MAP_2_INTR2_DOUBLE_TAP,
 			v_intr_double_tap_u8);
-			com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+			com_rslt += bmi160_bus_write(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_2_INTR2_DOUBLE_TAP__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		}
@@ -8174,14 +8167,14 @@ uint8_t v_channel_u8, uint8_t *v_intr_single_tap_u8)
 		switch (v_channel_u8) {
 		/* reads the single tap interrupt*/
 		case BMI160_INTR1_MAP_SINGLE_TAP:
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_0_INTR1_SINGLE_TAP__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_intr_single_tap_u8 = BMI160_GET_BITSLICE(v_data_u8,
 			BMI160_USER_INTR_MAP_0_INTR1_SINGLE_TAP);
 			break;
 		case BMI160_INTR2_MAP_SINGLE_TAP:
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_2_INTR2_SINGLE_TAP__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_intr_single_tap_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -8234,27 +8227,27 @@ if (p_bmi160 == BMI160_NULL) {
 	switch (v_channel_u8) {
 	/* write the single tap interrupt */
 	case BMI160_INTR1_MAP_SINGLE_TAP:
-		com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+		com_rslt = bmi160_bus_read(p_bmi160->
 		dev_addr, BMI160_USER_INTR_MAP_0_INTR1_SINGLE_TAP__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		if (com_rslt == SUCCESS_BMI160) {
 			v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 			BMI160_USER_INTR_MAP_0_INTR1_SINGLE_TAP,
 			v_intr_single_tap_u8);
-			com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+			com_rslt += bmi160_bus_write(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_0_INTR1_SINGLE_TAP__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		}
 		break;
 	case BMI160_INTR2_MAP_SINGLE_TAP:
-		com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+		com_rslt = bmi160_bus_read(p_bmi160->
 		dev_addr, BMI160_USER_INTR_MAP_2_INTR2_SINGLE_TAP__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		if (com_rslt == SUCCESS_BMI160) {
 			v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 			BMI160_USER_INTR_MAP_2_INTR2_SINGLE_TAP,
 			v_intr_single_tap_u8);
-			com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+			com_rslt += bmi160_bus_write(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_2_INTR2_SINGLE_TAP__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		}
@@ -8307,14 +8300,14 @@ uint8_t v_channel_u8, uint8_t *v_intr_orient_u8)
 		switch (v_channel_u8) {
 		/* read the orientation interrupt*/
 		case BMI160_INTR1_MAP_ORIENT:
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_0_INTR1_ORIENT__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_intr_orient_u8 = BMI160_GET_BITSLICE(v_data_u8,
 			BMI160_USER_INTR_MAP_0_INTR1_ORIENT);
 			break;
 		case BMI160_INTR2_MAP_ORIENT:
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_2_INTR2_ORIENT__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_intr_orient_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -8369,21 +8362,21 @@ if (p_bmi160 == BMI160_NULL) {
 	/* write the orientation interrupt*/
 	case BMI160_INTR1_MAP_ORIENT:
 		com_rslt =
-		p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+		bmi160_bus_read(p_bmi160->
 		dev_addr, BMI160_USER_INTR_MAP_0_INTR1_ORIENT__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		if (com_rslt == SUCCESS_BMI160) {
 			v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 			BMI160_USER_INTR_MAP_0_INTR1_ORIENT, v_intr_orient_u8);
 			com_rslt +=
-			p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+			bmi160_bus_write(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_0_INTR1_ORIENT__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		}
 		break;
 	case BMI160_INTR2_MAP_ORIENT:
 		com_rslt =
-		p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+		bmi160_bus_read(p_bmi160->
 		dev_addr, BMI160_USER_INTR_MAP_2_INTR2_ORIENT__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		if (com_rslt == SUCCESS_BMI160) {
@@ -8391,7 +8384,7 @@ if (p_bmi160 == BMI160_NULL) {
 			BMI160_SET_BITSLICE(v_data_u8,
 			BMI160_USER_INTR_MAP_2_INTR2_ORIENT, v_intr_orient_u8);
 			com_rslt +=
-			p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+			bmi160_bus_write(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_2_INTR2_ORIENT__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		}
@@ -8444,7 +8437,7 @@ uint8_t v_channel_u8, uint8_t *v_intr_flat_u8)
 		/* read the flat interrupt*/
 		case BMI160_INTR1_MAP_FLAT:
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_0_INTR1_FLAT__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_intr_flat_u8 =
@@ -8453,7 +8446,7 @@ uint8_t v_channel_u8, uint8_t *v_intr_flat_u8)
 			break;
 		case BMI160_INTR2_MAP_FLAT:
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_2_INTR2_FLAT__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_intr_flat_u8 =
@@ -8508,7 +8501,7 @@ uint8_t v_channel_u8, uint8_t v_intr_flat_u8)
 		/* write the flat interrupt */
 		case BMI160_INTR1_MAP_FLAT:
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_0_INTR1_FLAT__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			if (com_rslt == SUCCESS_BMI160) {
@@ -8517,7 +8510,7 @@ uint8_t v_channel_u8, uint8_t v_intr_flat_u8)
 				BMI160_USER_INTR_MAP_0_INTR1_FLAT,
 				v_intr_flat_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+				bmi160_bus_write(p_bmi160->
 				dev_addr,
 				BMI160_USER_INTR_MAP_0_INTR1_FLAT__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -8525,7 +8518,7 @@ uint8_t v_channel_u8, uint8_t v_intr_flat_u8)
 			break;
 		case BMI160_INTR2_MAP_FLAT:
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_2_INTR2_FLAT__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			if (com_rslt == SUCCESS_BMI160) {
@@ -8533,7 +8526,7 @@ uint8_t v_channel_u8, uint8_t v_intr_flat_u8)
 				BMI160_USER_INTR_MAP_2_INTR2_FLAT,
 				v_intr_flat_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+				bmi160_bus_write(p_bmi160->
 				dev_addr,
 				BMI160_USER_INTR_MAP_2_INTR2_FLAT__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -8586,7 +8579,7 @@ uint8_t v_channel_u8, uint8_t *v_intr_pmu_trig_u8)
 		/* read the pmu trigger interrupt*/
 		case BMI160_INTR1_MAP_PMUTRIG:
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_1_INTR1_PMU_TRIG__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_intr_pmu_trig_u8 =
@@ -8595,7 +8588,7 @@ uint8_t v_channel_u8, uint8_t *v_intr_pmu_trig_u8)
 			break;
 		case BMI160_INTR2_MAP_PMUTRIG:
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_1_INTR2_PMU_TRIG__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_intr_pmu_trig_u8 =
@@ -8649,7 +8642,7 @@ if (p_bmi160 == BMI160_NULL) {
 	/* write the pmu trigger interrupt */
 	case BMI160_INTR1_MAP_PMUTRIG:
 		com_rslt =
-		p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+		bmi160_bus_read(p_bmi160->
 		dev_addr, BMI160_USER_INTR_MAP_1_INTR1_PMU_TRIG__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		if (com_rslt == SUCCESS_BMI160) {
@@ -8658,14 +8651,14 @@ if (p_bmi160 == BMI160_NULL) {
 			BMI160_USER_INTR_MAP_1_INTR1_PMU_TRIG,
 			v_intr_pmu_trig_u8);
 			com_rslt +=
-			p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+			bmi160_bus_write(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_1_INTR1_PMU_TRIG__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		}
 	break;
 	case BMI160_INTR2_MAP_PMUTRIG:
 		com_rslt =
-		p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+		bmi160_bus_read(p_bmi160->
 		dev_addr, BMI160_USER_INTR_MAP_1_INTR2_PMU_TRIG__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		if (com_rslt == SUCCESS_BMI160) {
@@ -8674,7 +8667,7 @@ if (p_bmi160 == BMI160_NULL) {
 			BMI160_USER_INTR_MAP_1_INTR2_PMU_TRIG,
 			v_intr_pmu_trig_u8);
 			com_rslt +=
-			p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+			bmi160_bus_write(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_1_INTR2_PMU_TRIG__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		}
@@ -8727,7 +8720,7 @@ uint8_t v_channel_u8, uint8_t *v_intr_fifo_full_u8)
 		/* read the fifo full interrupt */
 		case BMI160_INTR1_MAP_FIFO_FULL:
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_1_INTR1_FIFO_FULL__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_intr_fifo_full_u8 =
@@ -8736,7 +8729,7 @@ uint8_t v_channel_u8, uint8_t *v_intr_fifo_full_u8)
 		break;
 		case BMI160_INTR2_MAP_FIFO_FULL:
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_1_INTR2_FIFO_FULL__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_intr_fifo_full_u8 =
@@ -8791,7 +8784,7 @@ uint8_t v_channel_u8, uint8_t v_intr_fifo_full_u8)
 		/* write the fifo full interrupt */
 		case BMI160_INTR1_MAP_FIFO_FULL:
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_1_INTR1_FIFO_FULL__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			if (com_rslt == SUCCESS_BMI160) {
@@ -8800,7 +8793,7 @@ uint8_t v_channel_u8, uint8_t v_intr_fifo_full_u8)
 				BMI160_USER_INTR_MAP_1_INTR1_FIFO_FULL,
 				v_intr_fifo_full_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+				bmi160_bus_write(p_bmi160->
 				dev_addr,
 				BMI160_USER_INTR_MAP_1_INTR1_FIFO_FULL__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -8808,7 +8801,7 @@ uint8_t v_channel_u8, uint8_t v_intr_fifo_full_u8)
 		break;
 		case BMI160_INTR2_MAP_FIFO_FULL:
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_1_INTR2_FIFO_FULL__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			if (com_rslt == SUCCESS_BMI160) {
@@ -8817,7 +8810,7 @@ uint8_t v_channel_u8, uint8_t v_intr_fifo_full_u8)
 				BMI160_USER_INTR_MAP_1_INTR2_FIFO_FULL,
 				v_intr_fifo_full_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+				bmi160_bus_write(p_bmi160->
 				dev_addr,
 				BMI160_USER_INTR_MAP_1_INTR2_FIFO_FULL__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -8872,7 +8865,7 @@ uint8_t v_channel_u8, uint8_t *v_intr_fifo_wm_u8)
 		/* read the fifo water mark interrupt */
 		case BMI160_INTR1_MAP_FIFO_WM:
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_1_INTR1_FIFO_WM__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_intr_fifo_wm_u8 =
@@ -8881,7 +8874,7 @@ uint8_t v_channel_u8, uint8_t *v_intr_fifo_wm_u8)
 			break;
 		case BMI160_INTR2_MAP_FIFO_WM:
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_1_INTR2_FIFO_WM__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_intr_fifo_wm_u8 =
@@ -8937,7 +8930,7 @@ uint8_t v_data_u8 = BMI160_INIT_VALUE;
 		/* write the fifo water mark interrupt */
 		case BMI160_INTR1_MAP_FIFO_WM:
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_1_INTR1_FIFO_WM__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			if (com_rslt == SUCCESS_BMI160) {
@@ -8945,7 +8938,7 @@ uint8_t v_data_u8 = BMI160_INIT_VALUE;
 				BMI160_USER_INTR_MAP_1_INTR1_FIFO_WM,
 				v_intr_fifo_wm_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+				bmi160_bus_write(p_bmi160->
 				dev_addr,
 				BMI160_USER_INTR_MAP_1_INTR1_FIFO_WM__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -8953,7 +8946,7 @@ uint8_t v_data_u8 = BMI160_INIT_VALUE;
 			break;
 		case BMI160_INTR2_MAP_FIFO_WM:
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_1_INTR2_FIFO_WM__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			if (com_rslt == SUCCESS_BMI160) {
@@ -8961,7 +8954,7 @@ uint8_t v_data_u8 = BMI160_INIT_VALUE;
 				BMI160_USER_INTR_MAP_1_INTR2_FIFO_WM,
 				v_intr_fifo_wm_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+				bmi160_bus_write(p_bmi160->
 				dev_addr,
 				BMI160_USER_INTR_MAP_1_INTR2_FIFO_WM__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -9014,14 +9007,14 @@ uint8_t v_channel_u8, uint8_t *v_intr_data_rdy_u8)
 		switch (v_channel_u8) {
 		/*Read Data Ready interrupt*/
 		case BMI160_INTR1_MAP_DATA_RDY:
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_1_INTR1_DATA_RDY__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_intr_data_rdy_u8 = BMI160_GET_BITSLICE(v_data_u8,
 			BMI160_USER_INTR_MAP_1_INTR1_DATA_RDY);
 			break;
 		case BMI160_INTR2_MAP_DATA_RDY:
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+			com_rslt = bmi160_bus_read(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_1_INTR2_DATA_RDY__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			*v_intr_data_rdy_u8 = BMI160_GET_BITSLICE(v_data_u8,
@@ -9075,7 +9068,7 @@ if (p_bmi160 == BMI160_NULL) {
 	/*Write Data Ready interrupt*/
 	case BMI160_INTR1_MAP_DATA_RDY:
 		com_rslt =
-		p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+		bmi160_bus_read(p_bmi160->
 		dev_addr, BMI160_USER_INTR_MAP_1_INTR1_DATA_RDY__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		if (com_rslt == SUCCESS_BMI160) {
@@ -9083,14 +9076,14 @@ if (p_bmi160 == BMI160_NULL) {
 			BMI160_USER_INTR_MAP_1_INTR1_DATA_RDY,
 			v_intr_data_rdy_u8);
 			com_rslt +=
-			p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+			bmi160_bus_write(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_1_INTR1_DATA_RDY__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		}
 	break;
 	case BMI160_INTR2_MAP_DATA_RDY:
 		com_rslt =
-		p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->
+		bmi160_bus_read(p_bmi160->
 		dev_addr, BMI160_USER_INTR_MAP_1_INTR2_DATA_RDY__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		if (com_rslt == SUCCESS_BMI160) {
@@ -9098,7 +9091,7 @@ if (p_bmi160 == BMI160_NULL) {
 			BMI160_USER_INTR_MAP_1_INTR2_DATA_RDY,
 			v_intr_data_rdy_u8);
 			com_rslt +=
-			p_bmi160->BMI160_BUS_WRITE_FUNC(p_bmi160->
+			bmi160_bus_write(p_bmi160->
 			dev_addr, BMI160_USER_INTR_MAP_1_INTR2_DATA_RDY__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		}
@@ -9139,7 +9132,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_tap_source(uint8_t *v_tap_source_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read the tap source interrupt */
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_INTR_DATA_0_INTR_TAP_SOURCE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -9179,7 +9172,7 @@ uint8_t v_tap_source_u8)
 		} else {
 		if (v_tap_source_u8 <= BMI160_MAX_VALUE_SOURCE_INTR) {
 			/* write the tap source interrupt */
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+			com_rslt = bmi160_bus_read
 			(p_bmi160->dev_addr,
 			BMI160_USER_INTR_DATA_0_INTR_TAP_SOURCE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -9187,7 +9180,7 @@ uint8_t v_tap_source_u8)
 				v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_INTR_DATA_0_INTR_TAP_SOURCE,
 				v_tap_source_u8);
-				com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC
+				com_rslt += bmi160_bus_write
 				(p_bmi160->dev_addr,
 				BMI160_USER_INTR_DATA_0_INTR_TAP_SOURCE__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -9227,7 +9220,7 @@ uint8_t *v_low_high_source_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read the high_low_g source interrupt */
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_INTR_DATA_0_INTR_LOW_HIGH_SOURCE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -9266,7 +9259,7 @@ if (p_bmi160 == BMI160_NULL) {
 	} else {
 	if (v_low_high_source_u8 <= BMI160_MAX_VALUE_SOURCE_INTR) {
 		/* write the high_low_g source interrupt */
-		com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+		com_rslt = bmi160_bus_read
 		(p_bmi160->dev_addr,
 		BMI160_USER_INTR_DATA_0_INTR_LOW_HIGH_SOURCE__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -9274,7 +9267,7 @@ if (p_bmi160 == BMI160_NULL) {
 			v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 			BMI160_USER_INTR_DATA_0_INTR_LOW_HIGH_SOURCE,
 			v_low_high_source_u8);
-			com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC
+			com_rslt += bmi160_bus_write
 			(p_bmi160->dev_addr,
 			BMI160_USER_INTR_DATA_0_INTR_LOW_HIGH_SOURCE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -9314,7 +9307,7 @@ uint8_t *v_motion_source_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read the any/no motion interrupt  */
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_INTR_DATA_1_INTR_MOTION_SOURCE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -9353,7 +9346,7 @@ uint8_t v_motion_source_u8)
 		} else {
 		if (v_motion_source_u8 <= BMI160_MAX_VALUE_SOURCE_INTR) {
 			/* write the any/no motion interrupt  */
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_INTR_DATA_1_INTR_MOTION_SOURCE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -9361,7 +9354,7 @@ uint8_t v_motion_source_u8)
 				v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_INTR_DATA_1_INTR_MOTION_SOURCE,
 				v_motion_source_u8);
-				com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC(
+				com_rslt += bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_INTR_DATA_1_INTR_MOTION_SOURCE__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -9404,7 +9397,7 @@ uint8_t *v_low_g_durn_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read the low_g interrupt */
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_INTR_LOWHIGH_0_INTR_LOW_DURN__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -9444,7 +9437,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_low_g_durn(uint8_t v_low_g_durn_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* write the low_g interrupt */
-			com_rslt = p_bmi160->BMI160_BUS_WRITE_FUNC(
+			com_rslt = bmi160_bus_write(
 			p_bmi160->dev_addr,
 			BMI160_USER_INTR_LOWHIGH_0_INTR_LOW_DURN__REG,
 			&v_low_g_durn_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -9483,7 +9476,7 @@ uint8_t *v_low_g_thres_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read low_g threshold */
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_INTR_LOWHIGH_1_INTR_LOW_THRES__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -9524,7 +9517,7 @@ uint8_t v_low_g_thres_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* write low_g threshold */
-			com_rslt = p_bmi160->BMI160_BUS_WRITE_FUNC(
+			com_rslt = bmi160_bus_write(
 			p_bmi160->dev_addr,
 			BMI160_USER_INTR_LOWHIGH_1_INTR_LOW_THRES__REG,
 			&v_low_g_thres_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -9556,7 +9549,7 @@ uint8_t *v_low_hyst_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read low_g hysteresis*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_INTR_LOWHIGH_2_INTR_LOW_G_HYST__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -9591,7 +9584,7 @@ uint8_t v_low_hyst_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* write low_g hysteresis*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+			com_rslt = bmi160_bus_read
 			(p_bmi160->dev_addr,
 			BMI160_USER_INTR_LOWHIGH_2_INTR_LOW_G_HYST__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -9599,7 +9592,7 @@ uint8_t v_low_hyst_u8)
 				v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_INTR_LOWHIGH_2_INTR_LOW_G_HYST,
 				v_low_hyst_u8);
-				com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC(
+				com_rslt += bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_INTR_LOWHIGH_2_INTR_LOW_G_HYST__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -9634,7 +9627,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_low_g_mode(uint8_t *v_low_g_mode_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/*read Low-g interrupt mode*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_INTR_LOWHIGH_2_INTR_LOW_G_MODE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -9672,7 +9665,7 @@ uint8_t v_low_g_mode_u8)
 		} else {
 		if (v_low_g_mode_u8 <= BMI160_MAX_VALUE_LOW_G_MODE) {
 			/*write Low-g interrupt mode*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_INTR_LOWHIGH_2_INTR_LOW_G_MODE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -9680,7 +9673,7 @@ uint8_t v_low_g_mode_u8)
 				v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_INTR_LOWHIGH_2_INTR_LOW_G_MODE,
 				v_low_g_mode_u8);
-				com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC(
+				com_rslt += bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_INTR_LOWHIGH_2_INTR_LOW_G_MODE__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -9723,7 +9716,7 @@ uint8_t *v_high_g_hyst_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read high_g hysteresis*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+			com_rslt = bmi160_bus_read
 			(p_bmi160->dev_addr,
 			BMI160_USER_INTR_LOWHIGH_2_INTR_HIGH_G_HYST__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -9764,7 +9757,7 @@ if (p_bmi160 == BMI160_NULL) {
 	return E_BMI160_NULL_PTR;
 	} else {
 		/* write high_g hysteresis*/
-		com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+		com_rslt = bmi160_bus_read(
 		p_bmi160->dev_addr,
 		BMI160_USER_INTR_LOWHIGH_2_INTR_HIGH_G_HYST__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -9772,7 +9765,7 @@ if (p_bmi160 == BMI160_NULL) {
 			v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 			BMI160_USER_INTR_LOWHIGH_2_INTR_HIGH_G_HYST,
 			v_high_g_hyst_u8);
-			com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC(
+			com_rslt += bmi160_bus_write(
 			p_bmi160->dev_addr,
 			BMI160_USER_INTR_LOWHIGH_2_INTR_HIGH_G_HYST__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -9809,7 +9802,7 @@ uint8_t *v_high_g_durn_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read high_g duration*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_INTR_LOWHIGH_3_INTR_HIGH_G_DURN__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -9847,7 +9840,7 @@ uint8_t v_high_g_durn_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* write high_g duration*/
-			com_rslt = p_bmi160->BMI160_BUS_WRITE_FUNC
+			com_rslt = bmi160_bus_write
 			(p_bmi160->dev_addr,
 			BMI160_USER_INTR_LOWHIGH_3_INTR_HIGH_G_DURN__REG,
 			&v_high_g_durn_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -9895,7 +9888,7 @@ uint8_t *v_high_g_thres_u8)
 	if (p_bmi160 == BMI160_NULL) {
 		return E_BMI160_NULL_PTR;
 		} else {
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_INTR_LOWHIGH_4_INTR_HIGH_THRES__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -9945,7 +9938,7 @@ uint8_t v_high_g_thres_u8)
 	if (p_bmi160 == BMI160_NULL) {
 		return E_BMI160_NULL_PTR;
 		} else {
-		com_rslt = p_bmi160->BMI160_BUS_WRITE_FUNC(
+		com_rslt = bmi160_bus_write(
 		p_bmi160->dev_addr,
 		BMI160_USER_INTR_LOWHIGH_4_INTR_HIGH_THRES__REG,
 		&v_high_g_thres_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -9977,7 +9970,7 @@ uint8_t *v_any_motion_durn_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 		/* read any motion duration*/
-		com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+		com_rslt = bmi160_bus_read
 		(p_bmi160->dev_addr,
 		BMI160_USER_INTR_MOTION_0_INTR_ANY_MOTION_DURN__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -10012,7 +10005,7 @@ uint8_t v_any_motion_durn_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 		/* write any motion duration*/
-		com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+		com_rslt = bmi160_bus_read
 		(p_bmi160->dev_addr,
 		BMI160_USER_INTR_MOTION_0_INTR_ANY_MOTION_DURN__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -10020,7 +10013,7 @@ uint8_t v_any_motion_durn_u8)
 			v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 			BMI160_USER_INTR_MOTION_0_INTR_ANY_MOTION_DURN,
 			v_any_motion_durn_u8);
-			com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC
+			com_rslt += bmi160_bus_write
 			(p_bmi160->dev_addr,
 			BMI160_USER_INTR_MOTION_0_INTR_ANY_MOTION_DURN__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -10060,7 +10053,7 @@ if (p_bmi160 == BMI160_NULL) {
 	return E_BMI160_NULL_PTR;
 	} else {
 		/* read slow no motion duration*/
-		com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+		com_rslt = bmi160_bus_read
 		(p_bmi160->dev_addr,
 		BMI160_USER_INTR_MOTION_0_INTR_SLOW_NO_MOTION_DURN__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -10102,7 +10095,7 @@ if (p_bmi160 == BMI160_NULL) {
 	return E_BMI160_NULL_PTR;
 	} else {
 	/* write slow no motion duration*/
-	com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+	com_rslt = bmi160_bus_read
 	(p_bmi160->dev_addr,
 	BMI160_USER_INTR_MOTION_0_INTR_SLOW_NO_MOTION_DURN__REG,
 	&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -10111,7 +10104,7 @@ if (p_bmi160 == BMI160_NULL) {
 		(v_data_u8,
 		BMI160_USER_INTR_MOTION_0_INTR_SLOW_NO_MOTION_DURN,
 		v_slow_no_motion_u8);
-		com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC
+		com_rslt += bmi160_bus_write
 		(p_bmi160->dev_addr,
 		BMI160_USER_INTR_MOTION_0_INTR_SLOW_NO_MOTION_DURN__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -10161,7 +10154,7 @@ uint8_t *v_any_motion_thres_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read any motion threshold*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+			com_rslt = bmi160_bus_read
 			(p_bmi160->dev_addr,
 			BMI160_USER_INTR_MOTION_1_INTR_ANY_MOTION_THRES__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -10212,7 +10205,7 @@ uint8_t v_any_motion_thres_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 		/* write any motion threshold*/
-		com_rslt = p_bmi160->BMI160_BUS_WRITE_FUNC
+		com_rslt = bmi160_bus_write
 		(p_bmi160->dev_addr,
 		BMI160_USER_INTR_MOTION_1_INTR_ANY_MOTION_THRES__REG,
 		&v_any_motion_thres_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -10261,7 +10254,7 @@ if (p_bmi160 == BMI160_NULL) {
 	return E_BMI160_NULL_PTR;
 	} else {
 		/* read slow no motion threshold*/
-		com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+		com_rslt = bmi160_bus_read
 		(p_bmi160->dev_addr,
 		BMI160_USER_INTR_MOTION_2_INTR_SLOW_NO_MOTION_THRES__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -10312,7 +10305,7 @@ if (p_bmi160 == BMI160_NULL) {
 	return E_BMI160_NULL_PTR;
 	} else {
 		/* write slow no motion threshold*/
-		com_rslt = p_bmi160->BMI160_BUS_WRITE_FUNC(
+		com_rslt = bmi160_bus_write(
 		p_bmi160->dev_addr,
 		BMI160_USER_INTR_MOTION_2_INTR_SLOW_NO_MOTION_THRES__REG,
 		&v_slow_no_motion_thres_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -10350,7 +10343,7 @@ if (p_bmi160 == BMI160_NULL) {
 	return E_BMI160_NULL_PTR;
 	} else {
 		/* read slow no motion select*/
-		com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+		com_rslt = bmi160_bus_read(
 		p_bmi160->dev_addr,
 		BMI160_USER_INTR_MOTION_3_INTR_SLOW_NO_MOTION_SELECT__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -10393,7 +10386,7 @@ if (p_bmi160 == BMI160_NULL) {
 } else {
 if (v_intr_slow_no_motion_select_u8 <= BMI160_MAX_VALUE_NO_MOTION) {
 	/* write slow no motion select*/
-	com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+	com_rslt = bmi160_bus_read
 	(p_bmi160->dev_addr,
 	BMI160_USER_INTR_MOTION_3_INTR_SLOW_NO_MOTION_SELECT__REG,
 	&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -10401,7 +10394,7 @@ if (v_intr_slow_no_motion_select_u8 <= BMI160_MAX_VALUE_NO_MOTION) {
 		v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 		BMI160_USER_INTR_MOTION_3_INTR_SLOW_NO_MOTION_SELECT,
 		v_intr_slow_no_motion_select_u8);
-		com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC
+		com_rslt += bmi160_bus_write
 		(p_bmi160->dev_addr,
 		BMI160_USER_INTR_MOTION_3_INTR_SLOW_NO_MOTION_SELECT__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -10444,7 +10437,7 @@ uint8_t *v_intr_significant_motion_select_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read the significant or any motion interrupt*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_INTR_SIGNIFICATION_MOTION_SELECT__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -10488,7 +10481,7 @@ if (p_bmi160 == BMI160_NULL) {
 	if (v_intr_significant_motion_select_u8 <=
 	BMI160_MAX_VALUE_SIGNIFICANT_MOTION) {
 		/* write the significant or any motion interrupt*/
-		com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+		com_rslt = bmi160_bus_read
 		(p_bmi160->dev_addr,
 		BMI160_USER_INTR_SIGNIFICATION_MOTION_SELECT__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -10496,7 +10489,7 @@ if (p_bmi160 == BMI160_NULL) {
 			v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 			BMI160_USER_INTR_SIGNIFICATION_MOTION_SELECT,
 			v_intr_significant_motion_select_u8);
-			com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC
+			com_rslt += bmi160_bus_write
 			(p_bmi160->dev_addr,
 			BMI160_USER_INTR_SIGNIFICATION_MOTION_SELECT__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -10539,7 +10532,7 @@ uint8_t *v_int_sig_mot_skip_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read significant skip time*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_INTR_SIGNIFICANT_MOTION_SKIP__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -10583,7 +10576,7 @@ uint8_t v_int_sig_mot_skip_u8)
 		} else {
 		if (v_int_sig_mot_skip_u8 <= BMI160_MAX_UNDER_SIG_MOTION) {
 			/* write significant skip time*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+			com_rslt = bmi160_bus_read
 			(p_bmi160->dev_addr,
 			BMI160_USER_INTR_SIGNIFICANT_MOTION_SKIP__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -10591,7 +10584,7 @@ uint8_t v_int_sig_mot_skip_u8)
 				v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_INTR_SIGNIFICANT_MOTION_SKIP,
 				v_int_sig_mot_skip_u8);
-				com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC
+				com_rslt += bmi160_bus_write
 				(p_bmi160->dev_addr,
 				BMI160_USER_INTR_SIGNIFICANT_MOTION_SKIP__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -10636,7 +10629,7 @@ uint8_t *v_significant_motion_proof_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read significant proof time */
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_INTR_SIGNIFICANT_MOTION_PROOF__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -10682,7 +10675,7 @@ uint8_t v_significant_motion_proof_u8)
 		if (v_significant_motion_proof_u8
 		<= BMI160_MAX_UNDER_SIG_MOTION) {
 			/* write significant proof time */
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+			com_rslt = bmi160_bus_read
 			(p_bmi160->dev_addr,
 			BMI160_USER_INTR_SIGNIFICANT_MOTION_PROOF__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -10690,7 +10683,7 @@ uint8_t v_significant_motion_proof_u8)
 				v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_INTR_SIGNIFICANT_MOTION_PROOF,
 				v_significant_motion_proof_u8);
-				com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC
+				com_rslt += bmi160_bus_write
 				(p_bmi160->dev_addr,
 				BMI160_USER_INTR_SIGNIFICANT_MOTION_PROOF__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -10737,7 +10730,7 @@ uint8_t *v_tap_durn_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read tap duration*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+			com_rslt = bmi160_bus_read
 			(p_bmi160->dev_addr,
 			BMI160_USER_INTR_TAP_0_INTR_TAP_DURN__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -10813,7 +10806,7 @@ uint8_t v_tap_durn_u8)
 				break;
 			}
 			/* write tap duration*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_INTR_TAP_0_INTR_TAP_DURN__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -10821,7 +10814,7 @@ uint8_t v_tap_durn_u8)
 				v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_INTR_TAP_0_INTR_TAP_DURN,
 				v_data_tap_durn_u8);
-				com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC
+				com_rslt += bmi160_bus_write
 				(p_bmi160->dev_addr,
 				BMI160_USER_INTR_TAP_0_INTR_TAP_DURN__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -10860,7 +10853,7 @@ uint8_t *v_tap_shock_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read tap shock duration*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_INTR_TAP_0_INTR_TAP_SHOCK__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -10897,7 +10890,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_tap_shock(uint8_t v_tap_shock_u8)
 		} else {
 		if (v_tap_shock_u8 <= BMI160_MAX_VALUE_TAP_SHOCK) {
 			/* write tap shock duration*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+			com_rslt = bmi160_bus_read
 			(p_bmi160->dev_addr,
 			BMI160_USER_INTR_TAP_0_INTR_TAP_SHOCK__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -10905,7 +10898,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_tap_shock(uint8_t v_tap_shock_u8)
 				v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_INTR_TAP_0_INTR_TAP_SHOCK,
 				v_tap_shock_u8);
-				com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC
+				com_rslt += bmi160_bus_write
 				(p_bmi160->dev_addr,
 				BMI160_USER_INTR_TAP_0_INTR_TAP_SHOCK__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -10945,7 +10938,7 @@ uint8_t *v_tap_quiet_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read tap quiet duration*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_INTR_TAP_0_INTR_TAP_QUIET__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -10984,7 +10977,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_tap_quiet(uint8_t v_tap_quiet_u8)
 		} else {
 		if (v_tap_quiet_u8 <= BMI160_MAX_VALUE_TAP_QUIET) {
 			/* write tap quiet duration*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+			com_rslt = bmi160_bus_read
 			(p_bmi160->dev_addr,
 			BMI160_USER_INTR_TAP_0_INTR_TAP_QUIET__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -10992,7 +10985,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_tap_quiet(uint8_t v_tap_quiet_u8)
 				v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_INTR_TAP_0_INTR_TAP_QUIET,
 				v_tap_quiet_u8);
-				com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC
+				com_rslt += bmi160_bus_write
 				(p_bmi160->dev_addr,
 				BMI160_USER_INTR_TAP_0_INTR_TAP_QUIET__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -11036,7 +11029,7 @@ uint8_t *v_tap_thres_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read tap threshold*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_INTR_TAP_1_INTR_TAP_THRES__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -11079,7 +11072,7 @@ uint8_t v_tap_thres_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* write tap threshold*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+			com_rslt = bmi160_bus_read
 			(p_bmi160->dev_addr,
 			BMI160_USER_INTR_TAP_1_INTR_TAP_THRES__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -11087,7 +11080,7 @@ uint8_t v_tap_thres_u8)
 				v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_INTR_TAP_1_INTR_TAP_THRES,
 				v_tap_thres_u8);
-				com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC
+				com_rslt += bmi160_bus_write
 				(p_bmi160->dev_addr,
 				BMI160_USER_INTR_TAP_1_INTR_TAP_THRES__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -11125,7 +11118,7 @@ uint8_t *v_orient_mode_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read orientation threshold*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+			com_rslt = bmi160_bus_read
 			(p_bmi160->dev_addr,
 			BMI160_USER_INTR_ORIENT_0_INTR_ORIENT_MODE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -11167,7 +11160,7 @@ uint8_t v_orient_mode_u8)
 		} else {
 		if (v_orient_mode_u8 <= BMI160_MAX_ORIENT_MODE) {
 			/* write orientation threshold*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+			com_rslt = bmi160_bus_read
 			(p_bmi160->dev_addr,
 			BMI160_USER_INTR_ORIENT_0_INTR_ORIENT_MODE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -11175,7 +11168,7 @@ uint8_t v_orient_mode_u8)
 				v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_INTR_ORIENT_0_INTR_ORIENT_MODE,
 				v_orient_mode_u8);
-				com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC
+				com_rslt += bmi160_bus_write
 				(p_bmi160->dev_addr,
 				BMI160_USER_INTR_ORIENT_0_INTR_ORIENT_MODE__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -11222,7 +11215,7 @@ uint8_t *v_orient_blocking_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read orient blocking mode*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+			com_rslt = bmi160_bus_read
 			(p_bmi160->dev_addr,
 			BMI160_USER_INTR_ORIENT_0_INTR_ORIENT_BLOCKING__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -11269,7 +11262,7 @@ if (p_bmi160 == BMI160_NULL) {
 	} else {
 	if (v_orient_blocking_u8 <= BMI160_MAX_ORIENT_BLOCKING) {
 		/* write orient blocking mode*/
-		com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+		com_rslt = bmi160_bus_read
 		(p_bmi160->dev_addr,
 		BMI160_USER_INTR_ORIENT_0_INTR_ORIENT_BLOCKING__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -11277,7 +11270,7 @@ if (p_bmi160 == BMI160_NULL) {
 			v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 			BMI160_USER_INTR_ORIENT_0_INTR_ORIENT_BLOCKING,
 			v_orient_blocking_u8);
-			com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC
+			com_rslt += bmi160_bus_write
 			(p_bmi160->dev_addr,
 			BMI160_USER_INTR_ORIENT_0_INTR_ORIENT_BLOCKING__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -11317,7 +11310,7 @@ uint8_t *v_orient_hyst_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read orient hysteresis*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+			com_rslt = bmi160_bus_read
 			(p_bmi160->dev_addr,
 			BMI160_USER_INTR_ORIENT_0_INTR_ORIENT_HYST__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -11356,7 +11349,7 @@ uint8_t v_orient_hyst_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* write orient hysteresis*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+			com_rslt = bmi160_bus_read
 			(p_bmi160->dev_addr,
 			BMI160_USER_INTR_ORIENT_0_INTR_ORIENT_HYST__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -11364,7 +11357,7 @@ uint8_t v_orient_hyst_u8)
 				v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_INTR_ORIENT_0_INTR_ORIENT_HYST,
 				v_orient_hyst_u8);
-				com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC
+				com_rslt += bmi160_bus_write
 				(p_bmi160->dev_addr,
 				BMI160_USER_INTR_ORIENT_0_INTR_ORIENT_HYST__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -11397,7 +11390,7 @@ uint8_t *v_orient_theta_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read Orient blocking angle*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+			com_rslt = bmi160_bus_read
 			(p_bmi160->dev_addr,
 			BMI160_USER_INTR_ORIENT_1_INTR_ORIENT_THETA__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -11433,7 +11426,7 @@ if (p_bmi160 == BMI160_NULL) {
 	} else {
 	if (v_orient_theta_u8 <= BMI160_MAX_ORIENT_THETA) {
 		/* write Orient blocking angle*/
-		com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+		com_rslt = bmi160_bus_read
 		(p_bmi160->dev_addr,
 		BMI160_USER_INTR_ORIENT_1_INTR_ORIENT_THETA__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -11441,7 +11434,7 @@ if (p_bmi160 == BMI160_NULL) {
 			v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 			BMI160_USER_INTR_ORIENT_1_INTR_ORIENT_THETA,
 			v_orient_theta_u8);
-			com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC
+			com_rslt += bmi160_bus_write
 			(p_bmi160->dev_addr,
 			BMI160_USER_INTR_ORIENT_1_INTR_ORIENT_THETA__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -11480,7 +11473,7 @@ uint8_t *v_orient_ud_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read orient up/down enable*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+			com_rslt = bmi160_bus_read
 			(p_bmi160->dev_addr,
 			BMI160_USER_INTR_ORIENT_1_INTR_ORIENT_UD_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -11519,7 +11512,7 @@ if (p_bmi160 == BMI160_NULL) {
 	} else {
 	if (v_orient_ud_u8 <= BMI160_MAX_VALUE_ORIENT_UD) {
 		/* write orient up/down enable */
-		com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+		com_rslt = bmi160_bus_read
 		(p_bmi160->dev_addr,
 		BMI160_USER_INTR_ORIENT_1_INTR_ORIENT_UD_ENABLE__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -11527,7 +11520,7 @@ if (p_bmi160 == BMI160_NULL) {
 			v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 			BMI160_USER_INTR_ORIENT_1_INTR_ORIENT_UD_ENABLE,
 			v_orient_ud_u8);
-			com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC
+			com_rslt += bmi160_bus_write
 			(p_bmi160->dev_addr,
 			BMI160_USER_INTR_ORIENT_1_INTR_ORIENT_UD_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -11566,7 +11559,7 @@ uint8_t *v_orient_axes_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read orientation axes changes  */
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+			com_rslt = bmi160_bus_read
 			(p_bmi160->dev_addr,
 			BMI160_USER_INTR_ORIENT_1_INTR_ORIENT_AXES_EX__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -11605,7 +11598,7 @@ if (p_bmi160 == BMI160_NULL) {
 	} else {
 	if (v_orient_axes_u8 <= BMI160_MAX_VALUE_ORIENT_AXES) {
 		/*write orientation axes changes  */
-		com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+		com_rslt = bmi160_bus_read
 		(p_bmi160->dev_addr,
 		BMI160_USER_INTR_ORIENT_1_INTR_ORIENT_AXES_EX__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -11613,7 +11606,7 @@ if (p_bmi160 == BMI160_NULL) {
 			v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 			BMI160_USER_INTR_ORIENT_1_INTR_ORIENT_AXES_EX,
 			v_orient_axes_u8);
-			com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC
+			com_rslt += bmi160_bus_write
 			(p_bmi160->dev_addr,
 			BMI160_USER_INTR_ORIENT_1_INTR_ORIENT_AXES_EX__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -11649,7 +11642,7 @@ uint8_t *v_flat_theta_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read Flat angle*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+			com_rslt = bmi160_bus_read
 			(p_bmi160->dev_addr,
 			BMI160_USER_INTR_FLAT_0_INTR_FLAT_THETA__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -11684,7 +11677,7 @@ uint8_t v_flat_theta_u8)
 		} else {
 		if (v_flat_theta_u8 <= BMI160_MAX_FLAT_THETA) {
 			/* write Flat angle */
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+			com_rslt = bmi160_bus_read
 			(p_bmi160->dev_addr,
 			BMI160_USER_INTR_FLAT_0_INTR_FLAT_THETA__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -11692,7 +11685,7 @@ uint8_t v_flat_theta_u8)
 				v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_INTR_FLAT_0_INTR_FLAT_THETA,
 				v_flat_theta_u8);
-				com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC
+				com_rslt += bmi160_bus_write
 				(p_bmi160->dev_addr,
 				BMI160_USER_INTR_FLAT_0_INTR_FLAT_THETA__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -11733,7 +11726,7 @@ uint8_t *v_flat_hold_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read flat hold time*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_INTR_FLAT_1_INTR_FLAT_HOLD__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -11773,7 +11766,7 @@ uint8_t v_flat_hold_u8)
 		} else {
 		if (v_flat_hold_u8 <= BMI160_MAX_FLAT_HOLD) {
 			/* write flat hold time*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_INTR_FLAT_1_INTR_FLAT_HOLD__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -11781,7 +11774,7 @@ uint8_t v_flat_hold_u8)
 				v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_INTR_FLAT_1_INTR_FLAT_HOLD,
 				v_flat_hold_u8);
-				com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC
+				com_rslt += bmi160_bus_write
 				(p_bmi160->dev_addr,
 				BMI160_USER_INTR_FLAT_1_INTR_FLAT_HOLD__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -11817,7 +11810,7 @@ uint8_t *v_flat_hyst_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read the flat hysteresis*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_INTR_FLAT_1_INTR_FLAT_HYST__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -11853,7 +11846,7 @@ uint8_t v_flat_hyst_u8)
 		} else {
 		if (v_flat_hyst_u8 <= BMI160_MAX_FLAT_HYST) {
 			/* read the flat hysteresis*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+			com_rslt = bmi160_bus_read
 			(p_bmi160->dev_addr,
 			BMI160_USER_INTR_FLAT_1_INTR_FLAT_HYST__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -11861,7 +11854,7 @@ uint8_t v_flat_hyst_u8)
 				v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_INTR_FLAT_1_INTR_FLAT_HYST,
 				v_flat_hyst_u8);
-				com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC
+				com_rslt += bmi160_bus_write
 				(p_bmi160->dev_addr,
 				BMI160_USER_INTR_FLAT_1_INTR_FLAT_HYST__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -11900,7 +11893,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_foc_accel_z(uint8_t *v_foc_accel_z_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read the accel offset compensation for z axis*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_FOC_ACCEL_Z__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -11938,7 +11931,7 @@ uint8_t v_foc_accel_z_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* write the accel offset compensation for z axis*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+			com_rslt = bmi160_bus_read
 			(p_bmi160->dev_addr,
 			BMI160_USER_FOC_ACCEL_Z__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -11946,7 +11939,7 @@ uint8_t v_foc_accel_z_u8)
 				v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_FOC_ACCEL_Z,
 				v_foc_accel_z_u8);
-				com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC
+				com_rslt += bmi160_bus_write
 				(p_bmi160->dev_addr,
 				BMI160_USER_FOC_ACCEL_Z__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -11985,7 +11978,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_foc_accel_y(uint8_t *v_foc_accel_y_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read the accel offset compensation for y axis*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+			com_rslt = bmi160_bus_read
 			(p_bmi160->dev_addr,
 			BMI160_USER_FOC_ACCEL_Y__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -12026,7 +12019,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_foc_accel_y(uint8_t v_foc_accel_y_u8)
 		} else {
 		if (v_foc_accel_y_u8 <= BMI160_MAX_ACCEL_FOC) {
 			/* write the accel offset compensation for y axis*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+			com_rslt = bmi160_bus_read
 			(p_bmi160->dev_addr,
 			BMI160_USER_FOC_ACCEL_Y__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -12034,7 +12027,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_foc_accel_y(uint8_t v_foc_accel_y_u8)
 				v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_FOC_ACCEL_Y,
 				v_foc_accel_y_u8);
-				com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC
+				com_rslt += bmi160_bus_write
 				(p_bmi160->dev_addr,
 				BMI160_USER_FOC_ACCEL_Y__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -12076,7 +12069,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_foc_accel_x(uint8_t *v_foc_accel_x_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 		/* read the accel offset compensation for x axis*/
-		com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+		com_rslt = bmi160_bus_read(
 		p_bmi160->dev_addr,
 		BMI160_USER_FOC_ACCEL_X__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -12117,7 +12110,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_foc_accel_x(uint8_t v_foc_accel_x_u8)
 		} else {
 		if (v_foc_accel_x_u8 <= BMI160_MAX_ACCEL_FOC) {
 			/* write the accel offset compensation for x axis*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_FOC_ACCEL_X__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -12125,7 +12118,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_foc_accel_x(uint8_t v_foc_accel_x_u8)
 				v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_FOC_ACCEL_X,
 				v_foc_accel_x_u8);
-				com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC(
+				com_rslt += bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_FOC_ACCEL_X__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -12189,7 +12182,7 @@ if (p_bmi160 == BMI160_NULL) {
 		switch (v_axis_u8) {
 		case FOC_X_AXIS:
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(
+			bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_FOC_ACCEL_X__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -12199,7 +12192,7 @@ if (p_bmi160 == BMI160_NULL) {
 				BMI160_USER_FOC_ACCEL_X,
 				v_foc_accel_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(
+				bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_FOC_ACCEL_X__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -12220,7 +12213,7 @@ if (p_bmi160 == BMI160_NULL) {
 				(focstatus != BMI160_FOC_STAT_HIGH
 				&& v_timeout_u8 <
 				BMI160_MAXIMUM_TIMEOUT)) {
-					p_bmi160->delay_msec(
+					HAL_Delay(
 					BMI160_DELAY_SETTLING_TIME);
 					com_rslt = bmi160_get_foc_rdy(
 					&focstatus);
@@ -12238,7 +12231,7 @@ if (p_bmi160 == BMI160_NULL) {
 		break;
 		case FOC_Y_AXIS:
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(
+			bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_FOC_ACCEL_Y__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -12248,7 +12241,7 @@ if (p_bmi160 == BMI160_NULL) {
 				BMI160_USER_FOC_ACCEL_Y,
 				v_foc_accel_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(
+				bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_FOC_ACCEL_Y__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -12269,7 +12262,7 @@ if (p_bmi160 == BMI160_NULL) {
 				(focstatus != BMI160_FOC_STAT_HIGH
 				&& v_timeout_u8 <
 				BMI160_MAXIMUM_TIMEOUT)) {
-					p_bmi160->delay_msec(
+					HAL_Delay(
 					BMI160_DELAY_SETTLING_TIME);
 					com_rslt = bmi160_get_foc_rdy(
 					&focstatus);
@@ -12287,7 +12280,7 @@ if (p_bmi160 == BMI160_NULL) {
 		break;
 		case FOC_Z_AXIS:
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(
+			bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_FOC_ACCEL_Z__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -12297,7 +12290,7 @@ if (p_bmi160 == BMI160_NULL) {
 				BMI160_USER_FOC_ACCEL_Z,
 				v_foc_accel_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(
+				bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_FOC_ACCEL_Z__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -12317,7 +12310,7 @@ if (p_bmi160 == BMI160_NULL) {
 				(focstatus != BMI160_FOC_STAT_HIGH
 				&& v_timeout_u8 <
 				BMI160_MAXIMUM_TIMEOUT)) {
-					p_bmi160->delay_msec(
+					HAL_Delay(
 					BMI160_DELAY_SETTLING_TIME);
 					com_rslt = bmi160_get_foc_rdy(
 					&focstatus);
@@ -12407,7 +12400,7 @@ if (p_bmi160 == BMI160_NULL) {
 		if (v_status_s8 == SUCCESS_BMI160) {
 			/* foc x axis*/
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(
+			bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_FOC_ACCEL_X__REG,
 			&focx, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -12416,7 +12409,7 @@ if (p_bmi160 == BMI160_NULL) {
 				BMI160_USER_FOC_ACCEL_X,
 				v_foc_accel_x_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(
+				bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_FOC_ACCEL_X__REG,
 				&focx, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -12424,7 +12417,7 @@ if (p_bmi160 == BMI160_NULL) {
 
 			/* foc y axis*/
 			com_rslt +=
-			p_bmi160->BMI160_BUS_READ_FUNC(
+			bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_FOC_ACCEL_Y__REG,
 			&focy, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -12433,7 +12426,7 @@ if (p_bmi160 == BMI160_NULL) {
 				BMI160_USER_FOC_ACCEL_Y,
 				v_foc_accel_y_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(
+				bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_FOC_ACCEL_Y__REG,
 				&focy, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -12441,7 +12434,7 @@ if (p_bmi160 == BMI160_NULL) {
 
 			/* foc z axis*/
 			com_rslt +=
-			p_bmi160->BMI160_BUS_READ_FUNC(
+			bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_FOC_ACCEL_Z__REG,
 			&focz, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -12450,7 +12443,7 @@ if (p_bmi160 == BMI160_NULL) {
 				BMI160_USER_FOC_ACCEL_Z,
 				v_foc_accel_z_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(
+				bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_FOC_ACCEL_Z__REG,
 				&focz, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -12469,7 +12462,7 @@ if (p_bmi160 == BMI160_NULL) {
 				(focstatus != BMI160_FOC_STAT_HIGH
 				&& v_timeout_u8 <
 				BMI160_MAXIMUM_TIMEOUT)) {
-					p_bmi160->delay_msec(
+					HAL_Delay(
 					BMI160_DELAY_SETTLING_TIME);
 					com_rslt = bmi160_get_foc_rdy(
 					&focstatus);
@@ -12529,7 +12522,7 @@ uint8_t *v_foc_gyro_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read the gyro fast offset enable*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_FOC_GYRO_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -12579,7 +12572,7 @@ if (p_bmi160 == BMI160_NULL) {
 		GYRO_OFFSET_ENABLE);
 		if (v_status_s8 == SUCCESS_BMI160) {
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC
+			bmi160_bus_read
 			(p_bmi160->dev_addr,
 			BMI160_USER_FOC_GYRO_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -12589,7 +12582,7 @@ if (p_bmi160 == BMI160_NULL) {
 				BMI160_USER_FOC_GYRO_ENABLE,
 				v_foc_gyro_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC
+				bmi160_bus_write
 				(p_bmi160->dev_addr,
 				BMI160_USER_FOC_GYRO_ENABLE__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -12607,7 +12600,7 @@ if (p_bmi160 == BMI160_NULL) {
 				(focstatus != BMI160_FOC_STAT_HIGH
 				&& v_timeout_u8 <
 				BMI160_MAXIMUM_TIMEOUT)) {
-					p_bmi160->delay_msec(
+					HAL_Delay(
 					BMI160_DELAY_SETTLING_TIME);
 					com_rslt = bmi160_get_foc_rdy(
 					&focstatus);
@@ -12664,7 +12657,7 @@ uint8_t *v_nvm_prog_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read NVM program*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_CONFIG_NVM_PROG_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -12701,7 +12694,7 @@ uint8_t v_nvm_prog_u8)
 		} else {
 		if (v_nvm_prog_u8 <= BMI160_MAX_VALUE_NVM_PROG) {
 			/* write the NVM program*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_CONFIG_NVM_PROG_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -12709,7 +12702,7 @@ uint8_t v_nvm_prog_u8)
 				v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_CONFIG_NVM_PROG_ENABLE,
 				v_nvm_prog_u8);
-				com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC(
+				com_rslt += bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_CONFIG_NVM_PROG_ENABLE__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -12749,7 +12742,7 @@ uint8_t *v_spi3_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read SPI mode*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_IF_CONFIG_SPI3__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -12788,7 +12781,7 @@ uint8_t v_spi3_u8)
 		} else {
 		if (v_spi3_u8 <= BMI160_MAX_VALUE_SPI3) {
 			/* write SPI mode*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_IF_CONFIG_SPI3__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -12796,7 +12789,7 @@ uint8_t v_spi3_u8)
 				v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_IF_CONFIG_SPI3,
 				v_spi3_u8);
-				com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC(
+				com_rslt += bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_IF_CONFIG_SPI3__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -12835,7 +12828,7 @@ uint8_t *v_i2c_wdt_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read I2C watch dog timer */
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_IF_CONFIG_I2C_WDT_SELECT__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -12873,7 +12866,7 @@ uint8_t v_i2c_wdt_u8)
 		} else {
 		if (v_i2c_wdt_u8 <= BMI160_MAX_VALUE_I2C_WDT) {
 			/* write I2C watch dog timer */
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_IF_CONFIG_I2C_WDT_SELECT__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -12881,7 +12874,7 @@ uint8_t v_i2c_wdt_u8)
 				v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_IF_CONFIG_I2C_WDT_SELECT,
 				v_i2c_wdt_u8);
-				com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC(
+				com_rslt += bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_IF_CONFIG_I2C_WDT_SELECT__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -12919,7 +12912,7 @@ uint8_t *v_i2c_wdt_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read i2c watch dog eneble */
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_IF_CONFIG_I2C_WDT_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -12956,7 +12949,7 @@ uint8_t v_i2c_wdt_u8)
 		} else {
 		if (v_i2c_wdt_u8 <= BMI160_MAX_VALUE_I2C_WDT) {
 			/* write i2c watch dog eneble */
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_IF_CONFIG_I2C_WDT_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -12964,7 +12957,7 @@ uint8_t v_i2c_wdt_u8)
 				v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_IF_CONFIG_I2C_WDT_ENABLE,
 				v_i2c_wdt_u8);
-				com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC(
+				com_rslt += bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_IF_CONFIG_I2C_WDT_ENABLE__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -13005,7 +12998,7 @@ uint8_t *v_if_mode_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read if mode*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_IF_CONFIG_IF_MODE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -13045,7 +13038,7 @@ uint8_t v_if_mode_u8)
 		} else {
 		if (v_if_mode_u8 <= BMI160_MAX_IF_MODE) {
 			/* write if mode*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_IF_CONFIG_IF_MODE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -13053,7 +13046,7 @@ uint8_t v_if_mode_u8)
 				v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_IF_CONFIG_IF_MODE,
 				v_if_mode_u8);
-				com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC(
+				com_rslt += bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_IF_CONFIG_IF_MODE__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -13099,7 +13092,7 @@ uint8_t *v_gyro_sleep_trigger_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read gyro sleep trigger */
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_GYRO_SLEEP_TRIGGER__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -13145,7 +13138,7 @@ uint8_t v_gyro_sleep_trigger_u8)
 		} else {
 		if (v_gyro_sleep_trigger_u8 <= BMI160_MAX_GYRO_SLEEP_TIGGER) {
 			/* write gyro sleep trigger */
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_GYRO_SLEEP_TRIGGER__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -13153,7 +13146,7 @@ uint8_t v_gyro_sleep_trigger_u8)
 				v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_GYRO_SLEEP_TRIGGER,
 				v_gyro_sleep_trigger_u8);
-				com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC(
+				com_rslt += bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_GYRO_SLEEP_TRIGGER__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -13194,7 +13187,7 @@ uint8_t *v_gyro_wakeup_trigger_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read gyro wakeup trigger */
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_GYRO_WAKEUP_TRIGGER__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -13236,7 +13229,7 @@ uint8_t v_gyro_wakeup_trigger_u8)
 		if (v_gyro_wakeup_trigger_u8
 		<= BMI160_MAX_GYRO_WAKEUP_TRIGGER) {
 			/* write gyro wakeup trigger */
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_GYRO_WAKEUP_TRIGGER__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -13244,7 +13237,7 @@ uint8_t v_gyro_wakeup_trigger_u8)
 				v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_GYRO_WAKEUP_TRIGGER,
 				v_gyro_wakeup_trigger_u8);
-				com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC(
+				com_rslt += bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_GYRO_WAKEUP_TRIGGER__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -13283,7 +13276,7 @@ uint8_t *v_gyro_sleep_state_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read gyro sleep state*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_GYRO_SLEEP_STATE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -13322,7 +13315,7 @@ uint8_t v_gyro_sleep_state_u8)
 		} else {
 		if (v_gyro_sleep_state_u8 <= BMI160_MAX_VALUE_SLEEP_STATE) {
 			/* write gyro sleep state*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_GYRO_SLEEP_STATE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -13330,7 +13323,7 @@ uint8_t v_gyro_sleep_state_u8)
 				v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_GYRO_SLEEP_STATE,
 				v_gyro_sleep_state_u8);
-				com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC(
+				com_rslt += bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_GYRO_SLEEP_STATE__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -13369,7 +13362,7 @@ uint8_t *v_gyro_wakeup_intr_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read gyro wakeup interrupt */
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_GYRO_WAKEUP_INTR__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -13408,7 +13401,7 @@ uint8_t v_gyro_wakeup_intr_u8)
 		} else {
 		if (v_gyro_wakeup_intr_u8 <= BMI160_MAX_VALUE_WAKEUP_INTR) {
 			/* write gyro wakeup interrupt */
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_GYRO_WAKEUP_INTR__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -13416,7 +13409,7 @@ uint8_t v_gyro_wakeup_intr_u8)
 				v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_GYRO_WAKEUP_INTR,
 				v_gyro_wakeup_intr_u8);
-				com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC(
+				com_rslt += bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_GYRO_WAKEUP_INTR__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -13457,7 +13450,7 @@ uint8_t *v_accel_selftest_axis_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read accel self test axis*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_ACCEL_SELFTEST_AXIS__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -13499,7 +13492,7 @@ uint8_t v_accel_selftest_axis_u8)
 		if (v_accel_selftest_axis_u8
 		<= BMI160_MAX_ACCEL_SELFTEST_AXIS) {
 			/* write accel self test axis*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_ACCEL_SELFTEST_AXIS__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -13507,7 +13500,7 @@ uint8_t v_accel_selftest_axis_u8)
 				v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_ACCEL_SELFTEST_AXIS,
 				v_accel_selftest_axis_u8);
-				com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC(
+				com_rslt += bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_ACCEL_SELFTEST_AXIS__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -13546,7 +13539,7 @@ uint8_t *v_accel_selftest_sign_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read accel self test axis sign*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_ACCEL_SELFTEST_SIGN__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -13586,7 +13579,7 @@ uint8_t v_accel_selftest_sign_u8)
 		if (v_accel_selftest_sign_u8 <=
 		BMI160_MAX_VALUE_SELFTEST_SIGN) {
 			/* write accel self test axis sign*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_ACCEL_SELFTEST_SIGN__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -13594,7 +13587,7 @@ uint8_t v_accel_selftest_sign_u8)
 				v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_ACCEL_SELFTEST_SIGN,
 				v_accel_selftest_sign_u8);
-				com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC(
+				com_rslt += bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_ACCEL_SELFTEST_SIGN__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -13634,7 +13627,7 @@ uint8_t *v_accel_selftest_amp_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read  self test amplitude*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_SELFTEST_AMP__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -13675,7 +13668,7 @@ uint8_t v_accel_selftest_amp_u8)
 		if (v_accel_selftest_amp_u8 <=
 		BMI160_MAX_VALUE_SELFTEST_AMP) {
 			/* write  self test amplitude*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_SELFTEST_AMP__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -13683,7 +13676,7 @@ uint8_t v_accel_selftest_amp_u8)
 				v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_SELFTEST_AMP,
 				v_accel_selftest_amp_u8);
-				com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC(
+				com_rslt += bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_SELFTEST_AMP__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -13716,7 +13709,7 @@ uint8_t *v_gyro_selftest_start_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read gyro self test start */
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_GYRO_SELFTEST_START__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -13750,7 +13743,7 @@ uint8_t v_gyro_selftest_start_u8)
 		if (v_gyro_selftest_start_u8 <=
 		BMI160_MAX_VALUE_SELFTEST_START) {
 			/* write gyro self test start */
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_GYRO_SELFTEST_START__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -13758,7 +13751,7 @@ uint8_t v_gyro_selftest_start_u8)
 				v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_GYRO_SELFTEST_START,
 				v_gyro_selftest_start_u8);
-				com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC(
+				com_rslt += bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_GYRO_SELFTEST_START__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -13796,7 +13789,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_spi_enable(uint8_t *v_spi_enable_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read interface section*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_NV_CONFIG_SPI_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -13832,7 +13825,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_spi_enable(uint8_t v_spi_enable_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* write interface section*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_NV_CONFIG_SPI_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -13840,7 +13833,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_spi_enable(uint8_t v_spi_enable_u8)
 				v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_NV_CONFIG_SPI_ENABLE,
 				v_spi_enable_u8);
-				com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC
+				com_rslt += bmi160_bus_write
 				(p_bmi160->dev_addr,
 				BMI160_USER_NV_CONFIG_SPI_ENABLE__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -13873,7 +13866,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_spare0_trim(uint8_t *v_spare0_trim_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read spare zero*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_NV_CONFIG_SPARE0__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -13907,7 +13900,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_spare0_trim(uint8_t v_spare0_trim_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* write  spare zero*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_NV_CONFIG_SPARE0__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -13915,7 +13908,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_spare0_trim(uint8_t v_spare0_trim_u8)
 				v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_NV_CONFIG_SPARE0,
 				v_spare0_trim_u8);
-				com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC(
+				com_rslt += bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_NV_CONFIG_SPARE0__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -13948,7 +13941,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_nvm_counter(uint8_t *v_nvm_counter_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read NVM counter*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_NV_CONFIG_NVM_COUNTER__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -13983,7 +13976,7 @@ uint8_t v_nvm_counter_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* write NVM counter*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_NV_CONFIG_NVM_COUNTER__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -13991,7 +13984,7 @@ uint8_t v_nvm_counter_u8)
 				v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_NV_CONFIG_NVM_COUNTER,
 				v_nvm_counter_u8);
-				com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC(
+				com_rslt += bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_NV_CONFIG_NVM_COUNTER__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -14027,7 +14020,7 @@ int8_t *v_accel_off_x_s8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read accel manual offset compensation of x axis*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_OFFSET_0_ACCEL_OFF_X__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -14070,7 +14063,7 @@ if (p_bmi160 == BMI160_NULL) {
 		if (v_status_s8 == SUCCESS_BMI160) {
 			/* write accel manual offset compensation of x axis*/
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(
+			bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_OFFSET_0_ACCEL_OFF_X__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -14081,7 +14074,7 @@ if (p_bmi160 == BMI160_NULL) {
 				BMI160_USER_OFFSET_0_ACCEL_OFF_X,
 				v_accel_off_x_s8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(
+				bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_OFFSET_0_ACCEL_OFF_X__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -14120,7 +14113,7 @@ int8_t *v_accel_off_y_s8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read accel manual offset compensation of y axis*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_OFFSET_1_ACCEL_OFF_Y__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -14163,7 +14156,7 @@ if (p_bmi160 == BMI160_NULL) {
 		if (v_status_s8 == SUCCESS_BMI160) {
 			/* write accel manual offset compensation of y axis*/
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(
+			bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_OFFSET_1_ACCEL_OFF_Y__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -14174,7 +14167,7 @@ if (p_bmi160 == BMI160_NULL) {
 				BMI160_USER_OFFSET_1_ACCEL_OFF_Y,
 				v_accel_off_y_s8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(
+				bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_OFFSET_1_ACCEL_OFF_Y__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -14213,7 +14206,7 @@ int8_t *v_accel_off_z_s8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read accel manual offset compensation of z axis*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_OFFSET_2_ACCEL_OFF_Z__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -14257,7 +14250,7 @@ int8_t v_accel_off_z_s8)
 				/* write accel manual offset
 				compensation of z axis*/
 				com_rslt =
-				p_bmi160->BMI160_BUS_READ_FUNC(
+				bmi160_bus_read(
 				p_bmi160->dev_addr,
 				BMI160_USER_OFFSET_2_ACCEL_OFF_Z__REG,
 				&v_data_u8,
@@ -14268,7 +14261,7 @@ int8_t v_accel_off_z_s8)
 					BMI160_USER_OFFSET_2_ACCEL_OFF_Z,
 					v_accel_off_z_s8);
 					com_rslt +=
-					p_bmi160->BMI160_BUS_WRITE_FUNC(
+					bmi160_bus_write(
 					p_bmi160->dev_addr,
 					BMI160_USER_OFFSET_2_ACCEL_OFF_Z__REG,
 					&v_data_u8,
@@ -14310,13 +14303,13 @@ int16_t *v_gyro_off_x_s16)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read gyro offset x*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_OFFSET_3_GYRO_OFF_X__REG,
 			&v_data1_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			v_data1_u8r = BMI160_GET_BITSLICE(v_data1_u8r,
 			BMI160_USER_OFFSET_3_GYRO_OFF_X);
-			com_rslt += p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt += bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_OFFSET_6_GYRO_OFF_X__REG,
 			&v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -14365,7 +14358,7 @@ if (p_bmi160 == BMI160_NULL) {
 		v_status_s8 = bmi160_set_gyro_offset_enable(
 		GYRO_OFFSET_ENABLE);
 		if (v_status_s8 == SUCCESS_BMI160) {
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_OFFSET_3_GYRO_OFF_X__REG,
 			&v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -14379,14 +14372,14 @@ if (p_bmi160 == BMI160_NULL) {
 				v_data1_u8r);
 				/* write 0x74 bit 0 to 7*/
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(
+				bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_OFFSET_3_GYRO_OFF_X__REG,
 				&v_data2_u8r,
 				BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			}
 
-			com_rslt += p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt += bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_OFFSET_6_GYRO_OFF_X__REG,
 			&v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -14402,7 +14395,7 @@ if (p_bmi160 == BMI160_NULL) {
 				v_data1_u8r);
 				/* write 0x77 bit 0 and 1*/
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC(
+				bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_OFFSET_6_GYRO_OFF_X__REG,
 				&v_data2_u8r,
@@ -14444,13 +14437,13 @@ int16_t *v_gyro_off_y_s16)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read gyro offset y*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_OFFSET_4_GYRO_OFF_Y__REG,
 			&v_data1_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			v_data1_u8r = BMI160_GET_BITSLICE(v_data1_u8r,
 			BMI160_USER_OFFSET_4_GYRO_OFF_Y);
-			com_rslt += p_bmi160->BMI160_BUS_READ_FUNC
+			com_rslt += bmi160_bus_read
 			(p_bmi160->dev_addr,
 			BMI160_USER_OFFSET_6_GYRO_OFF_Y__REG,
 			&v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -14500,7 +14493,7 @@ if (p_bmi160 == BMI160_NULL) {
 		GYRO_OFFSET_ENABLE);
 		/* write gyro offset y*/
 		if (v_status_s8 == SUCCESS_BMI160) {
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+			com_rslt = bmi160_bus_read
 			(p_bmi160->dev_addr,
 			BMI160_USER_OFFSET_4_GYRO_OFF_Y__REG,
 			&v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -14514,14 +14507,14 @@ if (p_bmi160 == BMI160_NULL) {
 				v_data1_u8r);
 				/* write 0x75 bit 0 to 7*/
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC
+				bmi160_bus_write
 				(p_bmi160->dev_addr,
 				BMI160_USER_OFFSET_4_GYRO_OFF_Y__REG,
 				&v_data2_u8r,
 				BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			}
 
-			com_rslt += p_bmi160->BMI160_BUS_READ_FUNC
+			com_rslt += bmi160_bus_read
 			(p_bmi160->dev_addr,
 			BMI160_USER_OFFSET_6_GYRO_OFF_Y__REG,
 			&v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -14537,7 +14530,7 @@ if (p_bmi160 == BMI160_NULL) {
 				v_data1_u8r);
 				/* write 0x77 bit 2 and 3*/
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC
+				bmi160_bus_write
 				(p_bmi160->dev_addr,
 				BMI160_USER_OFFSET_6_GYRO_OFF_Y__REG,
 				&v_data2_u8r,
@@ -14579,7 +14572,7 @@ int16_t *v_gyro_off_z_s16)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read gyro manual offset z axis*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+			com_rslt = bmi160_bus_read
 			(p_bmi160->dev_addr,
 			BMI160_USER_OFFSET_5_GYRO_OFF_Z__REG,
 			&v_data1_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -14587,7 +14580,7 @@ int16_t *v_gyro_off_z_s16)
 			(v_data1_u8r,
 			BMI160_USER_OFFSET_5_GYRO_OFF_Z);
 			com_rslt +=
-			p_bmi160->BMI160_BUS_READ_FUNC
+			bmi160_bus_read
 			(p_bmi160->dev_addr,
 			BMI160_USER_OFFSET_6_GYRO_OFF_Z__REG,
 			&v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -14638,7 +14631,7 @@ if (p_bmi160 == BMI160_NULL) {
 		GYRO_OFFSET_ENABLE);
 		/* write gyro manual offset z axis*/
 		if (v_status_s8 == SUCCESS_BMI160) {
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+			com_rslt = bmi160_bus_read
 			(p_bmi160->dev_addr,
 			BMI160_USER_OFFSET_5_GYRO_OFF_Z__REG,
 			&v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -14652,14 +14645,14 @@ if (p_bmi160 == BMI160_NULL) {
 				v_data1_u8r);
 				/* write 0x76 bit 0 to 7*/
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC
+				bmi160_bus_write
 				(p_bmi160->dev_addr,
 				BMI160_USER_OFFSET_5_GYRO_OFF_Z__REG,
 				&v_data2_u8r,
 				BMI160_GEN_READ_WRITE_DATA_LENGTH);
 			}
 
-			com_rslt += p_bmi160->BMI160_BUS_READ_FUNC
+			com_rslt += bmi160_bus_read
 			(p_bmi160->dev_addr,
 			BMI160_USER_OFFSET_6_GYRO_OFF_Z__REG,
 			&v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -14675,7 +14668,7 @@ if (p_bmi160 == BMI160_NULL) {
 				v_data1_u8r);
 				/* write 0x77 bit 4 and 5*/
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC
+				bmi160_bus_write
 				(p_bmi160->dev_addr,
 				BMI160_USER_OFFSET_6_GYRO_OFF_Z__REG,
 				&v_data2_u8r,
@@ -14717,7 +14710,7 @@ uint8_t *v_accel_off_enable_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read accel offset enable */
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+			com_rslt = bmi160_bus_read
 			(p_bmi160->dev_addr,
 			BMI160_USER_OFFSET_6_ACCEL_OFF_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -14756,7 +14749,7 @@ uint8_t v_accel_off_enable_u8)
 		return E_BMI160_NULL_PTR;
 			} else {
 			/* write accel offset enable */
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_OFFSET_6_ACCEL_OFF_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -14764,7 +14757,7 @@ uint8_t v_accel_off_enable_u8)
 				v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_OFFSET_6_ACCEL_OFF_ENABLE,
 				v_accel_off_enable_u8);
-				com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC(
+				com_rslt += bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_OFFSET_6_ACCEL_OFF_ENABLE__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -14802,7 +14795,7 @@ uint8_t *v_gyro_off_enable_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read gyro offset*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_OFFSET_6_GYRO_OFF_EN__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -14841,7 +14834,7 @@ uint8_t v_gyro_off_enable_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* write gyro offset*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_OFFSET_6_GYRO_OFF_EN__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -14849,7 +14842,7 @@ uint8_t v_gyro_off_enable_u8)
 				v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,
 				BMI160_USER_OFFSET_6_GYRO_OFF_EN,
 				v_gyro_off_enable_u8);
-				com_rslt += p_bmi160->BMI160_BUS_WRITE_FUNC(
+				com_rslt += bmi160_bus_write(
 				p_bmi160->dev_addr,
 				BMI160_USER_OFFSET_6_GYRO_OFF_EN__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -14889,7 +14882,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_read_step_count(int16_t *v_step_cnt_s16)
 		} else {
 			/* read step counter */
 			com_rslt =
-			p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+			bmi160_bus_read(p_bmi160->dev_addr,
 			BMI160_USER_STEP_COUNT_LSB__REG,
 			a_data_u8r, BMI160_STEP_COUNTER_LENGTH);
 
@@ -14925,12 +14918,12 @@ uint16_t *v_step_config_u16)
 	uint16_t v_data3_u8r = BMI160_INIT_VALUE;
 	/* Read the 0 to 7 bit*/
 	com_rslt =
-	p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+	bmi160_bus_read(p_bmi160->dev_addr,
 	BMI160_USER_STEP_CONFIG_ZERO__REG,
 	&v_data1_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 	/* Read the 8 to 10 bit*/
 	com_rslt +=
-	p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+	bmi160_bus_read(p_bmi160->dev_addr,
 	BMI160_USER_STEP_CONFIG_ONE_CNF1__REG,
 	&v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 	v_data2_u8r = BMI160_GET_BITSLICE(v_data2_u8r,
@@ -14940,7 +14933,7 @@ uint16_t *v_step_config_u16)
 	<< BMI160_SHIFT_BIT_POSITION_BY_08_BITS) | (v_data1_u8r)));
 	/* Read the 11 to 14 bit*/
 	com_rslt +=
-	p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+	bmi160_bus_read(p_bmi160->dev_addr,
 	BMI160_USER_STEP_CONFIG_ONE_CNF2__REG,
 	&v_data1_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 	v_data1_u8r = BMI160_GET_BITSLICE(v_data1_u8r,
@@ -14979,12 +14972,12 @@ uint16_t v_step_config_u16)
 	/* write the 0 to 7 bit*/
 	v_data1_u8r = (uint8_t)(v_step_config_u16 &
 	BMI160_STEP_CONFIG_0_7);
-	p_bmi160->BMI160_BUS_WRITE_FUNC
+	bmi160_bus_write
 	(p_bmi160->dev_addr,
 	BMI160_USER_STEP_CONFIG_ZERO__REG,
 	&v_data1_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 	/* write the 8 to 10 bit*/
-	com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+	com_rslt = bmi160_bus_read
 	(p_bmi160->dev_addr,
 	BMI160_USER_STEP_CONFIG_ONE_CNF1__REG,
 	&v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -14995,13 +14988,13 @@ uint16_t v_step_config_u16)
 		>> BMI160_SHIFT_BIT_POSITION_BY_08_BITS);
 		v_data2_u8r = BMI160_SET_BITSLICE(v_data2_u8r,
 		BMI160_USER_STEP_CONFIG_ONE_CNF1, v_data1_u8r);
-		p_bmi160->BMI160_BUS_WRITE_FUNC
+		bmi160_bus_write
 		(p_bmi160->dev_addr,
 		BMI160_USER_STEP_CONFIG_ONE_CNF1__REG,
 		&v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 	}
 	/* write the 11 to 14 bit*/
-	com_rslt += p_bmi160->BMI160_BUS_READ_FUNC
+	com_rslt += bmi160_bus_read
 	(p_bmi160->dev_addr,
 	BMI160_USER_STEP_CONFIG_ONE_CNF2__REG,
 	&v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -15012,7 +15005,7 @@ uint16_t v_step_config_u16)
 		>> BMI160_SHIFT_BIT_POSITION_BY_12_BITS);
 		v_data2_u8r = BMI160_SET_BITSLICE(v_data2_u8r,
 		BMI160_USER_STEP_CONFIG_ONE_CNF2, v_data1_u8r);
-		p_bmi160->BMI160_BUS_WRITE_FUNC
+		bmi160_bus_write
 		(p_bmi160->dev_addr,
 		BMI160_USER_STEP_CONFIG_ONE_CNF2__REG,
 		&v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -15044,7 +15037,7 @@ uint8_t *v_step_counter_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read the step counter */
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_USER_STEP_CONFIG_1_STEP_COUNT_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -15077,7 +15070,7 @@ if (p_bmi160 == BMI160_NULL) {
 } else {
 	if (v_step_counter_u8 <= BMI160_MAX_GYRO_STEP_COUNTER) {
 		/* write the step counter */
-		com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+		com_rslt = bmi160_bus_read
 		(p_bmi160->dev_addr,
 		BMI160_USER_STEP_CONFIG_1_STEP_COUNT_ENABLE__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -15087,7 +15080,7 @@ if (p_bmi160 == BMI160_NULL) {
 			BMI160_USER_STEP_CONFIG_1_STEP_COUNT_ENABLE,
 			v_step_counter_u8);
 			com_rslt +=
-			p_bmi160->BMI160_BUS_WRITE_FUNC
+			bmi160_bus_write
 			(p_bmi160->dev_addr,
 			BMI160_USER_STEP_CONFIG_1_STEP_COUNT_ENABLE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -15124,17 +15117,17 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_step_mode(uint8_t v_step_mode_u8)
 	case BMI160_STEP_NORMAL_MODE:
 		com_rslt = bmi160_set_step_config(
 		STEP_CONFIG_NORMAL);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	break;
 	case BMI160_STEP_SENSITIVE_MODE:
 		com_rslt = bmi160_set_step_config(
 		STEP_CONFIG_SENSITIVE);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	break;
 	case BMI160_STEP_ROBUST_MODE:
 		com_rslt = bmi160_set_step_config(
 		STEP_CONFIG_ROBUST);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	break;
 	default:
 		com_rslt = E_BMI160_OUT_OF_RANGE;
@@ -15186,7 +15179,7 @@ uint8_t v_significant_u8)
 		com_rslt += bmi160_write_reg(
 		BMI160_USER_INTR_MAP_0_INTR1_ANY_MOTION__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 		/* axis*/
 		com_rslt = bmi160_read_reg(BMI160_USER_INTR_ENABLE_0_ADDR,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -15194,7 +15187,7 @@ uint8_t v_significant_u8)
 		com_rslt += bmi160_write_reg(
 		BMI160_USER_INTR_ENABLE_0_ADDR,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	break;
 
 	case BMI160_MAP_INTR2:
@@ -15206,7 +15199,7 @@ uint8_t v_significant_u8)
 		com_rslt += bmi160_write_reg(
 		BMI160_USER_INTR_MAP_2_INTR2_ANY_MOTION__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 		/* axis*/
 		com_rslt = bmi160_read_reg(BMI160_USER_INTR_ENABLE_0_ADDR,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -15214,7 +15207,7 @@ uint8_t v_significant_u8)
 		com_rslt += bmi160_write_reg(
 		BMI160_USER_INTR_ENABLE_0_ADDR,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	break;
 
 	default:
@@ -15267,7 +15260,7 @@ uint8_t v_step_detector_u8)
 		com_rslt += bmi160_write_reg(
 		BMI160_USER_INTR_MAP_0_INTR1_LOW_G__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 		/* Enable the Low-g interrupt*/
 		com_rslt = bmi160_read_reg(
 		BMI160_USER_INTR_ENABLE_1_LOW_G_ENABLE__REG,
@@ -15277,7 +15270,7 @@ uint8_t v_step_detector_u8)
 		BMI160_USER_INTR_ENABLE_1_LOW_G_ENABLE__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	break;
 	case BMI160_MAP_INTR2:
 		/* map the step detector interrupt
@@ -15290,7 +15283,7 @@ uint8_t v_step_detector_u8)
 		com_rslt += bmi160_write_reg(
 		BMI160_USER_INTR_MAP_2_INTR2_LOW_G__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 		/* Enable the Low-g interrupt*/
 		com_rslt = bmi160_read_reg(
 		BMI160_USER_INTR_ENABLE_1_LOW_G_ENABLE__REG,
@@ -15299,7 +15292,7 @@ uint8_t v_step_detector_u8)
 		com_rslt += bmi160_write_reg(
 		BMI160_USER_INTR_ENABLE_1_LOW_G_ENABLE__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	break;
 	default:
 		com_rslt = E_BMI160_OUT_OF_RANGE;
@@ -15327,7 +15320,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_clear_step_counter(void)
 	BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
 	/* clear the step counter*/
 	com_rslt = bmi160_set_command_register(RESET_STEP_COUNTER);
-	p_bmi160->delay_msec(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 
 	return com_rslt;
 
@@ -15378,7 +15371,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_command_register(uint8_t v_command_reg_u8
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* write command register */
-			com_rslt = p_bmi160->BMI160_BUS_WRITE_FUNC(
+			com_rslt = bmi160_bus_write(
 			p_bmi160->dev_addr,
 			BMI160_CMD_COMMANDS__REG,
 			&v_command_reg_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -15410,7 +15403,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_target_page(uint8_t *v_target_page_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* read the page*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+			com_rslt = bmi160_bus_read(
 			p_bmi160->dev_addr,
 			BMI160_CMD_TARGET_PAGE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -15445,7 +15438,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_target_page(uint8_t v_target_page_u8)
 		} else {
 		if (v_target_page_u8 <= BMI160_MAX_TARGET_PAGE) {
 			/* write the page*/
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+			com_rslt = bmi160_bus_read
 			(p_bmi160->dev_addr,
 			BMI160_CMD_TARGET_PAGE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -15455,7 +15448,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_target_page(uint8_t v_target_page_u8)
 				BMI160_CMD_TARGET_PAGE,
 				v_target_page_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC
+				bmi160_bus_write
 				(p_bmi160->dev_addr,
 				BMI160_CMD_TARGET_PAGE__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -15495,7 +15488,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_paging_enable(uint8_t *v_page_enable_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 		/* read the page enable */
-		com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+		com_rslt = bmi160_bus_read(
 		p_bmi160->dev_addr,
 		BMI160_CMD_PAGING_EN__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -15535,7 +15528,7 @@ uint8_t v_page_enable_u8)
 		} else {
 		if (v_page_enable_u8 <= BMI160_MAX_VALUE_PAGE) {
 			/* write the page enable */
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+			com_rslt = bmi160_bus_read
 			(p_bmi160->dev_addr,
 			BMI160_CMD_PAGING_EN__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -15545,7 +15538,7 @@ uint8_t v_page_enable_u8)
 				BMI160_CMD_PAGING_EN,
 				v_page_enable_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC
+				bmi160_bus_write
 				(p_bmi160->dev_addr,
 				BMI160_CMD_PAGING_EN__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -15583,7 +15576,7 @@ uint8_t *v_control_pullup_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 		/* read pull up value */
-		com_rslt = p_bmi160->BMI160_BUS_READ_FUNC(
+		com_rslt = bmi160_bus_read(
 		p_bmi160->dev_addr,
 		BMI160_COM_C_TRIM_FIVE__REG,
 		&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -15620,7 +15613,7 @@ uint8_t v_control_pullup_u8)
 		return E_BMI160_NULL_PTR;
 		} else {
 			/* write  pull up value */
-			com_rslt = p_bmi160->BMI160_BUS_READ_FUNC
+			com_rslt = bmi160_bus_read
 			(p_bmi160->dev_addr,
 			BMI160_COM_C_TRIM_FIVE__REG,
 			&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -15630,7 +15623,7 @@ uint8_t v_control_pullup_u8)
 				BMI160_COM_C_TRIM_FIVE,
 				v_control_pullup_u8);
 				com_rslt +=
-				p_bmi160->BMI160_BUS_WRITE_FUNC
+				bmi160_bus_write
 				(p_bmi160->dev_addr,
 				BMI160_COM_C_TRIM_FIVE__REG,
 				&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -17356,61 +17349,61 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_bmm150_mag_interface_init(uint8_t *v_chip_id_
 	uint8_t v_data_u8 = BMI160_INIT_VALUE;
 	/* accel operation mode to normal*/
 	com_rslt = bmi160_set_command_register(ACCEL_MODE_NORMAL);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* write the mag power mode as NORMAL*/
 	com_rslt += bmi160_set_mag_interface_normal();
 	/* register 0x7E write the 0x37, 0x9A and 0x30*/
 	com_rslt += bmi160_set_command_register(BMI160_COMMAND_REG_ONE);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	com_rslt += bmi160_set_command_register(BMI160_COMMAND_REG_TWO);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	com_rslt += bmi160_set_command_register(BMI160_COMMAND_REG_THREE);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/*switch the page1*/
 	com_rslt += bmi160_set_target_page(BMI160_WRITE_TARGET_PAGE1);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	bmi160_get_target_page(&v_data_u8);
 	com_rslt += bmi160_set_paging_enable(BMI160_WRITE_ENABLE_PAGE1);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	bmi160_get_paging_enable(&v_data_u8);
 	/* enable the pullup configuration from
 	the register 0x05 bit 4 and 5 as 10*/
 	bmi160_get_pullup_configuration(&v_pull_value_u8);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	v_pull_value_u8 = v_pull_value_u8 | BMI160_PULL_UP_DATA;
 	com_rslt += bmi160_set_pullup_configuration(v_pull_value_u8);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/*switch the page0*/
 	com_rslt += bmi160_set_target_page(BMI160_WRITE_TARGET_PAGE0);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	bmi160_get_target_page(&v_data_u8);
 	/* Write the BMM150 i2c address*/
 	com_rslt += bmi160_set_i2c_device_addr(BMI160_AUX_BMM150_I2C_ADDRESS);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* enable the mag interface to manual mode*/
 	com_rslt += bmi160_set_mag_manual_enable(BMI160_MANUAL_ENABLE);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	bmi160_get_mag_manual_enable(&v_data_u8);
 	/*Enable the MAG interface */
 	com_rslt += bmi160_set_if_mode(BMI160_ENABLE_MAG_IF_MODE);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	bmi160_get_if_mode(&v_data_u8);
 	/* Mag normal mode*/
 	com_rslt += bmi160_bmm150_mag_wakeup();
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* Read the BMM150 device id is 0x32*/
 	com_rslt += bmi160_set_mag_read_addr(BMI160_BMM150_CHIP_ID);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	com_rslt += bmi160_read_reg(BMI160_MAG_DATA_READ_REG,
 	&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 	*v_chip_id_u8 = v_data_u8;
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* write the power mode register*/
 	com_rslt += bmi160_set_mag_write_data(BMI160_BMM_POWER_MODE_REG);
 	/*write 0x4C register to write set power mode to normal*/
 	com_rslt += bmi160_set_mag_write_addr(
 	BMI160_BMM150_POWE_MODE_REG);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* read the mag trim values*/
 	com_rslt += bmi160_read_bmm150_mag_trim();
 	/* To avoid the auto mode enable when manual mode operation running*/
@@ -17424,25 +17417,25 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_bmm150_mag_interface_init(uint8_t *v_chip_id_
 	/* The data have to write for the register
 	It write the value in the register 0x4F */
 	com_rslt += bmi160_set_mag_write_data(BMI160_BMM150_FORCE_MODE);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* write into power mode register*/
 	com_rslt += bmi160_set_mag_write_addr(
 	BMI160_BMM150_POWE_MODE_REG);
 	/* write the mag v_data_bw_u8 as 25Hz*/
 	com_rslt += bmi160_set_mag_output_data_rate(
 	BMI160_MAG_OUTPUT_DATA_RATE_25HZ);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 
 	/* When mag interface is auto mode - The mag read address
 	starts the register 0x42*/
 	com_rslt += bmi160_set_mag_read_addr(
 	BMI160_BMM150_DATA_REG);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* enable mag interface to auto mode*/
 	com_rslt += bmi160_set_mag_manual_enable(BMI160_MANUAL_DISABLE);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	bmi160_get_mag_manual_enable(&v_data_u8);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 
 	return com_rslt;
 }
@@ -17467,15 +17460,15 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_bmm150_mag_wakeup(void)
 
 	for (i = BMI160_INIT_VALUE; i < v_try_times_u8; i++) {
 		com_rslt = bmi160_set_mag_write_data(BMI160_BMM150_POWER_ON);
-		p_bmi160->delay_msec(BMI160_BMM150_WAKEUP_DELAY1);
+		HAL_Delay(BMI160_BMM150_WAKEUP_DELAY1);
 		/*write 0x4B register to enable power control bit*/
 		com_rslt += bmi160_set_mag_write_addr(
 		BMI160_BMM150_POWE_CONTROL_REG);
-		p_bmi160->delay_msec(BMI160_BMM150_WAKEUP_DELAY2);
+		HAL_Delay(BMI160_BMM150_WAKEUP_DELAY2);
 		com_rslt += bmi160_set_mag_read_addr(
 		BMI160_BMM150_POWE_CONTROL_REG);
 		/* 0x04 is secondary read mag x lsb register */
-		p_bmi160->delay_msec(BMI160_BMM150_WAKEUP_DELAY3);
+		HAL_Delay(BMI160_BMM150_WAKEUP_DELAY3);
 		com_rslt += bmi160_read_reg(BMI160_USER_DATA_0_ADDR,
 		&v_power_control_bit_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 		v_power_control_bit_u8 = BMI160_BMM150_SET_POWER_CONTROL
@@ -17518,12 +17511,12 @@ uint8_t v_mag_sec_if_pow_mode_u8)
 	BMI160_RETURN_FUNCTION_TYPE com_rslt = BMI160_INIT_VALUE;
 	/* set the accel power mode to NORMAL*/
 	com_rslt = bmi160_set_command_register(ACCEL_MODE_NORMAL);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* set mag interface manual mode*/
 	if (p_bmi160->mag_manual_enable != BMI160_MANUAL_ENABLE)	{
 		com_rslt += bmi160_set_mag_manual_enable(
 		BMI160_MANUAL_ENABLE);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	}
 	switch (v_mag_sec_if_pow_mode_u8) {
 	case BMI160_MAG_FORCE_MODE:
@@ -17531,15 +17524,15 @@ uint8_t v_mag_sec_if_pow_mode_u8)
 		com_rslt += bmi160_set_mag_interface_normal();
 		/* set the mag power mode as FORCE mode*/
 		com_rslt += bmi160_bmm150_mag_set_power_mode(FORCE_MODE);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	break;
 	case BMI160_MAG_SUSPEND_MODE:
 		/* set the mag power mode as SUSPEND mode*/
 		com_rslt += bmi160_bmm150_mag_set_power_mode(SUSPEND_MODE);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 		/* set the secondary mag power mode as SUSPEND*/
 		com_rslt += bmi160_set_command_register(MAG_MODE_SUSPEND);
-		p_bmi160->delay_msec(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 	break;
 	default:
 		com_rslt = E_BMI160_OUT_OF_RANGE;
@@ -17549,7 +17542,7 @@ uint8_t v_mag_sec_if_pow_mode_u8)
 		/* set mag interface auto mode*/
 		com_rslt += bmi160_set_mag_manual_enable(
 		BMI160_MANUAL_DISABLE);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	}
 	return com_rslt;
 }
@@ -17594,7 +17587,7 @@ uint8_t v_mag_pow_mode_u8)
 	if (p_bmi160->mag_manual_enable != BMI160_MANUAL_ENABLE) {
 		com_rslt = bmi160_set_mag_manual_enable(
 		BMI160_MANUAL_ENABLE);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 		if (com_rslt != SUCCESS_BMI160)
 			return com_rslt;
 
@@ -17606,33 +17599,33 @@ uint8_t v_mag_pow_mode_u8)
 		/* write the mag power mode as FORCE mode*/
 		com_rslt += bmi160_set_mag_write_data(
 		BMI160_BMM150_FORCE_MODE);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 		com_rslt += bmi160_set_mag_write_addr(
 		BMI160_BMM150_POWE_MODE_REG);
-		p_bmi160->delay_msec(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 		/* To avoid the auto mode enable when manual
 		mode operation running*/
 		V_bmm150_maual_auto_condition_u8 = BMI160_MANUAL_ENABLE;
 		/* set the preset mode */
 		com_rslt += bmi160_set_bmm150_mag_presetmode(
 		BMI160_MAG_PRESETMODE_REGULAR);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 		/* To avoid the auto mode enable when manual
 		mode operation running*/
 		V_bmm150_maual_auto_condition_u8 = BMI160_MANUAL_DISABLE;
 		/* set the mag read address to data registers*/
 		com_rslt += bmi160_set_mag_read_addr(
 		BMI160_BMM150_DATA_REG);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	break;
 	case SUSPEND_MODE:
 		/* Set the power mode of mag as suspend mode*/
 		com_rslt = bmi160_set_mag_write_data(
 		BMI160_BMM150_POWER_OFF);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 		com_rslt += bmi160_set_mag_write_addr(
 		BMI160_BMM150_POWE_CONTROL_REG);
-		p_bmi160->delay_msec(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 	break;
 	default:
 		com_rslt = E_BMI160_OUT_OF_RANGE;
@@ -17642,7 +17635,7 @@ uint8_t v_mag_pow_mode_u8)
 	if (p_bmi160->mag_manual_enable == BMI160_MANUAL_ENABLE) {
 		com_rslt += bmi160_set_mag_manual_enable(
 		BMI160_MANUAL_DISABLE);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	}
 	return com_rslt;
 }
@@ -17695,26 +17688,26 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_bmm150_mag_presetmode(uint8_t v_mode_u8)
 		It write the value in the register 0x4F*/
 		com_rslt = bmi160_set_mag_write_data(
 		BMI160_MAG_LOWPOWER_REPXY);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 		com_rslt += bmi160_set_mag_write_addr(
 		BMI160_BMM150_XY_REP);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 		/* write the Z repetitions*/
 		/* The v_data_u8 have to write for the register
 		It write the value in the register 0x4F*/
 		com_rslt += bmi160_set_mag_write_data(
 		BMI160_MAG_LOWPOWER_REPZ);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 		com_rslt += bmi160_set_mag_write_addr(
 		BMI160_BMM150_Z_REP);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 		/* set the mag v_data_u8 rate as 10 to the register 0x4C*/
 		com_rslt += bmi160_set_mag_write_data(
 		BMI160_MAG_LOWPOWER_DR);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 		com_rslt += bmi160_set_mag_write_addr(
 		BMI160_BMM150_POWE_MODE_REG);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	break;
 	case BMI160_MAG_PRESETMODE_REGULAR:
 		/* write the XY and Z repetitions*/
@@ -17722,26 +17715,26 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_bmm150_mag_presetmode(uint8_t v_mode_u8)
 		It write the value in the register 0x4F*/
 		com_rslt = bmi160_set_mag_write_data(
 		BMI160_MAG_REGULAR_REPXY);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 		com_rslt += bmi160_set_mag_write_addr(
 		BMI160_BMM150_XY_REP);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 		/* write the Z repetitions*/
 		/* The v_data_u8 have to write for the register
 		It write the value in the register 0x4F*/
 		com_rslt += bmi160_set_mag_write_data(
 		BMI160_MAG_REGULAR_REPZ);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 		com_rslt += bmi160_set_mag_write_addr(
 		BMI160_BMM150_Z_REP);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 		/* set the mag v_data_u8 rate as 10 to the register 0x4C*/
 		com_rslt += bmi160_set_mag_write_data(
 		BMI160_MAG_REGULAR_DR);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 		com_rslt += bmi160_set_mag_write_addr(
 		BMI160_BMM150_POWE_MODE_REG);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	break;
 	case BMI160_MAG_PRESETMODE_HIGHACCURACY:
 		/* write the XY and Z repetitions*/
@@ -17749,26 +17742,26 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_bmm150_mag_presetmode(uint8_t v_mode_u8)
 		It write the value in the register 0x4F*/
 		com_rslt = bmi160_set_mag_write_data(
 		BMI160_MAG_HIGHACCURACY_REPXY);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 		com_rslt += bmi160_set_mag_write_addr(
 		BMI160_BMM150_XY_REP);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 		/* write the Z repetitions*/
 		/* The v_data_u8 have to write for the register
 		It write the value in the register 0x4F*/
 		com_rslt += bmi160_set_mag_write_data(
 		BMI160_MAG_HIGHACCURACY_REPZ);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 		com_rslt += bmi160_set_mag_write_addr(
 		BMI160_BMM150_Z_REP);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 		/* set the mag v_data_u8 rate as 20 to the register 0x4C*/
 		com_rslt += bmi160_set_mag_write_data(
 		BMI160_MAG_HIGHACCURACY_DR);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 		com_rslt += bmi160_set_mag_write_addr(
 		BMI160_BMM150_POWE_MODE_REG);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	break;
 	case BMI160_MAG_PRESETMODE_ENHANCED:
 		/* write the XY and Z repetitions*/
@@ -17776,26 +17769,26 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_bmm150_mag_presetmode(uint8_t v_mode_u8)
 		It write the value in the register 0x4F*/
 		com_rslt = bmi160_set_mag_write_data(
 		BMI160_MAG_ENHANCED_REPXY);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 		com_rslt += bmi160_set_mag_write_addr(
 		BMI160_BMM150_XY_REP);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 		/* write the Z repetitions*/
 		/* The v_data_u8 have to write for the register
 		It write the value in the register 0x4F*/
 		com_rslt += bmi160_set_mag_write_data(
 		BMI160_MAG_ENHANCED_REPZ);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 		com_rslt += bmi160_set_mag_write_addr(
 		BMI160_BMM150_Z_REP);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 		/* set the mag v_data_u8 rate as 10 to the register 0x4C*/
 		com_rslt += bmi160_set_mag_write_data(
 		BMI160_MAG_ENHANCED_DR);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 		com_rslt += bmi160_set_mag_write_addr(
 		BMI160_BMM150_POWE_MODE_REG);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	break;
 	default:
 		com_rslt = E_BMI160_OUT_OF_RANGE;
@@ -17804,12 +17797,12 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_bmm150_mag_presetmode(uint8_t v_mode_u8)
 	if (V_bmm150_maual_auto_condition_u8 == BMI160_MANUAL_DISABLE) {
 			com_rslt += bmi160_set_mag_write_data(
 			BMI160_BMM150_FORCE_MODE);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 		com_rslt += bmi160_set_mag_write_addr(
 		BMI160_BMM150_POWE_MODE_REG);
-		p_bmi160->delay_msec(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 		com_rslt += bmi160_set_mag_read_addr(BMI160_BMM150_DATA_REG);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 		/* set mag interface auto mode*/
 		if (p_bmi160->mag_manual_enable == BMI160_MANUAL_ENABLE)
 			com_rslt = bmi160_set_mag_manual_enable(
@@ -17864,83 +17857,83 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_read_bmm150_mag_trim(void)
 	/* read dig_x1 value */
 	com_rslt = bmi160_set_mag_read_addr(
 	BMI160_MAG_DIG_X1);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* 0x04 is secondary read mag x lsb register */
 	com_rslt += bmi160_read_reg(BMI160_MAG_DATA_READ_REG,
 	&v_data_u8[BMI160_BMM150_DIG_X1],
 	BMI160_GEN_READ_WRITE_DATA_LENGTH);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	mag_trim.dig_x1 = v_data_u8[BMI160_BMM150_DIG_X1];
 	/* read dig_y1 value */
 	com_rslt += bmi160_set_mag_read_addr(
 	BMI160_MAG_DIG_Y1);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* 0x04 is secondary read mag x lsb register */
 	com_rslt += bmi160_read_reg(BMI160_MAG_DATA_READ_REG,
 	&v_data_u8[BMI160_BMM150_DIG_Y1],
 	BMI160_GEN_READ_WRITE_DATA_LENGTH);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	mag_trim.dig_y1 = v_data_u8[BMI160_BMM150_DIG_Y1];
 
 	/* read dig_x2 value */
 	com_rslt += bmi160_set_mag_read_addr(
 	BMI160_MAG_DIG_X2);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* 0x04 is secondary read mag x lsb register */
 	com_rslt += bmi160_read_reg(BMI160_MAG_DATA_READ_REG,
 	&v_data_u8[BMI160_BMM150_DIG_X2],
 	BMI160_GEN_READ_WRITE_DATA_LENGTH);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	mag_trim.dig_x2 = v_data_u8[BMI160_BMM150_DIG_X2];
 	/* read dig_y2 value */
 	com_rslt += bmi160_set_mag_read_addr(
 	BMI160_MAG_DIG_Y2);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* 0x04 is secondary read mag x lsb register */
 	com_rslt += bmi160_read_reg(BMI160_MAG_DATA_READ_REG,
 	&v_data_u8[BMI160_BMM150_DIG_Y3],
 	BMI160_GEN_READ_WRITE_DATA_LENGTH);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	mag_trim.dig_y2 = v_data_u8[BMI160_BMM150_DIG_Y3];
 
 	/* read dig_xy1 value */
 	com_rslt += bmi160_set_mag_read_addr(
 	BMI160_MAG_DIG_XY1);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* 0x04 is secondary read mag x lsb register */
 	com_rslt += bmi160_read_reg(BMI160_MAG_DATA_READ_REG,
 	&v_data_u8[BMI160_BMM150_DIG_XY1],
 	BMI160_GEN_READ_WRITE_DATA_LENGTH);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	mag_trim.dig_xy1 = v_data_u8[BMI160_BMM150_DIG_XY1];
 	/* read dig_xy2 value */
 	com_rslt += bmi160_set_mag_read_addr(
 	BMI160_MAG_DIG_XY2);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* 0x04 is v_mag_x_s16 ls register */
 	com_rslt += bmi160_read_reg(BMI160_MAG_DATA_READ_REG,
 	&v_data_u8[BMI160_BMM150_DIG_XY2],
 	BMI160_GEN_READ_WRITE_DATA_LENGTH);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	mag_trim.dig_xy2 = v_data_u8[BMI160_BMM150_DIG_XY2];
 
 	/* read dig_z1 lsb value */
 	com_rslt += bmi160_set_mag_read_addr(
 	BMI160_MAG_DIG_Z1_LSB);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* 0x04 is secondary read mag x lsb register */
 	com_rslt += bmi160_read_reg(BMI160_MAG_DATA_READ_REG,
 	&v_data_u8[BMI160_BMM150_DIG_Z1_LSB],
 	BMI160_GEN_READ_WRITE_DATA_LENGTH);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* read dig_z1 msb value */
 	com_rslt += bmi160_set_mag_read_addr(BMI160_MAG_DIG_Z1_MSB);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* 0x04 is v_mag_x_s16 msb register */
 	com_rslt += bmi160_read_reg(BMI160_MAG_DATA_READ_REG,
 	&v_data_u8[BMI160_BMM150_DIG_Z1_MSB],
 	BMI160_GEN_READ_WRITE_DATA_LENGTH);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	mag_trim.dig_z1 =
 	(uint16_t)((((uint32_t)((uint8_t)v_data_u8[BMI160_BMM150_DIG_Z1_MSB]))
 			<< BMI160_SHIFT_BIT_POSITION_BY_08_BITS) |
@@ -17948,20 +17941,20 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_read_bmm150_mag_trim(void)
 
 	/* read dig_z2 lsb value */
 	com_rslt += bmi160_set_mag_read_addr(BMI160_MAG_DIG_Z2_LSB);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* 0x04 is secondary read mag x lsb register */
 	com_rslt += bmi160_read_reg(BMI160_MAG_DATA_READ_REG,
 	&v_data_u8[BMI160_BMM150_DIG_Z2_LSB],
 	BMI160_GEN_READ_WRITE_DATA_LENGTH);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* read dig_z2 msb value */
 	com_rslt += bmi160_set_mag_read_addr(BMI160_MAG_DIG_Z2_MSB);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* 0x04 is v_mag_x_s16 msb register */
 	com_rslt += bmi160_read_reg(BMI160_MAG_DATA_READ_REG,
 	&v_data_u8[BMI160_BMM150_DIG_Z2_MSB],
 	BMI160_GEN_READ_WRITE_DATA_LENGTH);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	mag_trim.dig_z2 =
 	(int16_t)((((int32_t)((int8_t)v_data_u8[BMI160_BMM150_DIG_Z2_MSB]))
 			<< BMI160_SHIFT_BIT_POSITION_BY_08_BITS) |
@@ -17969,40 +17962,40 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_read_bmm150_mag_trim(void)
 
 	/* read dig_z3 lsb value */
 	com_rslt += bmi160_set_mag_read_addr(BMI160_MAG_DIG_Z3_LSB);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* 0x04 is secondary read mag x lsb register */
 	com_rslt += bmi160_read_reg(BMI160_MAG_DATA_READ_REG,
 	&v_data_u8[BMI160_BMM150_DIG_DIG_Z3_LSB],
 	BMI160_GEN_READ_WRITE_DATA_LENGTH);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* read dig_z3 msb value */
 	com_rslt += bmi160_set_mag_read_addr(BMI160_MAG_DIG_Z3_MSB);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* 0x04 is v_mag_x_s16 msb register */
 	com_rslt += bmi160_read_reg(BMI160_MAG_DATA_READ_REG,
 	&v_data_u8[BMI160_BMM150_DIG_DIG_Z3_MSB],
 	BMI160_GEN_READ_WRITE_DATA_LENGTH);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	mag_trim.dig_z3 =
 	(int16_t)((((int32_t)((int8_t)v_data_u8[BMI160_BMM150_DIG_DIG_Z3_MSB]))
 			<< BMI160_SHIFT_BIT_POSITION_BY_08_BITS) |
 			(v_data_u8[BMI160_BMM150_DIG_DIG_Z3_LSB]));
 	/* read dig_z4 lsb value */
 	com_rslt += bmi160_set_mag_read_addr(BMI160_MAG_DIG_Z4_LSB);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* 0x04 is secondary read mag x lsb register */
 	com_rslt += bmi160_read_reg(BMI160_MAG_DATA_READ_REG,
 	&v_data_u8[BMI160_BMM150_DIG_DIG_Z4_LSB],
 	BMI160_GEN_READ_WRITE_DATA_LENGTH);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* read dig_z4 msb value */
 	com_rslt += bmi160_set_mag_read_addr(BMI160_MAG_DIG_Z4_MSB);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* 0x04 is v_mag_x_s16 msb register */
 	com_rslt += bmi160_read_reg(BMI160_MAG_DATA_READ_REG,
 	&v_data_u8[BMI160_BMM150_DIG_DIG_Z4_MSB],
 	BMI160_GEN_READ_WRITE_DATA_LENGTH);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	mag_trim.dig_z4 =
 	(int16_t)((((int32_t)((int8_t)v_data_u8[BMI160_BMM150_DIG_DIG_Z4_MSB]))
 			<< BMI160_SHIFT_BIT_POSITION_BY_08_BITS) |
@@ -18010,20 +18003,20 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_read_bmm150_mag_trim(void)
 
 	/* read dig_xyz1 lsb value */
 	com_rslt += bmi160_set_mag_read_addr(BMI160_MAG_DIG_XYZ1_LSB);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* 0x04 is secondary read mag x lsb register */
 	com_rslt += bmi160_read_reg(BMI160_MAG_DATA_READ_REG,
 	&v_data_u8[BMI160_BMM150_DIG_DIG_XYZ1_LSB],
 	BMI160_GEN_READ_WRITE_DATA_LENGTH);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* read dig_xyz1 msb value */
 	com_rslt += bmi160_set_mag_read_addr(BMI160_MAG_DIG_XYZ1_MSB);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* 0x04 is v_mag_x_s16 msb register */
 	com_rslt += bmi160_read_reg(BMI160_MAG_DATA_READ_REG,
 	&v_data_u8[BMI160_BMM150_DIG_DIG_XYZ1_MSB],
 	BMI160_GEN_READ_WRITE_DATA_LENGTH);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	mag_trim.dig_xyz1 =
 	(uint16_t)((((uint32_t)((uint8_t)v_data_u8[BMI160_BMM150_DIG_DIG_XYZ1_MSB]))
 			<< BMI160_SHIFT_BIT_POSITION_BY_08_BITS) |
@@ -18062,65 +18055,65 @@ uint8_t v_akm_i2c_address_u8)
 	uint8_t v_akm_chip_id_u8 = BMI160_INIT_VALUE;
 	/* accel operation mode to normal*/
 	com_rslt = bmi160_set_command_register(ACCEL_MODE_NORMAL);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	com_rslt += bmi160_set_command_register(MAG_MODE_NORMAL);
-	p_bmi160->delay_msec(BMI160_AKM_INIT_DELAY);
+	HAL_Delay(BMI160_AKM_INIT_DELAY);
 	bmi160_get_mag_power_mode_stat(&v_data_u8);
 	/* register 0x7E write the 0x37, 0x9A and 0x30*/
 	com_rslt += bmi160_set_command_register(BMI160_COMMAND_REG_ONE);
-	p_bmi160->delay_msec(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 	com_rslt += bmi160_set_command_register(BMI160_COMMAND_REG_TWO);
-	p_bmi160->delay_msec(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 	com_rslt += bmi160_set_command_register(BMI160_COMMAND_REG_THREE);
-	p_bmi160->delay_msec(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 	/*switch the page1*/
 	com_rslt += bmi160_set_target_page(BMI160_WRITE_TARGET_PAGE1);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	bmi160_get_target_page(&v_data_u8);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	com_rslt += bmi160_set_paging_enable(BMI160_WRITE_ENABLE_PAGE1);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	bmi160_get_paging_enable(&v_data_u8);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* enable the pullup configuration from
 	the register 0x05 bit 4 and 5  to 10*/
 	bmi160_get_pullup_configuration(&v_pull_value_u8);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	v_pull_value_u8 = v_pull_value_u8 | BMI160_PULL_UP_DATA;
 	com_rslt += bmi160_set_pullup_configuration(v_pull_value_u8);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 
 	/*switch the page0*/
 	com_rslt += bmi160_set_target_page(BMI160_WRITE_TARGET_PAGE0);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	bmi160_get_target_page(&v_data_u8);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* Write the AKM09911 0r AKM09912 i2c address*/
 	com_rslt += bmi160_set_i2c_device_addr(v_akm_i2c_address_u8);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* enable the mag interface to manual mode*/
 	com_rslt += bmi160_set_mag_manual_enable(BMI160_MANUAL_ENABLE);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	bmi160_get_mag_manual_enable(&v_data_u8);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/*Enable the MAG interface */
 	com_rslt += bmi160_set_if_mode(BMI160_ENABLE_MAG_IF_MODE);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	bmi160_get_if_mode(&v_data_u8);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 
 	/* Set the AKM Fuse ROM mode */
 	/* Set value for fuse ROM mode*/
 	com_rslt += bmi160_set_mag_write_data(AKM_FUSE_ROM_MODE);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* AKM mode address is 0x31*/
 	com_rslt += bmi160_set_mag_write_addr(AKM_POWER_MODE_REG);
-	p_bmi160->delay_msec(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 	/* Read the Fuse ROM v_data_u8 from registers
 	0x60,0x61 and 0x62*/
 	/* ASAX v_data_u8 */
 	com_rslt += bmi160_read_bst_akm_sensitivity_data();
-	p_bmi160->delay_msec(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 	/* read the device id of the AKM sensor
 	if device id is 0x05 - AKM09911
 	if device id is 0x04 - AKM09912*/
@@ -18130,28 +18123,28 @@ uint8_t v_akm_i2c_address_u8)
 	&v_akm_chip_id_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 	/* Set value power down mode mode*/
 	com_rslt += bmi160_set_mag_write_data(AKM_POWER_DOWN_MODE_DATA);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* AKM mode address is 0x31*/
 	com_rslt += bmi160_set_mag_write_addr(AKM_POWER_MODE_REG);
-	p_bmi160->delay_msec(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 	/* Set AKM Force mode*/
 	com_rslt += bmi160_set_mag_write_data(
 	AKM_SINGLE_MEASUREMENT_MODE);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* AKM mode address is 0x31*/
 	com_rslt += bmi160_set_mag_write_addr(AKM_POWER_MODE_REG);
-	p_bmi160->delay_msec(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 	/* Set the AKM read xyz v_data_u8 address*/
 	com_rslt += bmi160_set_mag_read_addr(AKM_DATA_REGISTER);
 	/* write the mag v_data_bw_u8 as 25Hz*/
 	com_rslt += bmi160_set_mag_output_data_rate(
 	BMI160_MAG_OUTPUT_DATA_RATE_25HZ);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* Enable mag interface to auto mode*/
 	com_rslt += bmi160_set_mag_manual_enable(BMI160_MANUAL_DISABLE);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	bmi160_get_mag_manual_enable(&v_data_u8);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 
 	return com_rslt;
 }
@@ -18189,30 +18182,30 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_read_bst_akm_sensitivity_data(void)
 	BMI160_INIT_VALUE, BMI160_INIT_VALUE};
 	/* read asax value */
 	com_rslt = bmi160_set_mag_read_addr(BMI160_BST_AKM_ASAX);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* 0x04 is secondary read mag x lsb register */
 	com_rslt += bmi160_read_reg(BMI160_MAG_DATA_READ_REG,
 	&v_data_u8[AKM_ASAX],
 	BMI160_GEN_READ_WRITE_DATA_LENGTH);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	akm_asa_data.asax = v_data_u8[AKM_ASAX];
 	/* read asay value */
 	com_rslt += bmi160_set_mag_read_addr(BMI160_BST_AKM_ASAY);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* 0x04 is secondary read mag x lsb register */
 	com_rslt += bmi160_read_reg(BMI160_MAG_DATA_READ_REG,
 	&v_data_u8[AKM_ASAY],
 	BMI160_GEN_READ_WRITE_DATA_LENGTH);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	akm_asa_data.asay = v_data_u8[AKM_ASAY];
 	/* read asaz value */
 	com_rslt += bmi160_set_mag_read_addr(BMI160_BST_AKM_ASAZ);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* 0x04 is secondary read mag x lsb register */
 	com_rslt += bmi160_read_reg(BMI160_MAG_DATA_READ_REG,
 	&v_data_u8[AKM_ASAZ],
 	BMI160_GEN_READ_WRITE_DATA_LENGTH);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	akm_asa_data.asaz = v_data_u8[AKM_ASAZ];
 
 	return com_rslt;
@@ -18532,41 +18525,41 @@ uint8_t v_akm_pow_mode_u8)
 	if (p_bmi160->mag_manual_enable != BMI160_MANUAL_ENABLE) {
 		com_rslt = bmi160_set_mag_manual_enable(
 		BMI160_MANUAL_ENABLE);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	}
 	switch (v_akm_pow_mode_u8) {
 	case AKM_POWER_DOWN_MODE:
 		/* Set the power mode of AKM as power down mode*/
 		com_rslt += bmi160_set_mag_write_data(AKM_POWER_DOWN_MODE_DATA);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 		com_rslt += bmi160_set_mag_write_addr(AKM_POWER_MODE_REG);
-		p_bmi160->delay_msec(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 	break;
 	case AKM_SINGLE_MEAS_MODE:
 		/* Set the power mode of AKM as
 		single measurement mode*/
 		com_rslt += bmi160_set_mag_write_data
 		(AKM_SINGLE_MEASUREMENT_MODE);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 		com_rslt += bmi160_set_mag_write_addr(AKM_POWER_MODE_REG);
-		p_bmi160->delay_msec(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 		com_rslt += bmi160_set_mag_read_addr(AKM_DATA_REGISTER);
 	break;
 	case FUSE_ROM_MODE:
 		/* Set the power mode of AKM as
 		Fuse ROM mode*/
 		com_rslt += bmi160_set_mag_write_data(AKM_FUSE_ROM_MODE);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 		com_rslt += bmi160_set_mag_write_addr(AKM_POWER_MODE_REG);
-		p_bmi160->delay_msec(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 		/* Sensitivity v_data_u8 */
 		com_rslt += bmi160_read_bst_akm_sensitivity_data();
-		p_bmi160->delay_msec(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 		/* power down mode*/
 		com_rslt += bmi160_set_mag_write_data(AKM_POWER_DOWN_MODE);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 		com_rslt += bmi160_set_mag_write_addr(AKM_POWER_MODE_REG);
-		p_bmi160->delay_msec(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 	break;
 	default:
 		com_rslt = E_BMI160_OUT_OF_RANGE;
@@ -18576,7 +18569,7 @@ uint8_t v_akm_pow_mode_u8)
 	if (p_bmi160->mag_manual_enable == BMI160_MANUAL_ENABLE) {
 		com_rslt += bmi160_set_mag_manual_enable(
 		BMI160_MANUAL_DISABLE);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	}
 	return com_rslt;
 }
@@ -18610,12 +18603,12 @@ uint8_t v_mag_sec_if_pow_mode_u8)
 	BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
 	/* accel operation mode to normal*/
 	com_rslt = bmi160_set_command_register(ACCEL_MODE_NORMAL);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* set mag interface manual mode*/
 	if (p_bmi160->mag_manual_enable != BMI160_MANUAL_ENABLE) {
 		com_rslt = bmi160_set_mag_manual_enable(
 		BMI160_MANUAL_ENABLE);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	}
 	switch (v_mag_sec_if_pow_mode_u8) {
 	case BMI160_MAG_FORCE_MODE:
@@ -18623,17 +18616,17 @@ uint8_t v_mag_sec_if_pow_mode_u8)
 		com_rslt += bmi160_set_mag_interface_normal();
 		/* set the akm power mode as single measurement mode*/
 		com_rslt += bmi160_bst_akm_set_powermode(AKM_SINGLE_MEAS_MODE);
-		p_bmi160->delay_msec(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 		com_rslt += bmi160_set_mag_read_addr(AKM_DATA_REGISTER);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	break;
 	case BMI160_MAG_SUSPEND_MODE:
 		/* set the akm power mode as power down mode*/
 		com_rslt += bmi160_bst_akm_set_powermode(AKM_POWER_DOWN_MODE);
-		p_bmi160->delay_msec(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 		/* set the secondary mag power mode as SUSPEND*/
 		com_rslt += bmi160_set_command_register(MAG_MODE_SUSPEND);
-		p_bmi160->delay_msec(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 	break;
 	default:
 		com_rslt = E_BMI160_OUT_OF_RANGE;
@@ -18643,7 +18636,7 @@ uint8_t v_mag_sec_if_pow_mode_u8)
 	if (p_bmi160->mag_manual_enable == BMI160_MANUAL_ENABLE)
 		com_rslt += bmi160_set_mag_manual_enable(
 		BMI160_MANUAL_DISABLE);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	return com_rslt;
 }
 /*!
@@ -18667,60 +18660,60 @@ void)
 	uint8_t i = BMI160_INIT_VALUE;
 	/* accel operation mode to normal*/
 	com_rslt = bmi160_set_command_register(ACCEL_MODE_NORMAL);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* write mag power mode as NORMAL*/
 	com_rslt += bmi160_set_mag_interface_normal();
 	/* register 0x7E write the 0x37, 0x9A and 0x30*/
 	com_rslt += bmi160_set_command_register(BMI160_COMMAND_REG_ONE);
-	p_bmi160->delay_msec(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 	com_rslt += bmi160_set_command_register(BMI160_COMMAND_REG_TWO);
-	p_bmi160->delay_msec(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 	com_rslt += bmi160_set_command_register(BMI160_COMMAND_REG_THREE);
-	p_bmi160->delay_msec(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 	/*switch the page1*/
 	com_rslt += bmi160_set_target_page(BMI160_WRITE_TARGET_PAGE1);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	bmi160_get_target_page(&v_data_u8);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	com_rslt += bmi160_set_paging_enable(BMI160_WRITE_ENABLE_PAGE1);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	bmi160_get_paging_enable(&v_data_u8);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* enable the pullup configuration from
 	the register 0x05 bit 4 and 5 as 10*/
 	bmi160_get_pullup_configuration(&v_pull_value_u8);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	v_pull_value_u8 = v_pull_value_u8 | BMI160_PULL_UP_DATA;
 	com_rslt += bmi160_set_pullup_configuration(v_pull_value_u8);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/*switch the page0*/
 	com_rslt += bmi160_set_target_page(BMI160_WRITE_TARGET_PAGE0);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	bmi160_get_target_page(&v_data_u8);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* Write the YAS532 i2c address*/
 	com_rslt += bmi160_set_i2c_device_addr(BMI160_AUX_YAS532_I2C_ADDRESS);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* enable the mag interface to manual mode*/
 	com_rslt += bmi160_set_mag_manual_enable(BMI160_MANUAL_ENABLE);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	bmi160_get_mag_manual_enable(&v_data_u8);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/*Enable the MAG interface */
 	com_rslt += bmi160_set_if_mode(BMI160_ENABLE_MAG_IF_MODE);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	bmi160_get_if_mode(&v_data_u8);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	v_data_u8 = BMI160_MANUAL_DISABLE;
 	/* Read the YAS532 device id is 0x02*/
 	com_rslt += bmi160_set_mag_read_addr(BMI160_YAS_DEVICE_ID_REG);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	com_rslt += bmi160_read_reg(BMI160_MAG_DATA_READ_REG,
 	&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* Read the YAS532 calibration data*/
 	com_rslt += bmi160_bst_yamaha_yas532_calib_values();
-	p_bmi160->delay_msec(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 	/* Assign the data acquisition mode*/
 	yas532_data.measure_state = YAS532_MAG_STATE_INIT_COIL;
 	/* Set the default offset as invalid offset*/
@@ -18745,13 +18738,13 @@ void)
 	/* write the mag v_data_bw_u8 as 25Hz*/
 	com_rslt += bmi160_set_mag_output_data_rate(
 	BMI160_MAG_OUTPUT_DATA_RATE_25HZ);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* Enable mag interface to auto mode*/
 	com_rslt += bmi160_set_mag_manual_enable(
 	BMI160_MANUAL_DISABLE);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	bmi160_get_mag_manual_enable(&v_data_u8);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 
 	return com_rslt;
 }
@@ -18773,21 +18766,21 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yas532_set_initial_values(void)
 	/* write testr1 as 0x00*/
 	com_rslt = bmi160_set_mag_write_data(
 	BMI160_YAS532_WRITE_TESTR1);
-	p_bmi160->delay_msec(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 	com_rslt += bmi160_set_mag_write_addr(BMI160_YAS532_TESTR1);
-	p_bmi160->delay_msec(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 	/* write testr2 as 0x00*/
 	com_rslt += bmi160_set_mag_write_data(
 	BMI160_YAS532_WRITE_TESTR2);
-	p_bmi160->delay_msec(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 	com_rslt += bmi160_set_mag_write_addr(BMI160_YAS532_TESTR2);
-	p_bmi160->delay_msec(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 	/* write Rcoil as 0x00*/
 	com_rslt += bmi160_set_mag_write_data(
 	BMI160_YAS532_WRITE_RCOIL);
-	p_bmi160->delay_msec(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 	com_rslt += bmi160_set_mag_write_addr(BMI160_YAS532_RCOIL);
-	p_bmi160->delay_msec(BMI160_YAS532_SET_INITIAL_VALUE_DELAY);
+	HAL_Delay(BMI160_YAS532_SET_INITIAL_VALUE_DELAY);
 	/* check the valid offset*/
 	if (is_valid_offset(yas532_data.v_hard_offset_s8)) {
 		com_rslt += bmi160_bst_yas532_set_offset(
@@ -18890,7 +18883,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yamaha_yas532_calib_values(void)
 	BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE};
 	/* Read the DX value */
 	com_rslt = bmi160_set_mag_read_addr(BMI160_YAS532_CALIB_CX);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	/* 0x04 is secondary read mag x lsb register */
 	com_rslt += bmi160_read_reg(BMI160_MAG_DATA_READ_REG,
 	&v_data_u8[0], BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -18933,7 +18926,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yamaha_yas532_calib_values(void)
 	/* calculate a4*/
 	yas532_data.calib_yas532.a4 = (int32_t)((v_data_u8[4]
 	& 0x3F) - 32);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     /* Read the D5 and D6 value */
 	com_rslt += bmi160_set_mag_read_addr(BMI160_YAS532_CALIB3);
 	/* 0x04 is secondary read mag x lsb register */
@@ -19138,7 +19131,7 @@ uint16_t *v_temp_u16, uint16_t *v_xy1y2_u16, uint8_t *v_overflow_u8)
 		com_rslt = bmi160_bst_yas532_acquisition_command_register(
 		v_acquisition_command_u8);
 		com_rslt +=
-		p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+		bmi160_bus_read(p_bmi160->dev_addr,
 		BMI160_USER_DATA_MAG_X_LSB__REG,
 		v_data_u8, BMI160_MAG_YAS_DATA_LENGTH);
 		 v_data_u8[0] = 0x31;
@@ -19251,9 +19244,9 @@ uint8_t v_acquisition_command_u8)
 		/* write Rcoil*/
 		com_rslt += bmi160_set_mag_write_data(
 		BMI160_YAS_DISABLE_RCOIL);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 		com_rslt += bmi160_set_mag_write_addr(BMI160_YAS532_RCOIL);
-		p_bmi160->delay_msec(BMI160_YAS532_MEASUREMENT_DELAY);
+		HAL_Delay(BMI160_YAS532_MEASUREMENT_DELAY);
 		if (!yas532_data.overflow && is_valid_offset(
 		yas532_data.v_hard_offset_s8))
 			yas532_data.measure_state = 0;
@@ -19520,14 +19513,14 @@ uint8_t v_command_reg_data_u8)
 			BMI160_MANUAL_ENABLE);
 
 		com_rslt = bmi160_set_mag_write_data(v_command_reg_data_u8);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 		/* YAMAHA YAS532-0x82*/
 		com_rslt += bmi160_set_mag_write_addr(
 		BMI160_YAS532_COMMAND_REGISTER);
-		p_bmi160->delay_msec(BMI160_YAS_ACQ_COMMAND_DELAY);
+		HAL_Delay(BMI160_YAS_ACQ_COMMAND_DELAY);
 		com_rslt += bmi160_set_mag_read_addr(
 		BMI160_YAS532_DATA_REGISTER);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 
 	if (p_bmi160->mag_manual_enable == BMI160_MANUAL_ENABLE)
 		com_rslt += bmi160_set_mag_manual_enable(BMI160_MANUAL_DISABLE);
@@ -19556,28 +19549,28 @@ const int8_t *p_offset_s8)
 
 	if (p_bmi160->mag_manual_enable != BMI160_MANUAL_ENABLE)
 		com_rslt = bmi160_set_mag_manual_enable(BMI160_MANUAL_ENABLE);
-		p_bmi160->delay_msec(BMI160_YAS532_OFFSET_DELAY);
+		HAL_Delay(BMI160_YAS532_OFFSET_DELAY);
 
 	    /* Write offset X data*/
 		com_rslt = bmi160_set_mag_write_data(p_offset_s8[0]);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 		/* YAS532 offset x write*/
 		com_rslt += bmi160_set_mag_write_addr(BMI160_YAS532_OFFSET_X);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 
 		/* Write offset Y data*/
 		com_rslt = bmi160_set_mag_write_data(p_offset_s8[1]);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 		/* YAS532 offset y write*/
 		com_rslt += bmi160_set_mag_write_addr(BMI160_YAS532_OFFSET_Y);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 
 		/* Write offset Z data*/
 		com_rslt = bmi160_set_mag_write_data(p_offset_s8[2]);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 		/* YAS532 offset z write*/
 		com_rslt += bmi160_set_mag_write_addr(BMI160_YAS532_OFFSET_Z);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 		set_vector(yas532_data.v_hard_offset_s8, p_offset_s8);
 
 	if (p_bmi160->mag_manual_enable == BMI160_MANUAL_ENABLE)
@@ -19605,64 +19598,64 @@ uint8_t v_data_u8 = BMI160_INIT_VALUE;
 uint8_t i = BMI160_INIT_VALUE;
 /* accel operation mode to normal*/
 com_rslt = bmi160_set_command_register(ACCEL_MODE_NORMAL);
-p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /* write mag power mode as NORMAL*/
 com_rslt += bmi160_set_mag_interface_normal();
 /* register 0x7E write the 0x37, 0x9A and 0x30*/
 com_rslt += bmi160_set_command_register(BMI160_COMMAND_REG_ONE);
-p_bmi160->delay_msec(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 com_rslt += bmi160_set_command_register(BMI160_COMMAND_REG_TWO);
-p_bmi160->delay_msec(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 com_rslt += bmi160_set_command_register(BMI160_COMMAND_REG_THREE);
-p_bmi160->delay_msec(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 /*switch the page1*/
 com_rslt += bmi160_set_target_page(BMI160_WRITE_TARGET_PAGE1);
-p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 bmi160_get_target_page(&v_data_u8);
-p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 com_rslt += bmi160_set_paging_enable(BMI160_WRITE_ENABLE_PAGE1);
-p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 bmi160_get_paging_enable(&v_data_u8);
-p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /* enable the pullup configuration from
 the register 0x05 bit 4 and 5 as 10*/
 bmi160_get_pullup_configuration(&v_pull_value_u8);
-p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 v_pull_value_u8 = v_pull_value_u8 | BMI160_PULL_UP_DATA;
 com_rslt += bmi160_set_pullup_configuration(v_pull_value_u8);
-p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /*switch the page0*/
 com_rslt += bmi160_set_target_page(BMI160_WRITE_TARGET_PAGE0);
-p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 bmi160_get_target_page(&v_data_u8);
-p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /* Write the YAS532 i2c address*/
 com_rslt += bmi160_set_i2c_device_addr(BMI160_YAS537_I2C_ADDRESS);
-p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /* enable the mag interface to manual mode*/
 com_rslt += bmi160_set_mag_manual_enable(BMI160_MANUAL_ENABLE);
-p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 bmi160_get_mag_manual_enable(&v_data_u8);
-p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /*Enable the MAG interface */
 com_rslt += bmi160_set_if_mode(BMI160_ENABLE_MAG_IF_MODE);
-p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 bmi160_get_if_mode(&v_data_u8);
-p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 v_data_u8 = BMI160_MANUAL_DISABLE;
 /* Read the YAS537 device id 0x07*/
 com_rslt += bmi160_set_mag_read_addr(BMI160_YAS_DEVICE_ID_REG);
-p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 com_rslt += bmi160_read_reg(BMI160_MAG_DATA_READ_REG,
 &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 yas537_data.dev_id = v_data_u8;
-p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /* Read the YAS532 calibration data*/
 
 com_rslt +=
 bmi160_bst_yamaha_yas537_calib_values(
 BMI160_GEN_READ_WRITE_DATA_LENGTH);
-p_bmi160->delay_msec(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 /* set the mode to NORMAL*/
 yas537_data.measure_state = YAS537_MAG_STATE_NORMAL;
 /* set the transform to zero */
@@ -19677,13 +19670,13 @@ for (i = 0; i < 4; i++)
 /* write the mag bandwidth as 25Hz*/
 com_rslt += bmi160_set_mag_output_data_rate(
 BMI160_MAG_OUTPUT_DATA_RATE_25HZ);
-p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /* Enable mag interface to auto mode*/
 com_rslt += bmi160_set_mag_manual_enable(
 BMI160_MANUAL_DISABLE);
-p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 bmi160_get_mag_manual_enable(&v_data_u8);
-p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 return com_rslt;
 }
 /*!
@@ -19720,108 +19713,108 @@ uint8_t v_cal_valid_u8 = BMI160_INIT_VALUE, i;
 /* write soft reset as 0x02*/
 com_rslt = bmi160_set_mag_write_data(
 YAS537_SRSTR_DATA);
-p_bmi160->delay_msec(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 com_rslt += bmi160_set_mag_write_addr(YAS537_REG_SRSTR);
-p_bmi160->delay_msec(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 /* Read the DX value */
 com_rslt = bmi160_set_mag_read_addr(YAS537_REG_CALR_C0);
-p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /* 0x04 is secondary read mag x lsb register */
 com_rslt += bmi160_read_reg(BMI160_MAG_DATA_READ_REG,
 &a_data_u8[0], BMI160_GEN_READ_WRITE_DATA_LENGTH);
 /* Read the DY1 value */
 com_rslt += bmi160_set_mag_read_addr(YAS537_REG_CALR_C1);
-p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /* 0x04 is secondary read mag x lsb register */
 com_rslt += bmi160_read_reg(BMI160_MAG_DATA_READ_REG,
 &a_data_u8[1], BMI160_GEN_READ_WRITE_DATA_LENGTH);
 /* Read the DY2 value */
 com_rslt += bmi160_set_mag_read_addr(YAS537_REG_CALR_C2);
-p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /* 0x04 is secondary read mag x lsb register */
 com_rslt += bmi160_read_reg(BMI160_MAG_DATA_READ_REG,
 &a_data_u8[2], BMI160_GEN_READ_WRITE_DATA_LENGTH);
 /* Read the D2 value */
 com_rslt += bmi160_set_mag_read_addr(YAS537_REG_CALR_C3);
-p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /* 0x04 is secondary read mag x lsb register */
 com_rslt += bmi160_read_reg(BMI160_MAG_DATA_READ_REG,
 &a_data_u8[3], BMI160_GEN_READ_WRITE_DATA_LENGTH);
 /* Read the D3 value */
 com_rslt += bmi160_set_mag_read_addr(YAS537_REG_CALR_C4);
-p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /* 0x04 is secondary read mag x lsb register */
 com_rslt += bmi160_read_reg(BMI160_MAG_DATA_READ_REG,
 &a_data_u8[4], BMI160_GEN_READ_WRITE_DATA_LENGTH);
 /* Read the D4 value */
 com_rslt += bmi160_set_mag_read_addr(YAS537_REG_CALR_C5);
-p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /* 0x04 is secondary read mag x lsb register */
 com_rslt += bmi160_read_reg(BMI160_MAG_DATA_READ_REG,
 &a_data_u8[5], BMI160_GEN_READ_WRITE_DATA_LENGTH);
 /* Read the D5 value */
 com_rslt += bmi160_set_mag_read_addr(YAS537_REG_CALR_C6);
-p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /* 0x04 is secondary read mag x lsb register */
 com_rslt += bmi160_read_reg(BMI160_MAG_DATA_READ_REG,
 &a_data_u8[6], BMI160_GEN_READ_WRITE_DATA_LENGTH);
 /* Read the D6 value */
 com_rslt += bmi160_set_mag_read_addr(YAS537_REG_CALR_C7);
-p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /* 0x04 is secondary read mag x lsb register */
 com_rslt += bmi160_read_reg(BMI160_MAG_DATA_READ_REG,
 &a_data_u8[7], BMI160_GEN_READ_WRITE_DATA_LENGTH);
 /* Read the D7 value */
 com_rslt += bmi160_set_mag_read_addr(YAS537_REG_CALR_C8);
-p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /* 0x04 is secondary read mag x lsb register */
 com_rslt += bmi160_read_reg(BMI160_MAG_DATA_READ_REG,
 &a_data_u8[8], BMI160_GEN_READ_WRITE_DATA_LENGTH);
 /* Read the D8 value */
 com_rslt += bmi160_set_mag_read_addr(YAS537_REG_CALR_C9);
-p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /* 0x04 is secondary read mag x lsb register */
 com_rslt += bmi160_read_reg(BMI160_MAG_DATA_READ_REG,
 &a_data_u8[9], BMI160_GEN_READ_WRITE_DATA_LENGTH);
 /* Read the D9 value */
 com_rslt += bmi160_set_mag_read_addr(YAS537_REG_CALR_CA);
-p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /* 0x04 is secondary read mag x lsb register */
 com_rslt += bmi160_read_reg(BMI160_MAG_DATA_READ_REG,
 &a_data_u8[10], BMI160_GEN_READ_WRITE_DATA_LENGTH);
 /* Read the RX value */
 com_rslt += bmi160_set_mag_read_addr(YAS537_REG_CALR_CB);
-p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /* 0x04 is secondary read mag x lsb register */
 com_rslt += bmi160_read_reg(BMI160_MAG_DATA_READ_REG,
 &a_data_u8[11], BMI160_GEN_READ_WRITE_DATA_LENGTH);
 /* Read the RY1 value */
 com_rslt += bmi160_set_mag_read_addr(YAS537_REG_CALR_CC);
-p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /* 0x04 is secondary read mag x lsb register */
 com_rslt += bmi160_read_reg(BMI160_MAG_DATA_READ_REG,
 &a_data_u8[12], BMI160_GEN_READ_WRITE_DATA_LENGTH);
 /* Read the RY2 value */
 com_rslt += bmi160_set_mag_read_addr(YAS537_REG_CALR_CD);
-p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /* 0x04 is secondary read mag x lsb register */
 com_rslt += bmi160_read_reg(BMI160_MAG_DATA_READ_REG,
 &a_data_u8[13], BMI160_GEN_READ_WRITE_DATA_LENGTH);
 /* Read the RY2 value */
 com_rslt += bmi160_set_mag_read_addr(YAS537_REG_CALR_CE);
-p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /* 0x04 is secondary read mag x lsb register */
 com_rslt += bmi160_read_reg(BMI160_MAG_DATA_READ_REG,
 &a_data_u8[14], BMI160_GEN_READ_WRITE_DATA_LENGTH);
 /* Read the CHF value */
 com_rslt += bmi160_set_mag_read_addr(YAS537_REG_CALR_CF);
-p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /* 0x04 is secondary read mag x lsb register */
 com_rslt += bmi160_read_reg(BMI160_MAG_DATA_READ_REG,
 &a_data_u8[15], BMI160_GEN_READ_WRITE_DATA_LENGTH);
 /* Read the VER value */
 com_rslt += bmi160_set_mag_read_addr(YAS537_REG_CALR_DO);
-p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /* 0x04 is secondary read mag x lsb register */
 com_rslt += bmi160_read_reg(BMI160_MAG_DATA_READ_REG,
 &a_data_u8[16], BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -19843,21 +19836,21 @@ if (yas537_data.calib_yas537.ver == 0) {
 			/* write offset*/
 			com_rslt += bmi160_set_mag_write_data(
 			a_data_u8[i]);
-			p_bmi160->delay_msec(
+			HAL_Delay(
 			BMI160_GEN_READ_WRITE_DELAY);
 			com_rslt += bmi160_set_mag_write_addr(
 			YAS537_REG_MTCR + i);
-			p_bmi160->delay_msec(
+			HAL_Delay(
 			BMI160_GEN_READ_WRITE_DELAY);
 		} else if (i < 15) {
 			/* write offset correction*/
 			com_rslt += bmi160_set_mag_write_data(
 			a_data_u8[i]);
-			p_bmi160->delay_msec(
+			HAL_Delay(
 			BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 			com_rslt += bmi160_set_mag_write_addr((
 			(YAS537_REG_OXR + i) - 12));
-			p_bmi160->delay_msec(
+			HAL_Delay(
 			BMI160_GEN_READ_WRITE_DELAY);
 			yas537_data.hard_offset[i - 12]
 			= a_data_u8[i];
@@ -19865,11 +19858,11 @@ if (yas537_data.calib_yas537.ver == 0) {
 			/* write offset correction*/
 			com_rslt += bmi160_set_mag_write_data(
 			a_data_u8[i]);
-			p_bmi160->delay_msec(
+			HAL_Delay(
 			BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 			com_rslt += bmi160_set_mag_write_addr((
 			(YAS537_REG_OXR + i) - 11));
-			p_bmi160->delay_msec(
+			HAL_Delay(
 			BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 		}
 
@@ -19879,21 +19872,21 @@ if (yas537_data.calib_yas537.ver == 0) {
 		/* write offset*/
 		com_rslt += bmi160_set_mag_write_data(
 		a_data_u8[i]);
-		p_bmi160->delay_msec(
+		HAL_Delay(
 		BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 		com_rslt += bmi160_set_mag_write_addr(
 		YAS537_REG_MTCR + i);
-		p_bmi160->delay_msec(
+		HAL_Delay(
 		BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 		if (com_rslt == SUCCESS_BMI160) {
 			/* write offset*/
 			com_rslt += bmi160_set_mag_write_data(
 			a_data_u8[i + 12]);
-			p_bmi160->delay_msec(
+			HAL_Delay(
 			BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 			com_rslt += bmi160_set_mag_write_addr(
 			YAS537_REG_OXR + i);
-			p_bmi160->delay_msec(
+			HAL_Delay(
 			BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 			yas537_data.hard_offset[i] =
 			a_data_u8[i + 12];
@@ -19904,37 +19897,37 @@ if (yas537_data.calib_yas537.ver == 0) {
 	/* write offset*/
 	com_rslt += bmi160_set_mag_write_data(
 	((a_data_u8[i] & 0xE0) | 0x10));
-	p_bmi160->delay_msec(
+	HAL_Delay(
 	BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 	com_rslt += bmi160_set_mag_write_addr(
 	YAS537_REG_MTCR + i);
-	p_bmi160->delay_msec(
+	HAL_Delay(
 	BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 	/* write offset*/
 	com_rslt += bmi160_set_mag_write_data(
 	((a_data_u8[15]
 	>> BMI160_SHIFT_BIT_POSITION_BY_03_BITS)
 	& 0x1E));
-	p_bmi160->delay_msec(
+	HAL_Delay(
 	BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 	com_rslt += bmi160_set_mag_write_addr(YAS537_REG_HCKR);
-	p_bmi160->delay_msec(
+	HAL_Delay(
 	BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 	/* write offset*/
 	com_rslt += bmi160_set_mag_write_data(
 	((a_data_u8[15] << 1) & 0x1E));
-	p_bmi160->delay_msec(
+	HAL_Delay(
 	BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 	com_rslt += bmi160_set_mag_write_addr(YAS537_REG_LCKR);
-	p_bmi160->delay_msec(
+	HAL_Delay(
 	BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 	/* write offset*/
 	com_rslt += bmi160_set_mag_write_data(
 	(a_data_u8[16] & 0x3F));
-	p_bmi160->delay_msec(
+	HAL_Delay(
 	BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 	com_rslt += bmi160_set_mag_write_addr(YAS537_REG_OCR);
-	p_bmi160->delay_msec(
+	HAL_Delay(
 	BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 
 	/* Assign the calibration values*/
@@ -20000,33 +19993,33 @@ if (yas537_data.calib_yas537.ver == 0) {
 /* write A/D converter*/
 com_rslt += bmi160_set_mag_write_data(
 YAS537_WRITE_A_D_CONVERTER);
-p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 com_rslt += bmi160_set_mag_write_addr(YAS537_REG_ADCCALR);
-p_bmi160->delay_msec(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 /* write A/D converter second register*/
 com_rslt += bmi160_set_mag_write_data(
 YAS537_WRITE_A_D_CONVERTER2);
-p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 com_rslt += bmi160_set_mag_write_addr(YAS537_REG_ADCCALR_ONE);
-p_bmi160->delay_msec(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 /* write temperature calibration register*/
 com_rslt += bmi160_set_mag_write_data(YAS537_WRITE_TEMP_CALIB);
-p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 com_rslt += bmi160_set_mag_write_addr(YAS537_REG_TRMR);
-p_bmi160->delay_msec(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 /* write average filter register*/
 com_rslt += bmi160_set_mag_write_data(
 v_avrr_u8[yas537_data.average]);
-p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 com_rslt += bmi160_set_mag_write_addr(YAS537_REG_AVRR);
-p_bmi160->delay_msec(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
+HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 if (v_rcoil_u8) {
 	/* write average; filter register*/
 	com_rslt += bmi160_set_mag_write_data(
 	YAS537_WRITE_FILTER);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	com_rslt += bmi160_set_mag_write_addr(YAS537_REG_CONFR);
-	p_bmi160->delay_msec(
+	HAL_Delay(
 	BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 }
 
@@ -20072,24 +20065,24 @@ uint8_t v_command_reg_data_u8)
 	if (p_bmi160->mag_manual_enable != BMI160_MANUAL_ENABLE)
 			com_rslt = bmi160_set_mag_manual_enable(
 			BMI160_MANUAL_ENABLE);
-			p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+			HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 
 		com_rslt = bmi160_set_mag_write_data(v_command_reg_data_u8);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 		/* YAMAHA YAS532-0x82*/
 		com_rslt += bmi160_set_mag_write_addr(
 		BMI160_REG_YAS537_CMDR);
 		/* set the mode to RECORD*/
 		yas537_data.measure_state = YAS537_MAG_STATE_RECORD_DATA;
-		p_bmi160->delay_msec(BMI160_YAS_ACQ_COMMAND_DELAY);
+		HAL_Delay(BMI160_YAS_ACQ_COMMAND_DELAY);
 		com_rslt += bmi160_set_mag_read_addr(
 		YAS537_REG_TEMPERATURE_0);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 
 	if (p_bmi160->mag_manual_enable == BMI160_MANUAL_ENABLE)
 		com_rslt += bmi160_set_mag_manual_enable(
 		BMI160_MANUAL_DISABLE);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 
 	return com_rslt;
 
@@ -20155,7 +20148,7 @@ uint16_t *v_temperature_u16, uint16_t *xy1y2, uint8_t *v_ouflow_u8)
 	YAS537_SET_COMMAND_REGISTER);
 	/* read the yas537 sensor data of xy1y2*/
 	com_rslt +=
-	p_bmi160->BMI160_BUS_READ_FUNC(p_bmi160->dev_addr,
+	bmi160_bus_read(p_bmi160->dev_addr,
 	BMI160_USER_DATA_MAG_X_LSB__REG,
 	a_data_u8, BMI160_MAG_YAS_DATA_LENGTH);
 	/* read the busy flag*/
@@ -20318,9 +20311,9 @@ uint8_t *v_ouflow_u8, struct yas_vector *vector_xyz)
 			com_rslt = bmi160_set_mag_manual_enable(
 			BMI160_MANUAL_ENABLE);
 		com_rslt += bmi160_set_mag_write_data(YAS537_WRITE_CONFR);
-		p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 		com_rslt += bmi160_set_mag_write_addr(YAS537_REG_CONFR);
-		p_bmi160->delay_msec(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
+		HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 		yas537_data.measure_state = YAS537_MAG_STATE_RECORD_DATA;
 		if (p_bmi160->mag_manual_enable == BMI160_MANUAL_ENABLE)
 			com_rslt = bmi160_set_mag_manual_enable(
@@ -20407,9 +20400,9 @@ case YAS537_MAG_STATE_INIT_COIL:
 		com_rslt = bmi160_set_mag_manual_enable(
 		BMI160_MANUAL_ENABLE);
 	com_rslt += bmi160_set_mag_write_data(YAS537_WRITE_CONFR);
-	p_bmi160->delay_msec(BMI160_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 	com_rslt += bmi160_set_mag_write_addr(YAS537_REG_CONFR);
-	p_bmi160->delay_msec(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
+	HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 	yas537_data.measure_state = YAS537_MAG_STATE_RECORD_DATA;
 	if (p_bmi160->mag_manual_enable == BMI160_MANUAL_ENABLE)
 		com_rslt = bmi160_set_mag_manual_enable(

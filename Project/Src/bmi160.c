@@ -52,18 +52,19 @@ int8_t bmi160_bus_read(uint8_t dev_addr, uint8_t reg_addr, uint8_t *reg_data, ui
 {
     reg_addr |= 0x80; // needed for read
 
-    uint8_t sbuf[cnt + 1];
+    uint8_t sbuf[cnt + 1], sbufout[cnt + 1];
     memset((char *)sbuf, 0, cnt + 1);
+    memset((char *)sbufout, 0, cnt + 1);
     sbuf[0] = reg_addr;
 
     bmi160_cs_on();
-    SPI_TransmitReceive_DMA((uint16_t*)sbuf, (uint16_t*)sbuf, cnt + 1);  
+    SPI_TransmitReceive_DMA(sbuf, sbufout, cnt + 1);  
     bmi160_cs_off();
 
     // now copy it into user buffer
     int i;
     for (i=0; i<cnt; i++)
-        reg_data[i] = sbuf[i + 1];
+        reg_data[i] = sbufout[i + 1];
 
     return 0;
 }
@@ -91,15 +92,14 @@ int8_t bmi160_bus_write(uint8_t dev_addr, uint8_t reg_addr, uint8_t *reg_data, u
 // delay for some milliseconds
 void bmi160_delay_ms(uint32_t msek)
 {
-  upm_delay_ms(msek);
+  HAL_Delay(msek);
 }
 
 
 bmi160_context bmi160_init(unsigned int bus, int address, int cs_pin,
                            bool enable_mag)
 {
-    bmi160_context dev =
-        (bmi160_context)malloc(sizeof(struct _bmi160_context));
+    bmi160_context dev = (bmi160_context)malloc(sizeof(struct _bmi160_context));
 
     if (!dev)
         return NULL;

@@ -28,6 +28,7 @@
 /* USER CODE BEGIN Includes */
 #include "bma250e.h"
 #include "bmg160.h"
+#include "bmi160.h"
 #include "Madgwick.h"
 /* USER CODE END Includes */
 
@@ -120,13 +121,15 @@ int main(void)
   /* USER CODE BEGIN WHILE */
  
   bma250e_context bma250 = bma250e_init(BMA250E_DEFAULT_SPI_BUS,-1, 10);
-  bmg160_context bmg160 = bmg160_init(BMG160_DEFAULT_SPI_BUS,-1, 10);
+  //bmg160_context bmg160 = bmg160_init(BMG160_DEFAULT_SPI_BUS,-1, 10);
+  //bmi160_context bmi160 = bmi160_init(BMG160_DEFAULT_SPI_BUS,0,-1, 10);
   float ax, ay, az, temperature;
   float gx, gy, gz;
   while (1)
   {
-    bma250e_update(bma250, &ax, &ay, &az, &temperature);
-    bmg160_update(bmg160, &gx, &gy, &gz);
+    //bma250e_update(bma250, &ax, &ay, &az, &temperature);
+    //bmg160_update(bmg160, &gx, &gy, &gz);
+    // bmi160_update(bmi160, &gx, &gy, &gz);
     Madgwick_updateIMU(gx, gy, gz, ax, ay, az);
     HAL_Delay(250);
     /* USER CODE END WHILE */

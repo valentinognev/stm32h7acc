@@ -129,7 +129,7 @@ int main(void)
   {
     //bma250e_update(bma250, &ax, &ay, &az, &temperature);
     //bmg160_update(bmg160, &gx, &gy, &gz);
-    bmi160_update(bmi160, &gx, &gy, &gz);
+    bmi160_update(bmi160);//, &gx, &gy, &gz);
     Madgwick_updateIMU(gx, gy, gz, ax, ay, az);
     HAL_Delay(250);
     /* USER CODE END WHILE */

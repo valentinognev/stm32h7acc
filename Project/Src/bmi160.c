@@ -167,8 +167,7 @@ bmi160_context bmi160_init(unsigned int bus, int address, int cs_pin,
     bmi160_delay_ms(BMI160_GEN_READ_WRITE_DELAY);
 
     /* set accel data rate as 200Hz */
-    bmi160_set_accel_output_data_rate(BMI160_ACCEL_OUTPUT_DATA_RATE_200HZ,
-                                      BMI160_ACCEL_OSR4_AVG1);
+    bmi160_set_accel_output_data_rate(BMI160_ACCEL_OUTPUT_DATA_RATE_200HZ, BMI160_ACCEL_OSR4_AVG1);
     bmi160_delay_ms(BMI160_GEN_READ_WRITE_DELAY);
 
     bmi160_set_accelerometer_scale(dev, BMI160_ACC_RANGE_2G);

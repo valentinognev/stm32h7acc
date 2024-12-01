@@ -125,11 +125,16 @@ int main(void)
   bmi160_context bmi160 = bmi160_init(BMG160_DEFAULT_SPI_BUS,0,-1, true);
   float ax, ay, az, temperature;
   float gx, gy, gz;
+  float mx, my, mz;
   while (1)
   {
     //bma250e_update(bma250, &ax, &ay, &az, &temperature);
     //bmg160_update(bmg160, &gx, &gy, &gz);
     bmi160_update(bmi160);//, &gx, &gy, &gz);
+    gx = bmi160->gyroX;    gy = bmi160->gyroY;    gz = bmi160->gyroZ;
+    ax = bmi160->accelX;   ay = bmi160->accelY;   az = bmi160->accelZ;
+    mx = bmi160->magX;     my = bmi160->magY;     mz = bmi160->magZ;
+
     Madgwick_updateIMU(gx, gy, gz, ax, ay, az);
     HAL_Delay(250);
     /* USER CODE END WHILE */

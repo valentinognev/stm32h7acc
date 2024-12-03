@@ -1,9 +1,9 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file    spi.h
+  * @file    sdmmc.h
   * @brief   This file contains all the function prototypes for
-  *          the spi.c file
+  *          the sdmmc.c file
   ******************************************************************************
   * @attention
   *
@@ -18,8 +18,8 @@
   */
 /* USER CODE END Header */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __SPI_H__
-#define __SPI_H__
+#ifndef __SDMMC_H__
+#define __SDMMC_H__
 
 #ifdef __cplusplus
 extern "C" {
@@ -32,21 +32,15 @@ extern "C" {
 
 /* USER CODE END Includes */
 
-extern SPI_HandleTypeDef hspi1;
+extern SD_HandleTypeDef hsd1;
 
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
 
-void MX_SPI1_Init(void);
+void MX_SDMMC1_SD_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-void SPI_TransmitReceive_DMA(uint8_t* transferData, uint8_t* receiveData, uint16_t size);
-void SPI_Transfer_DMA(uint8_t* transferData, uint16_t size);
-void SPI_Receive_DMA(uint8_t* receiveData, uint16_t size);
-void DMA1_ReceiveComplete(void);
-void DMA1_TransmitComplete(void);
-void SPI1_TransferError_Callback(void);
 
 /* USER CODE END Prototypes */
 
@@ -54,5 +48,5 @@ void SPI1_TransferError_Callback(void);
 }
 #endif
 
-#endif /* __SPI_H__ */
+#endif /* __SDMMC_H__ */
 

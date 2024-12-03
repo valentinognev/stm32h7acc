@@ -81,19 +81,27 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define GYRO1_CS_Pin GPIO_PIN_3
-#define GYRO1_CS_GPIO_Port GPIOA
+#define BUTTON_Pin GPIO_PIN_13
+#define BUTTON_GPIO_Port GPIOC
 #define ACCL1_CS_Pin GPIO_PIN_4
 #define ACCL1_CS_GPIO_Port GPIOA
-#define IMU1_SCK_Pin GPIO_PIN_5
-#define IMU1_SCK_GPIO_Port GPIOA
-#define IMU1_MISO_Pin GPIO_PIN_6
-#define IMU1_MISO_GPIO_Port GPIOA
-#define IMU1_MOSI_Pin GPIO_PIN_7
-#define IMU1_MOSI_GPIO_Port GPIOA
-#define ACCL1_IT_Pin GPIO_PIN_4
-#define ACCL1_IT_GPIO_Port GPIOC
-#define ACCL1_IT_EXTI_IRQn EXTI4_IRQn
+#define IMU_SCK_Pin GPIO_PIN_5
+#define IMU_SCK_GPIO_Port GPIOA
+#define IMU_MISO_Pin GPIO_PIN_6
+#define IMU_MISO_GPIO_Port GPIOA
+#define IMU_MOSI_Pin GPIO_PIN_7
+#define IMU_MOSI_GPIO_Port GPIOA
+#define ACCL1_CSC4_Pin GPIO_PIN_4
+#define ACCL1_CSC4_GPIO_Port GPIOC
+#define ACCL1_CSC4_EXTI_IRQn EXTI4_IRQn
+#define ACCL2_CS_Pin GPIO_PIN_5
+#define ACCL2_CS_GPIO_Port GPIOC
+#define ACCL7_CS_Pin GPIO_PIN_0
+#define ACCL7_CS_GPIO_Port GPIOB
+#define ACCL3_CS_Pin GPIO_PIN_1
+#define ACCL3_CS_GPIO_Port GPIOB
+#define DIODE_Pin GPIO_PIN_2
+#define DIODE_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 

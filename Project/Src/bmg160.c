@@ -29,7 +29,7 @@ static void _csOn(const bmg160_context dev)
     assert(dev != NULL);
 
     //if (dev->gpioCS)        mraa_gpio_write(dev->gpioCS, 0);
-    LL_GPIO_ResetOutputPin(GYRO1_CS_GPIO_Port, GYRO1_CS_Pin);
+    //LL_GPIO_ResetOutputPin(GYRO1_CS_GPIO_Port, GYRO1_CS_Pin);
 }
 
 static void _csOff(const bmg160_context dev)
@@ -37,7 +37,7 @@ static void _csOff(const bmg160_context dev)
     assert(dev != NULL);
 
     //if (dev->gpioCS)        mraa_gpio_write(dev->gpioCS, 1);
-    LL_GPIO_SetOutputPin(GYRO1_CS_GPIO_Port, GYRO1_CS_Pin);
+    //LL_GPIO_SetOutputPin(GYRO1_CS_GPIO_Port, GYRO1_CS_Pin);
 }
 
 // init

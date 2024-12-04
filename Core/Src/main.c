@@ -28,8 +28,6 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "bma250e.h"
-#include "bmg160.h"
 #include "bmi160.h"
 #include "Madgwick.h"
 /* USER CODE END Includes */
@@ -123,7 +121,8 @@ int main(void)
  
   //bma250e_context bma250 = bma250e_init(BMA250E_DEFAULT_SPI_BUS,-1, 10);
   //bmg160_context bmg160 = bmg160_init(BMG160_DEFAULT_SPI_BUS,-1, 10);
-  bmi160_context bmi160 = bmi160_init(BMG160_DEFAULT_SPI_BUS,0,-1, true);
+  bmi160_context bmi160;
+  bmi160_init(&bmi160, 0, -1, true);
   float ax, ay, az, temperature;
   float gx, gy, gz;
   float mx, my, mz;
@@ -131,10 +130,10 @@ int main(void)
   {
     //bma250e_update(bma250, &ax, &ay, &az, &temperature);
     //bmg160_update(bmg160, &gx, &gy, &gz);
-    bmi160_update(bmi160);//, &gx, &gy, &gz);
-    gx = bmi160->gyroX;    gy = bmi160->gyroY;    gz = bmi160->gyroZ;
-    ax = bmi160->accelX;   ay = bmi160->accelY;   az = bmi160->accelZ;
-    mx = bmi160->magX;     my = bmi160->magY;     mz = bmi160->magZ;
+    bmi160_update(&bmi160);//, &gx, &gy, &gz);
+    gx = bmi160.gyroX;    gy = bmi160.gyroY;    gz = bmi160.gyroZ;
+    ax = bmi160.accelX;   ay = bmi160.accelY;   az = bmi160.accelZ;
+    mx = bmi160.magX;     my = bmi160.magY;     mz = bmi160.magZ;
 
     Madgwick_updateIMU(gx, gy, gz, ax, ay, az);
     HAL_Delay(250);

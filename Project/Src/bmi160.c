@@ -17,9 +17,11 @@
 // #include <mraa/gpio.h>
 
 #include "bmi160.h"
+#include "bosch_bmi160.h"
+#include "spi.h"
 #include "main.h"
 
-// #include <upm_utilities.h>
+#define uint8_t        uint8_t
 
 // we have to do it the old skool way.  Note, this also means that
 // only one instance of the bmi160 driver can be active at a time.
@@ -95,8 +97,7 @@ void bmi160_delay_ms(uint32_t msek)
   HAL_Delay(msek);
 }
 
-
-bool bmi160_init(bmi160_context *dev, int cs_port, int cs_pin, bool enable_mag)
+uint8_t bmi160_init(bmi160_context *dev, GPIO_TypeDef* cs_port, int cs_pin, bool enable_mag)
 {
     // zero out context
     memset((void *)&dev, 0, sizeof(bmi160_context));
@@ -105,6 +106,10 @@ bool bmi160_init(bmi160_context *dev, int cs_port, int cs_pin, bool enable_mag)
     // A hardware controlled pin should specify cs as -1.
     // init the driver interface functions
     // Init our driver interface pointers
+    dev->bmi160.cs_pin = cs_pin;
+    dev->bmi160.cs_port = cs_port;
+    dev->bmi160.mag_manual_enable = enable_mag;
+
     if (bmi160_init_bus(&(dev->bmi160)))
     {
         // printf("%s: bmi160_bus_init() failed.\n", __FUNCTION__);
@@ -131,31 +136,31 @@ bool bmi160_init(bmi160_context *dev, int cs_port, int cs_pin, bool enable_mag)
     bmi160_enable_magnetometer(dev, enable_mag);
 
     /* Set the accel mode as Normal write in the register 0x7E */
-    bmi160_set_command_register(ACCEL_MODE_NORMAL);
+    bmi160_set_command_register(&(dev->bmi160), ACCEL_MODE_NORMAL);
 
     /* bmi160_delay_ms in ms */
     bmi160_delay_ms(C_BMI160_THIRTY_U8X);
 
     /* Set the gyro mode as Normal write in the register 0x7E */
-    bmi160_set_command_register(GYRO_MODE_NORMAL);
+    bmi160_set_command_register(&(dev->bmi160), GYRO_MODE_NORMAL);
 
     /* bmi160_delay_ms in ms */
     bmi160_delay_ms(C_BMI160_THIRTY_U8X);
 
     /* Set the accel bandwidth as OSRS4 */
-    bmi160_set_accel_bw(BMI160_ACCEL_OSR4_AVG1);
+    bmi160_set_accel_bw(&(dev->bmi160), BMI160_ACCEL_OSR4_AVG1);
     bmi160_delay_ms(BMI160_GEN_READ_WRITE_DELAY);
 
     /* Set the gryo bandwidth as Normal */
-    bmi160_set_gyro_bw(BMI160_GYRO_NORMAL_MODE);
+    bmi160_set_gyro_bw(&(dev->bmi160), BMI160_GYRO_NORMAL_MODE);
     bmi160_delay_ms(BMI160_GEN_READ_WRITE_DELAY);
 
     /* set gyro data rate as 200Hz */
-    bmi160_set_gyro_output_data_rate(BMI160_GYRO_OUTPUT_DATA_RATE_200HZ);
+    bmi160_set_gyro_output_data_rate(&(dev->bmi160), BMI160_GYRO_OUTPUT_DATA_RATE_200HZ);
     bmi160_delay_ms(BMI160_GEN_READ_WRITE_DELAY);
 
     /* set accel data rate as 200Hz */
-    bmi160_set_accel_output_data_rate(BMI160_ACCEL_OUTPUT_DATA_RATE_200HZ, BMI160_ACCEL_OSR4_AVG1);
+    bmi160_set_accel_output_data_rate(&(dev->bmi160), BMI160_ACCEL_OUTPUT_DATA_RATE_200HZ, BMI160_ACCEL_OSR4_AVG1);
     bmi160_delay_ms(BMI160_GEN_READ_WRITE_DELAY);
 
     bmi160_set_accelerometer_scale(dev, BMI160_ACC_RANGE_2G);
@@ -164,7 +169,7 @@ bool bmi160_init(bmi160_context *dev, int cs_port, int cs_pin, bool enable_mag)
     return dev;
 }
 
-void bmi160_close(bmi160_context dev)
+void bmi160_close(bmi160_context* dev)
 {
     // assert(dev != NULL);
 
@@ -183,7 +188,7 @@ void bmi160_close(bmi160_context dev)
     // free(dev);
 }
 
-void bmi160_update(const bmi160_context dev)
+void bmi160_update(bmi160_context* dev)
 {
     assert(dev != NULL); 
 
@@ -192,18 +197,18 @@ void bmi160_update(const bmi160_context dev)
     struct bmi160_mag_xyz_s32_t magxyz;
 
     // read gyro data
-    bmi160_read_gyro_xyz(&gyroxyz);
+    bmi160_read_gyro_xyz(&(dev->bmi160), &gyroxyz);
 
     // read accel data
-    bmi160_read_accel_xyz(&accelxyz);
+    bmi160_read_accel_xyz(&(dev->bmi160), &accelxyz);
 
     // read mag data
     if (dev->magEnabled)
-        bmi160_bmm150_mag_compensate_xyz(&magxyz);
+        bmi160_bmm150_mag_compensate_xyz(&(dev->bmi160), &magxyz);
 
     // read the sensor time
     uint32_t v_sensor_time;
-    bmi160_get_sensor_time(&v_sensor_time);
+    bmi160_get_sensor_time(&(dev->bmi160), &v_sensor_time);
     dev->sensorTime = (unsigned int)v_sensor_time;
 
     dev->accelX = (float)accelxyz.x;
@@ -222,7 +227,7 @@ void bmi160_update(const bmi160_context dev)
     }
 }
 
-void bmi160_update2(const bmi160_context dev) 
+void bmi160_update2(bmi160_context* dev) 
 {
    	float aRes = 16.0 / 32768.0;			//ares value for full range (16g) readings
 	float gRes = 2000.0 / 32768.0;			//gres value for full range (2000dps) readings
@@ -235,18 +240,18 @@ void bmi160_update2(const bmi160_context dev)
     struct bmi160_mag_xyz_s32_t magxyz;
 
     // read gyro data
-    bmi160_read_gyro_xyz(&gyroxyz);
+    bmi160_read_gyro_xyz(&(dev->bmi160), &gyroxyz);
 
     // read accel data
-    bmi160_read_accel_xyz(&accelxyz);
+    bmi160_read_accel_xyz(&(dev->bmi160), &accelxyz);
 
     // read mag data
     if (dev->magEnabled)
-        bmi160_bmm150_mag_compensate_xyz(&magxyz);
+        bmi160_bmm150_mag_compensate_xyz(&(dev->bmi160), &magxyz);
 
     // read the sensor time
     uint32_t v_sensor_time;
-    bmi160_get_sensor_time(&v_sensor_time);
+    bmi160_get_sensor_time(&(dev->bmi160), &v_sensor_time);
 
 	float ax, ay, az, gx, gy, gz, mx, my, mz;
 
@@ -310,7 +315,7 @@ void bmi160_update2(const bmi160_context dev)
 	}
 }
 
-void bmi160_set_accelerometer_scale(const bmi160_context dev,
+void bmi160_set_accelerometer_scale(bmi160_context* dev,
                                     BMI160_ACC_RANGE_T scale)
 {
     assert(dev != NULL);
@@ -346,13 +351,12 @@ void bmi160_set_accelerometer_scale(const bmi160_context dev,
         break;
     }
 
-    bmi160_set_accel_range(v_range);
+    bmi160_set_accel_range(&(dev->bmi160), v_range);
 
     return;
 }
 
-void bmi160_set_gyroscope_scale(const bmi160_context dev,
-                                BMI160_GYRO_RANGE_T scale)
+void bmi160_set_gyroscope_scale(bmi160_context* dev, BMI160_GYRO_RANGE_T scale)
 {
     assert(dev != NULL);
 
@@ -393,12 +397,12 @@ void bmi160_set_gyroscope_scale(const bmi160_context dev,
         break;
     }
 
-    bmi160_set_gyro_range(v_range);
+    bmi160_set_gyro_range(&(dev->bmi160), v_range);
 
     return;
 }
 
-void bmi160_get_accelerometer(const bmi160_context dev, float *x, float *y,
+void bmi160_get_accelerometer(const bmi160_context* dev, float *x, float *y,
                               float *z)
 {
     assert(dev != NULL);
@@ -413,8 +417,7 @@ void bmi160_get_accelerometer(const bmi160_context dev, float *x, float *y,
         *z = dev->accelZ * dev->accelScale;
 }
 
-void bmi160_get_gyroscope(const bmi160_context dev, float *x, float *y,
-                          float *z)
+void bmi160_get_gyroscope(const bmi160_context* dev, float *x, float *y, float *z)
 {
     assert(dev != NULL);
 
@@ -428,7 +431,7 @@ void bmi160_get_gyroscope(const bmi160_context dev, float *x, float *y,
         *z = dev->gyroZ * dev->gyroScale;
 }
 
-void bmi160_get_magnetometer(const bmi160_context dev, float *x, float *y,
+void bmi160_get_magnetometer(const bmi160_context* dev, float *x, float *y,
                              float *z)
 {
     assert(dev != NULL);
@@ -479,9 +482,9 @@ void bmi160_enable_magnetometer(bmi160_context *dev, bool enable)
     // butchered from support example
     if (!enable)
     {
-        bmi160_set_bmm150_mag_and_secondary_if_power_mode(MAG_SUSPEND_MODE);
+        bmi160_set_bmm150_mag_and_secondary_if_power_mode(&(dev->bmi160), MAG_SUSPEND_MODE);
         bmi160_delay_ms(BMI160_GEN_READ_WRITE_DELAY);
-        bmi160_set_if_mode(0x00);
+        bmi160_set_if_mode(&(dev->bmi160), 0x00);
         bmi160_delay_ms(BMI160_GEN_READ_WRITE_DELAY);
 
         dev->magEnabled = false;
@@ -493,7 +496,7 @@ void bmi160_enable_magnetometer(bmi160_context *dev, bool enable)
     {
         uint8_t v_bmm_chip_id_u8 = BMI160_INIT_VALUE;
         /* Init the magnetometer */
-        bmi160_bmm150_mag_interface_init(&v_bmm_chip_id_u8);
+        bmi160_bmm150_mag_interface_init(&(dev->bmi160), &v_bmm_chip_id_u8);
 
         /* bmi160_delay_ms in ms*/
         bmi160_delay_ms(BMI160_GEN_READ_WRITE_DELAY);
@@ -547,8 +550,8 @@ void bmi160_calibrateAccelGyro(const bmi160_context *dev, calData* cal)
 		int16_t accel_temp[3] = { 0, 0, 0 }, gyro_temp[3] = { 0, 0, 0 };
 
 		//bmi160_bus_read(&(dev->bmi160), BMI160_GYR_X_L, 12, &data[0]);    // Read the 12 raw data registers into data array
-        bmi160_read_accel_xyz(&accel);
-        bmi160_read_gyro_xyz(&gyro);
+        bmi160_read_accel_xyz(&(dev->bmi160), &accel);
+        bmi160_read_gyro_xyz(&(dev->bmi160), &gyro);
 
 		// gyro_temp[0] = ((int16_t)data[1] << 8) | data[0];		  // Turn the MSB and LSB into a signed 16-bit value
 		// gyro_temp[1] = ((int16_t)data[3] << 8) | data[2];

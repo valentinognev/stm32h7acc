@@ -100,10 +100,10 @@ struct yas_vector fifo_vector_xyz;
  *
 */
 /* JET - renamed from bmi160_init to avoid conflict with UPM code */
-BMI160_RETURN_FUNCTION_TYPE bmi160_init_bus(bmi160_t *bmi160)
+uint8_t bmi160_init_bus(bmi160_t *bmi160)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     uint8_t v_pmu_data_u8 = BMI160_INIT_VALUE;
     /* assign bmi160 ptr */
@@ -134,10 +134,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_init_bus(bmi160_t *bmi160)
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_write_reg(const bmi160_t *bmi160, uint8_t v_addr_u8, uint8_t *v_data_u8, uint8_t v_len_u8)
+uint8_t bmi160_write_reg(const bmi160_t *bmi160, uint8_t v_addr_u8, uint8_t *v_data_u8, uint8_t v_len_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) 
     {
@@ -166,10 +166,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_write_reg(const bmi160_t *bmi160, uint8_t v_a
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_reg(const bmi160_t *bmi160, uint8_t v_addr_u8, uint8_t *v_data_u8, uint8_t v_len_u8)
+uint8_t bmi160_read_reg(const bmi160_t *bmi160, uint8_t v_addr_u8, uint8_t *v_data_u8, uint8_t v_len_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) 
     {
@@ -197,10 +197,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_read_reg(const bmi160_t *bmi160, uint8_t v_ad
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_fatal_err(const bmi160_t *bmi160, uint8_t *v_fatal_err_u8)
+uint8_t bmi160_get_fatal_err(const bmi160_t *bmi160, uint8_t *v_fatal_err_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -236,10 +236,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_fatal_err(const bmi160_t *bmi160, uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_err_code(const bmi160_t *bmi160, uint8_t *v_err_code_u8)
+uint8_t bmi160_get_err_code(const bmi160_t *bmi160, uint8_t *v_err_code_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -265,10 +265,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_err_code(const bmi160_t *bmi160, uint8_t 
 //  *
 //  *
 // */
-// BMI160_RETURN_FUNCTION_TYPE bmi160_get_i2c_fail_err(const bmi160_t *bmi160, uint8_t *v_i2c_err_code_u8)
+// uint8_t bmi160_get_i2c_fail_err(const bmi160_t *bmi160, uint8_t *v_i2c_err_code_u8)
 // {
 //     /* variable used for return the status of communication result*/
-//     BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+//     uint8_t com_rslt = E_BMI160_COMM_RES;
 //     uint8_t v_data_u8 = BMI160_INIT_VALUE;
 //     /* check the bmi160 structure as NULL*/
 //     if (bmi160 == BMI160_NULL) {
@@ -298,10 +298,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_err_code(const bmi160_t *bmi160, uint8_t 
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_drop_cmd_err(const bmi160_t *bmi160, uint8_t *v_drop_cmd_err_u8)
+uint8_t bmi160_get_drop_cmd_err(const bmi160_t *bmi160, uint8_t *v_drop_cmd_err_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -330,10 +330,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_drop_cmd_err(const bmi160_t *bmi160, uint
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_dada_rdy_err(const bmi160_t *bmi160, uint8_t *v_mag_data_rdy_err_u8)
+uint8_t bmi160_get_mag_dada_rdy_err(const bmi160_t *bmi160, uint8_t *v_mag_data_rdy_err_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -362,12 +362,12 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_dada_rdy_err(const bmi160_t *bmi160, 
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_error_status(const bmi160_t *bmi160, uint8_t *v_fatal_er_u8r,
+uint8_t bmi160_get_error_status(const bmi160_t *bmi160, uint8_t *v_fatal_er_u8r,
 uint8_t *v_err_code_u8, uint8_t *v_i2c_fail_err_u8,
 uint8_t *v_drop_cmd_err_u8, uint8_t *v_mag_data_rdy_err_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) 
@@ -417,10 +417,10 @@ uint8_t *v_drop_cmd_err_u8, uint8_t *v_mag_data_rdy_err_u8)
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_power_mode_stat(const bmi160_t *bmi160, uint8_t *v_mag_power_mode_stat_u8)
+uint8_t bmi160_get_mag_power_mode_stat(const bmi160_t *bmi160, uint8_t *v_mag_power_mode_stat_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) 
@@ -459,10 +459,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_power_mode_stat(const bmi160_t *bmi16
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_power_mode_stat(const bmi160_t *bmi160, uint8_t *v_gyro_power_mode_stat_u8)
+uint8_t bmi160_get_gyro_power_mode_stat(const bmi160_t *bmi160, uint8_t *v_gyro_power_mode_stat_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) 
@@ -502,10 +502,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_power_mode_stat(const bmi160_t *bmi1
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_power_mode_stat(const bmi160_t *bmi160, uint8_t *v_accel_power_mode_stat_u8)
+uint8_t bmi160_get_accel_power_mode_stat(const bmi160_t *bmi160, uint8_t *v_accel_power_mode_stat_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) 
@@ -528,10 +528,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_power_mode_stat(const bmi160_t *bmi
  *    @retval -1 -> Error
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_mag_interface_normal(const bmi160_t *bmi160)
+uint8_t bmi160_set_mag_interface_normal(const bmi160_t *bmi160)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = BMI160_INIT_VALUE;
+    uint8_t com_rslt = BMI160_INIT_VALUE;
     /* aim to check the result of switching mag normal */
     uint8_t v_try_times_u8 = BMI160_MAG_NOAMRL_SWITCH_TIMES;
     uint8_t v_mag_pum_status_u8 = BMI160_INIT_VALUE;
@@ -576,10 +576,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_mag_interface_normal(const bmi160_t *bmi1
  *    @retval -1 -> Error
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_mag_x(const bmi160_t *bmi160, int16_t *v_mag_x_s16, uint8_t v_sensor_select_u8)
+uint8_t bmi160_read_mag_x(const bmi160_t *bmi160, int16_t *v_mag_x_s16, uint8_t v_sensor_select_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     /* Array contains the mag X lSB and MSB data
         v_data_u8[0] - LSB
         v_data_u8[1] - MSB*/
@@ -634,9 +634,9 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_read_mag_x(const bmi160_t *bmi160, int16_t *v
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_mag_y(const bmi160_t *bmi160, int16_t *v_mag_y_s16, uint8_t v_sensor_select_u8)
+uint8_t bmi160_read_mag_y(const bmi160_t *bmi160, int16_t *v_mag_y_s16, uint8_t v_sensor_select_u8)
 {
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_OUT_OF_RANGE;
+    uint8_t com_rslt = E_BMI160_OUT_OF_RANGE;
     /* Array contains the mag Y lSB and MSB data
         v_data_u8[0] - LSB
         v_data_u8[1] - MSB*/
@@ -691,10 +691,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_read_mag_y(const bmi160_t *bmi160, int16_t *v
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_mag_z(const bmi160_t *bmi160, int16_t *v_mag_z_s16, uint8_t v_sensor_select_u8)
+uint8_t bmi160_read_mag_z(const bmi160_t *bmi160, int16_t *v_mag_z_s16, uint8_t v_sensor_select_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     /* Array contains the mag Z lSB and MSB data
         v_data_u8[0] - LSB
         v_data_u8[1] - MSB*/
@@ -742,10 +742,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_read_mag_z(const bmi160_t *bmi160, int16_t *v
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_mag_r(const bmi160_t *bmi160, int16_t *v_mag_r_s16)
+uint8_t bmi160_read_mag_r(const bmi160_t *bmi160, int16_t *v_mag_r_s16)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     /* Array contains the mag R lSB and MSB data
         v_data_u8[0] - LSB
         v_data_u8[1] - MSB*/
@@ -786,10 +786,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_read_mag_r(const bmi160_t *bmi160, int16_t *v
  *    @retval -1 -> Error *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_mag_xyz(const bmi160_t *bmi160, struct bmi160_mag_t *mag, uint8_t v_sensor_select_u8)
+uint8_t bmi160_read_mag_xyz(const bmi160_t *bmi160, struct bmi160_mag_t *mag, uint8_t v_sensor_select_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     /* Array contains the mag XYZ lSB and MSB data
         v_data_u8[0] - X-LSB
         v_data_u8[1] - X-MSB
@@ -880,10 +880,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_read_mag_xyz(const bmi160_t *bmi160, struct b
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_mag_xyzr(const bmi160_t *bmi160, struct bmi160_mag_xyzr_t *mag)
+uint8_t bmi160_read_mag_xyzr(const bmi160_t *bmi160, struct bmi160_mag_xyzr_t *mag)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8[BMI160_MAG_XYZR_DATA_SIZE] = {
     BMI160_INIT_VALUE, BMI160_INIT_VALUE,
     BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE,
@@ -955,10 +955,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_read_mag_xyzr(const bmi160_t *bmi160, struct 
  *    @retval -1 -> Error
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_gyro_x(const bmi160_t *bmi160, int16_t *v_gyro_x_s16)
+uint8_t bmi160_read_gyro_x(const bmi160_t *bmi160, int16_t *v_gyro_x_s16)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     /* Array contains the gyro X lSB and MSB data
         v_data_u8[0] - LSB
         v_data_u8[MSB_ONE] - MSB*/
@@ -997,10 +997,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_read_gyro_x(const bmi160_t *bmi160, int16_t *
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_gyro_y(const bmi160_t *bmi160, int16_t *v_gyro_y_s16)
+uint8_t bmi160_read_gyro_y(const bmi160_t *bmi160, int16_t *v_gyro_y_s16)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     /* Array contains the gyro Y lSB and MSB data
         v_data_u8[LSB_ZERO] - LSB
         v_data_u8[MSB_ONE] - MSB*/
@@ -1040,10 +1040,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_read_gyro_y(const bmi160_t *bmi160, int16_t *
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_gyro_z(const bmi160_t *bmi160, int16_t *v_gyro_z_s16)
+uint8_t bmi160_read_gyro_z(const bmi160_t *bmi160, int16_t *v_gyro_z_s16)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     /* Array contains the gyro Z lSB and MSB data
         v_data_u8[LSB_ZERO] - LSB
         v_data_u8[MSB_ONE] - MSB*/
@@ -1083,10 +1083,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_read_gyro_z(const bmi160_t *bmi160, int16_t *
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_gyro_xyz(const bmi160_t *bmi160, struct bmi160_gyro_t *gyro)
+uint8_t bmi160_read_gyro_xyz(const bmi160_t *bmi160, struct bmi160_gyro_t *gyro)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     /* Array contains the mag XYZ lSB and MSB data
         v_data_u8[0] - X-LSB
         v_data_u8[1] - X-MSB
@@ -1138,10 +1138,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_read_gyro_xyz(const bmi160_t *bmi160, struct 
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_accel_x(const bmi160_t *bmi160, int16_t *v_accel_x_s16)
+uint8_t bmi160_read_accel_x(const bmi160_t *bmi160, int16_t *v_accel_x_s16)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     /* Array contains the accel X lSB and MSB data
         v_data_u8[0] - LSB
         v_data_u8[1] - MSB*/
@@ -1181,10 +1181,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_read_accel_x(const bmi160_t *bmi160, int16_t 
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_accel_y(const bmi160_t *bmi160, int16_t *v_accel_y_s16)
+uint8_t bmi160_read_accel_y(const bmi160_t *bmi160, int16_t *v_accel_y_s16)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     /* Array contains the accel Y lSB and MSB data
         v_data_u8[0] - LSB
         v_data_u8[1] - MSB*/
@@ -1224,10 +1224,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_read_accel_y(const bmi160_t *bmi160, int16_t 
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_accel_z(const bmi160_t *bmi160, int16_t *v_accel_z_s16)
+uint8_t bmi160_read_accel_z(const bmi160_t *bmi160, int16_t *v_accel_z_s16)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     /* Array contains the accel Z lSB and MSB data
         a_data_u8r[LSB_ZERO] - LSB
         a_data_u8r[MSB_ONE] - MSB*/
@@ -1267,10 +1267,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_read_accel_z(const bmi160_t *bmi160, int16_t 
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_accel_xyz(const bmi160_t *bmi160, struct bmi160_accel_t *accel)
+uint8_t bmi160_read_accel_xyz(const bmi160_t *bmi160, struct bmi160_accel_t *accel)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     /* Array contains the accel XYZ lSB and MSB data
     a_data_u8r[0] - X-LSB
     a_data_u8r[1] - X-MSB
@@ -1316,10 +1316,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_read_accel_xyz(const bmi160_t *bmi160, struct
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_sensor_time(const bmi160_t *bmi160, uint32_t *v_sensor_time_u32)
+uint8_t bmi160_get_sensor_time(const bmi160_t *bmi160, uint32_t *v_sensor_time_u32)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     /* Array contains the sensor time it is 32 bit data
     a_data_u8r[0] - sensor time
     a_data_u8r[1] - sensor time
@@ -1360,10 +1360,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_sensor_time(const bmi160_t *bmi160, uint3
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_selftest(const bmi160_t *bmi160, uint8_t *v_gyro_selftest_u8)
+uint8_t bmi160_get_gyro_selftest(const bmi160_t *bmi160, uint8_t *v_gyro_selftest_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) 
@@ -1397,11 +1397,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_selftest(const bmi160_t *bmi160, uin
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_manual_operation_stat(const bmi160_t *bmi160, uint8_t
+uint8_t bmi160_get_mag_manual_operation_stat(const bmi160_t *bmi160, uint8_t
 *v_mag_manual_stat_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -1428,11 +1428,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_manual_operation_stat(const bmi160_t 
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_foc_rdy(const bmi160_t *bmi160, uint8_t
+uint8_t bmi160_get_foc_rdy(const bmi160_t *bmi160, uint8_t
 *v_foc_rdy_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -1462,11 +1462,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_foc_rdy(const bmi160_t *bmi160, uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_nvm_rdy(const bmi160_t *bmi160, uint8_t
+uint8_t bmi160_get_nvm_rdy(const bmi160_t *bmi160, uint8_t
 *v_nvm_rdy_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -1493,11 +1493,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_nvm_rdy(const bmi160_t *bmi160, uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_data_rdy_mag(const bmi160_t *bmi160, uint8_t
+uint8_t bmi160_get_data_rdy_mag(const bmi160_t *bmi160, uint8_t
 *v_data_rdy_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -1524,11 +1524,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_data_rdy_mag(const bmi160_t *bmi160, uint
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_data_rdy(const bmi160_t *bmi160, uint8_t
+uint8_t bmi160_get_gyro_data_rdy(const bmi160_t *bmi160, uint8_t
 *v_data_rdy_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -1555,11 +1555,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_data_rdy(const bmi160_t *bmi160, uin
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_data_rdy(const bmi160_t *bmi160, uint8_t
+uint8_t bmi160_get_accel_data_rdy(const bmi160_t *bmi160, uint8_t
 *v_data_rdy_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -1595,11 +1595,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_data_rdy(const bmi160_t *bmi160, ui
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_step_intr(const bmi160_t *bmi160, uint8_t
+uint8_t bmi160_get_stat0_step_intr(const bmi160_t *bmi160, uint8_t
 *v_step_intr_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -1637,11 +1637,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_step_intr(const bmi160_t *bmi160, u
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_significant_intr(const bmi160_t *bmi160, uint8_t
+uint8_t bmi160_get_stat0_significant_intr(const bmi160_t *bmi160, uint8_t
 *v_significant_intr_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -1675,11 +1675,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_significant_intr(const bmi160_t *bm
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_any_motion_intr(const bmi160_t *bmi160, uint8_t
+uint8_t bmi160_get_stat0_any_motion_intr(const bmi160_t *bmi160, uint8_t
 *v_any_motion_intr_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -1715,11 +1715,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_any_motion_intr(const bmi160_t *bmi
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_pmu_trigger_intr(const bmi160_t *bmi160, uint8_t
+uint8_t bmi160_get_stat0_pmu_trigger_intr(const bmi160_t *bmi160, uint8_t
 *v_pmu_trigger_intr_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -1770,11 +1770,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_pmu_trigger_intr(const bmi160_t *bm
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_double_tap_intr(const bmi160_t *bmi160, uint8_t
+uint8_t bmi160_get_stat0_double_tap_intr(const bmi160_t *bmi160, uint8_t
 *v_double_tap_intr_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -1825,11 +1825,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_double_tap_intr(const bmi160_t *bmi
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_single_tap_intr(const bmi160_t *bmi160, uint8_t
+uint8_t bmi160_get_stat0_single_tap_intr(const bmi160_t *bmi160, uint8_t
 *v_single_tap_intr_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -1882,11 +1882,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_single_tap_intr(const bmi160_t *bmi
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_orient_intr(const bmi160_t *bmi160, uint8_t
+uint8_t bmi160_get_stat0_orient_intr(const bmi160_t *bmi160, uint8_t
 *v_orient_intr_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -1932,11 +1932,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_orient_intr(const bmi160_t *bmi160,
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_flat_intr(const bmi160_t *bmi160, uint8_t
+uint8_t bmi160_get_stat0_flat_intr(const bmi160_t *bmi160, uint8_t
 *v_flat_intr_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -1987,11 +1987,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_flat_intr(const bmi160_t *bmi160, u
  *    @retval -1 -> Error
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat1_high_g_intr(const bmi160_t *bmi160, uint8_t
+uint8_t bmi160_get_stat1_high_g_intr(const bmi160_t *bmi160, uint8_t
 *v_high_g_intr_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -2039,11 +2039,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat1_high_g_intr(const bmi160_t *bmi160,
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat1_low_g_intr(const bmi160_t *bmi160, uint8_t
+uint8_t bmi160_get_stat1_low_g_intr(const bmi160_t *bmi160, uint8_t
 *v_low_g_intr_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -2081,11 +2081,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat1_low_g_intr(const bmi160_t *bmi160, 
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat1_data_rdy_intr(const bmi160_t *bmi160, uint8_t
+uint8_t bmi160_get_stat1_data_rdy_intr(const bmi160_t *bmi160, uint8_t
 *v_data_rdy_intr_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -2121,11 +2121,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat1_data_rdy_intr(const bmi160_t *bmi16
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat1_fifo_full_intr(const bmi160_t *bmi160, uint8_t
+uint8_t bmi160_get_stat1_fifo_full_intr(const bmi160_t *bmi160, uint8_t
 *v_fifo_full_intr_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -2162,11 +2162,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat1_fifo_full_intr(const bmi160_t *bmi1
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat1_fifo_wm_intr(const bmi160_t *bmi160, uint8_t
+uint8_t bmi160_get_stat1_fifo_wm_intr(const bmi160_t *bmi160, uint8_t
 *v_fifo_wm_intr_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -2202,7 +2202,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat1_fifo_wm_intr(const bmi160_t *bmi160
  *    @note THRESHOLD
  *    @note bmi160_set_intr_slow_no_motion_thres()
  *    @note SLOW/NO MOTION SELECT
- *    @note bmi160_set_intr_slow_no_motion_select()
+ *    @note bmi160_set_intr_slow_no_motion_select(bmi160, )
  *
  *    @return results of bus communication function
  *    @retval 0 -> Success
@@ -2210,11 +2210,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat1_fifo_wm_intr(const bmi160_t *bmi160
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat1_nomotion_intr(const bmi160_t *bmi160, uint8_t
+uint8_t bmi160_get_stat1_nomotion_intr(const bmi160_t *bmi160, uint8_t
 *v_nomotion_intr_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -2243,11 +2243,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat1_nomotion_intr(const bmi160_t *bmi16
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_any_motion_first_x(const bmi160_t *bmi160, uint8_t
+uint8_t bmi160_get_stat2_any_motion_first_x(const bmi160_t *bmi160, uint8_t
 *v_anymotion_first_x_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -2279,11 +2279,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_any_motion_first_x(const bmi160_t *
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_any_motion_first_y(const bmi160_t *bmi160, uint8_t
+uint8_t bmi160_get_stat2_any_motion_first_y(const bmi160_t *bmi160, uint8_t
 *v_any_motion_first_y_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -2316,11 +2316,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_any_motion_first_y(const bmi160_t *
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_any_motion_first_z(const bmi160_t *bmi160, uint8_t
+uint8_t bmi160_get_stat2_any_motion_first_z(const bmi160_t *bmi160, uint8_t
 *v_any_motion_first_z_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -2352,11 +2352,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_any_motion_first_z(const bmi160_t *
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_any_motion_sign(const bmi160_t *bmi160, uint8_t
+uint8_t bmi160_get_stat2_any_motion_sign(const bmi160_t *bmi160, uint8_t
 *v_anymotion_sign_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -2387,11 +2387,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_any_motion_sign(const bmi160_t *bmi
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_tap_first_x(const bmi160_t *bmi160, uint8_t
+uint8_t bmi160_get_stat2_tap_first_x(const bmi160_t *bmi160, uint8_t
 *v_tap_first_x_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -2424,11 +2424,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_tap_first_x(const bmi160_t *bmi160,
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_tap_first_y(const bmi160_t *bmi160, uint8_t
+uint8_t bmi160_get_stat2_tap_first_y(const bmi160_t *bmi160, uint8_t
 *v_tap_first_y_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -2461,11 +2461,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_tap_first_y(const bmi160_t *bmi160,
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_tap_first_z(const bmi160_t *bmi160, uint8_t
+uint8_t bmi160_get_stat2_tap_first_z(const bmi160_t *bmi160, uint8_t
 *v_tap_first_z_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -2497,11 +2497,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_tap_first_z(const bmi160_t *bmi160,
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_tap_sign(const bmi160_t *bmi160, uint8_t
+uint8_t bmi160_get_stat2_tap_sign(const bmi160_t *bmi160, uint8_t
 *v_tap_sign_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -2534,11 +2534,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_tap_sign(const bmi160_t *bmi160, ui
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat3_high_g_first_x(const bmi160_t *bmi160, uint8_t
+uint8_t bmi160_get_stat3_high_g_first_x(const bmi160_t *bmi160, uint8_t
 *v_high_g_first_x_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -2571,11 +2571,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat3_high_g_first_x(const bmi160_t *bmi1
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat3_high_g_first_y(const bmi160_t *bmi160, uint8_t
+uint8_t bmi160_get_stat3_high_g_first_y(const bmi160_t *bmi160, uint8_t
 *v_high_g_first_y_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -2608,11 +2608,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat3_high_g_first_y(const bmi160_t *bmi1
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat3_high_g_first_z(const bmi160_t *bmi160, uint8_t
+uint8_t bmi160_get_stat3_high_g_first_z(const bmi160_t *bmi160, uint8_t
 *v_high_g_first_z_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -2645,11 +2645,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat3_high_g_first_z(const bmi160_t *bmi1
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat3_high_g_sign(const bmi160_t *bmi160, uint8_t
+uint8_t bmi160_get_stat3_high_g_sign(const bmi160_t *bmi160, uint8_t
 *v_high_g_sign_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -2681,11 +2681,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat3_high_g_sign(const bmi160_t *bmi160,
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat3_orient_xy(const bmi160_t *bmi160, uint8_t
+uint8_t bmi160_get_stat3_orient_xy(const bmi160_t *bmi160, uint8_t
 *v_orient_xy_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -2714,11 +2714,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat3_orient_xy(const bmi160_t *bmi160, u
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat3_orient_z(const bmi160_t *bmi160, uint8_t
+uint8_t bmi160_get_stat3_orient_z(const bmi160_t *bmi160, uint8_t
 *v_orient_z_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -2748,11 +2748,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat3_orient_z(const bmi160_t *bmi160, ui
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat3_flat(const bmi160_t *bmi160, uint8_t
+uint8_t bmi160_get_stat3_flat(const bmi160_t *bmi160, uint8_t
 *v_flat_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -2780,10 +2780,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat3_flat(const bmi160_t *bmi160, uint8_
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_temp(const bmi160_t *bmi160, int16_t *v_temp_s16)
+uint8_t bmi160_get_temp(const bmi160_t *bmi160, int16_t *v_temp_s16)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     /* Array contains the temperature lSB and MSB data
     v_data_u8[0] - LSB
     v_data_u8[1] - MSB*/
@@ -2817,10 +2817,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_temp(const bmi160_t *bmi160, int16_t *v_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_fifo_length(const bmi160_t *bmi160, uint32_t *v_fifo_length_u32)
+uint8_t bmi160_fifo_length(const bmi160_t *bmi160, uint32_t *v_fifo_length_u32)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     /* Array contains the fifo length data
     v_data_u8[0] - fifo length
     v_data_u8[1] - fifo length*/
@@ -2860,10 +2860,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_fifo_length(const bmi160_t *bmi160, uint32_t 
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_fifo_data(const bmi160_t *bmi160, uint8_t *v_fifodata_u8, uint16_t v_fifo_length_u16)
+uint8_t bmi160_fifo_data(const bmi160_t *bmi160, uint8_t *v_fifodata_u8, uint16_t v_fifo_length_u16)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) 
     {
@@ -2906,10 +2906,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_fifo_data(const bmi160_t *bmi160, uint8_t *v_
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_output_data_rate(const bmi160_t *bmi160, uint8_t *v_output_data_rate_u8)
+uint8_t bmi160_get_accel_output_data_rate(const bmi160_t *bmi160, uint8_t *v_output_data_rate_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -2984,10 +2984,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_output_data_rate(const bmi160_t *bm
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_output_data_rate(const bmi160_t *bmi160, uint8_t v_output_data_rate_u8, uint8_t v_accel_bw_u8)
+uint8_t bmi160_set_accel_output_data_rate(const bmi160_t *bmi160, uint8_t v_output_data_rate_u8, uint8_t v_accel_bw_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     uint8_t v_odr_u8 = BMI160_INIT_VALUE;
     uint8_t v_assign_bw = BMI160_ASSIGN_DATA;
@@ -3207,10 +3207,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_output_data_rate(const bmi160_t *bm
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_bw(const bmi160_t *bmi160, uint8_t *v_bw_u8)
+uint8_t bmi160_get_accel_bw(const bmi160_t *bmi160, uint8_t *v_bw_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -3267,10 +3267,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_bw(const bmi160_t *bmi160, uint8_t 
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_bw(const bmi160_t *bmi160, uint8_t v_bw_u8)
+uint8_t bmi160_set_accel_bw(const bmi160_t *bmi160, uint8_t v_bw_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) 
@@ -3316,10 +3316,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_bw(const bmi160_t *bmi160, uint8_t 
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_under_sampling_parameter(const bmi160_t *bmi160, uint8_t *v_accel_under_sampling_u8)
+uint8_t bmi160_get_accel_under_sampling_parameter(const bmi160_t *bmi160, uint8_t *v_accel_under_sampling_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -3352,10 +3352,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_under_sampling_parameter(const bmi1
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_under_sampling_parameter(const bmi160_t *bmi160, uint8_t v_accel_under_sampling_u8)
+uint8_t bmi160_set_accel_under_sampling_parameter(const bmi160_t *bmi160, uint8_t v_accel_under_sampling_u8)
 {
 /* variable used for return the status of communication result*/
-BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+uint8_t com_rslt = E_BMI160_COMM_RES;
 uint8_t v_data_u8 = BMI160_INIT_VALUE;
 /* check the bmi160 structure as NULL*/
 if (bmi160 == BMI160_NULL) 
@@ -3404,10 +3404,10 @@ return com_rslt;
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_range(const bmi160_t *bmi160, uint8_t *v_range_u8)
+uint8_t bmi160_get_accel_range(const bmi160_t *bmi160, uint8_t *v_range_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -3442,10 +3442,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_range(const bmi160_t *bmi160, uint8
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_range(const bmi160_t *bmi160, uint8_t v_range_u8)
+uint8_t bmi160_set_accel_range(const bmi160_t *bmi160, uint8_t v_range_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -3501,10 +3501,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_range(const bmi160_t *bmi160, uint8
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_output_data_rate(const bmi160_t *bmi160, uint8_t *v_output_data_rate_u8)
+uint8_t bmi160_get_gyro_output_data_rate(const bmi160_t *bmi160, uint8_t *v_output_data_rate_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -3549,10 +3549,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_output_data_rate(const bmi160_t *bmi
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_output_data_rate(const bmi160_t *bmi160, uint8_t v_output_data_rate_u8)
+uint8_t bmi160_set_gyro_output_data_rate(const bmi160_t *bmi160, uint8_t v_output_data_rate_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) 
@@ -3608,10 +3608,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_output_data_rate(const bmi160_t *bmi
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_bw(const bmi160_t *bmi160, uint8_t *v_bw_u8)
+uint8_t bmi160_get_gyro_bw(const bmi160_t *bmi160, uint8_t *v_bw_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -3645,10 +3645,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_bw(const bmi160_t *bmi160, uint8_t *
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_bw(const bmi160_t *bmi160, uint8_t v_bw_u8)
+uint8_t bmi160_set_gyro_bw(const bmi160_t *bmi160, uint8_t v_bw_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) 
@@ -3693,10 +3693,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_bw(const bmi160_t *bmi160, uint8_t v
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_range(const bmi160_t *bmi160, uint8_t *v_range_u8)
+uint8_t bmi160_get_gyro_range(const bmi160_t *bmi160, uint8_t *v_range_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -3728,10 +3728,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_range(const bmi160_t *bmi160, uint8_
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_range(const bmi160_t *bmi160, uint8_t v_range_u8)
+uint8_t bmi160_set_gyro_range(const bmi160_t *bmi160, uint8_t v_range_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -3786,10 +3786,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_range(const bmi160_t *bmi160, uint8_
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_output_data_rate(const bmi160_t *bmi160, uint8_t *v_output_data_rat_u8e)
+uint8_t bmi160_get_mag_output_data_rate(const bmi160_t *bmi160, uint8_t *v_output_data_rat_u8e)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -3836,10 +3836,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_output_data_rate(const bmi160_t *bmi1
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_mag_output_data_rate(const bmi160_t *bmi160, uint8_t v_output_data_rat_u8e)
+uint8_t bmi160_set_mag_output_data_rate(const bmi160_t *bmi160, uint8_t v_output_data_rat_u8e)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) 
@@ -3883,10 +3883,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_mag_output_data_rate(const bmi160_t *bmi1
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_fifo_down_gyro(const bmi160_t *bmi160, uint8_t *v_fifo_down_gyro_u8)
+uint8_t bmi160_get_fifo_down_gyro(const bmi160_t *bmi160, uint8_t *v_fifo_down_gyro_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -3914,10 +3914,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_fifo_down_gyro(const bmi160_t *bmi160, ui
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_fifo_down_gyro(const bmi160_t *bmi160, uint8_t v_fifo_down_gyro_u8)
+uint8_t bmi160_set_fifo_down_gyro(const bmi160_t *bmi160, uint8_t v_fifo_down_gyro_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -3951,10 +3951,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_fifo_down_gyro(const bmi160_t *bmi160, ui
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_fifo_filter_data(const bmi160_t *bmi160, uint8_t *v_gyro_fifo_filter_data_u8)
+uint8_t bmi160_get_gyro_fifo_filter_data(const bmi160_t *bmi160, uint8_t *v_gyro_fifo_filter_data_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -3984,10 +3984,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_fifo_filter_data(const bmi160_t *bmi
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_fifo_filter_data(const bmi160_t *bmi160, uint8_t v_gyro_fifo_filter_data_u8)
+uint8_t bmi160_set_gyro_fifo_filter_data(const bmi160_t *bmi160, uint8_t v_gyro_fifo_filter_data_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -4025,10 +4025,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_fifo_filter_data(const bmi160_t *bmi
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_fifo_down_accel(const bmi160_t *bmi160, uint8_t *v_fifo_down_u8)
+uint8_t bmi160_get_fifo_down_accel(const bmi160_t *bmi160, uint8_t *v_fifo_down_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -4057,10 +4057,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_fifo_down_accel(const bmi160_t *bmi160, u
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_fifo_down_accel(const bmi160_t *bmi160, uint8_t v_fifo_down_u8)
+uint8_t bmi160_set_fifo_down_accel(const bmi160_t *bmi160, uint8_t v_fifo_down_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -4095,10 +4095,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_fifo_down_accel(const bmi160_t *bmi160, u
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_fifo_filter_data(const bmi160_t *bmi160, uint8_t *accel_fifo_filter_u8)
+uint8_t bmi160_get_accel_fifo_filter_data(const bmi160_t *bmi160, uint8_t *accel_fifo_filter_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -4129,10 +4129,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_fifo_filter_data(const bmi160_t *bm
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_fifo_filter_data(const bmi160_t *bmi160, uint8_t v_accel_fifo_filter_u8)
+uint8_t bmi160_set_accel_fifo_filter_data(const bmi160_t *bmi160, uint8_t v_accel_fifo_filter_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -4168,10 +4168,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_fifo_filter_data(const bmi160_t *bm
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_fifo_wm(const bmi160_t *bmi160, uint8_t *v_fifo_wm_u8)
+uint8_t bmi160_get_fifo_wm(const bmi160_t *bmi160, uint8_t *v_fifo_wm_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -4199,10 +4199,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_fifo_wm(const bmi160_t *bmi160, uint8_t *
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_fifo_wm(const bmi160_t *bmi160, uint8_t v_fifo_wm_u8)
+uint8_t bmi160_set_fifo_wm(const bmi160_t *bmi160, uint8_t v_fifo_wm_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
         return E_BMI160_NULL_PTR;
@@ -4231,10 +4231,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_fifo_wm(const bmi160_t *bmi160, uint8_t v
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_fifo_time_enable(bmi160,const bmi160_t *bmi160, uint8_t *v_fifo_time_enable_u8)
+uint8_t bmi160_get_fifo_time_enable(bmi160,const bmi160_t *bmi160, uint8_t *v_fifo_time_enable_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -4265,10 +4265,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_fifo_time_enable(bmi160,const bmi160_t *b
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_fifo_time_enable(bmi160,const bmi160_t *bmi160, uint8_t v_fifo_time_enable_u8)
+uint8_t bmi160_set_fifo_time_enable(bmi160,const bmi160_t *bmi160, uint8_t v_fifo_time_enable_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -4307,10 +4307,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_fifo_time_enable(bmi160,const bmi160_t *b
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_fifo_tag_intr2_enable(bmi160,const bmi160_t *bmi160, uint8_t *v_fifo_tag_intr2_u8)
+uint8_t bmi160_get_fifo_tag_intr2_enable(bmi160,const bmi160_t *bmi160, uint8_t *v_fifo_tag_intr2_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -4341,10 +4341,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_fifo_tag_intr2_enable(bmi160,const bmi160
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_fifo_tag_intr2_enable(bmi160,const bmi160_t *bmi160, uint8_t v_fifo_tag_intr2_u8)
+uint8_t bmi160_set_fifo_tag_intr2_enable(bmi160,const bmi160_t *bmi160, uint8_t v_fifo_tag_intr2_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -4382,10 +4382,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_fifo_tag_intr2_enable(bmi160,const bmi160
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_fifo_tag_intr1_enable(bmi160,const bmi160_t *bmi160, uint8_t *v_fifo_tag_intr1_u8)
+uint8_t bmi160_get_fifo_tag_intr1_enable(bmi160,const bmi160_t *bmi160, uint8_t *v_fifo_tag_intr1_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -4413,10 +4413,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_fifo_tag_intr1_enable(bmi160,const bmi160
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_fifo_tag_intr1_enable(const bmi160_t *bmi160, uint8_t v_fifo_tag_intr1_u8)
+uint8_t bmi160_set_fifo_tag_intr1_enable(const bmi160_t *bmi160, uint8_t v_fifo_tag_intr1_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -4454,10 +4454,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_fifo_tag_intr1_enable(const bmi160_t *bmi
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_fifo_header_enable(const bmi160_t *bmi160, uint8_t *v_fifo_header_u8)
+uint8_t bmi160_get_fifo_header_enable(const bmi160_t *bmi160, uint8_t *v_fifo_header_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -4485,10 +4485,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_fifo_header_enable(const bmi160_t *bmi160
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_fifo_header_enable(const bmi160_t *bmi160, uint8_t v_fifo_header_u8)
+uint8_t bmi160_set_fifo_header_enable(const bmi160_t *bmi160, uint8_t v_fifo_header_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -4524,10 +4524,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_fifo_header_enable(const bmi160_t *bmi160
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_fifo_mag_enable(const bmi160_t *bmi160, uint8_t *v_fifo_mag_u8)
+uint8_t bmi160_get_fifo_mag_enable(const bmi160_t *bmi160, uint8_t *v_fifo_mag_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -4555,10 +4555,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_fifo_mag_enable(const bmi160_t *bmi160, u
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_fifo_mag_enable(const bmi160_t *bmi160, uint8_t v_fifo_mag_u8)
+uint8_t bmi160_set_fifo_mag_enable(const bmi160_t *bmi160, uint8_t v_fifo_mag_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -4597,10 +4597,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_fifo_mag_enable(const bmi160_t *bmi160, u
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_fifo_accel_enable(const bmi160_t *bmi160, uint8_t *v_fifo_accel_u8)
+uint8_t bmi160_get_fifo_accel_enable(const bmi160_t *bmi160, uint8_t *v_fifo_accel_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -4630,10 +4630,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_fifo_accel_enable(const bmi160_t *bmi160,
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_fifo_accel_enable(const bmi160_t *bmi160, uint8_t v_fifo_accel_u8)
+uint8_t bmi160_set_fifo_accel_enable(const bmi160_t *bmi160, uint8_t v_fifo_accel_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -4671,10 +4671,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_fifo_accel_enable(const bmi160_t *bmi160,
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_fifo_gyro_enable(const bmi160_t *bmi160, uint8_t *v_fifo_gyro_u8)
+uint8_t bmi160_get_fifo_gyro_enable(const bmi160_t *bmi160, uint8_t *v_fifo_gyro_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -4704,10 +4704,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_fifo_gyro_enable(const bmi160_t *bmi160, 
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_fifo_gyro_enable(const bmi160_t *bmi160, uint8_t v_fifo_gyro_u8)
+uint8_t bmi160_set_fifo_gyro_enable(const bmi160_t *bmi160, uint8_t v_fifo_gyro_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -4743,10 +4743,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_fifo_gyro_enable(const bmi160_t *bmi160, 
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_i2c_device_addr(const bmi160_t *bmi160, uint8_t *v_i2c_device_addr_u8)
+uint8_t bmi160_get_i2c_device_addr(const bmi160_t *bmi160, uint8_t *v_i2c_device_addr_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -4774,10 +4774,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_i2c_device_addr(const bmi160_t *bmi160, u
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_i2c_device_addr(const bmi160_t *bmi160, uint8_t v_i2c_device_addr_u8)
+uint8_t bmi160_set_i2c_device_addr(const bmi160_t *bmi160, uint8_t v_i2c_device_addr_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) 
@@ -4812,10 +4812,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_i2c_device_addr(const bmi160_t *bmi160, u
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_burst(const bmi160_t *bmi160, uint8_t *v_mag_burst_u8)
+uint8_t bmi160_get_mag_burst(const bmi160_t *bmi160, uint8_t *v_mag_burst_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -4844,10 +4844,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_burst(const bmi160_t *bmi160, uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_mag_burst(const bmi160_t *bmi160, uint8_t v_mag_burst_u8)
+uint8_t bmi160_set_mag_burst(const bmi160_t *bmi160, uint8_t v_mag_burst_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -4882,10 +4882,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_mag_burst(const bmi160_t *bmi160, uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_offset(const bmi160_t *bmi160, uint8_t *v_mag_offset_u8)
+uint8_t bmi160_get_mag_offset(const bmi160_t *bmi160, uint8_t *v_mag_offset_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -4915,10 +4915,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_offset(const bmi160_t *bmi160, uint8_
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_mag_offset(const bmi160_t *bmi160, uint8_t v_mag_offset_u8)
+uint8_t bmi160_set_mag_offset(const bmi160_t *bmi160, uint8_t v_mag_offset_u8)
 {
 /* variable used for return the status of communication result*/
-BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+uint8_t com_rslt = E_BMI160_COMM_RES;
 uint8_t v_data_u8 = BMI160_INIT_VALUE;
 /* check the bmi160 structure as NULL*/
 if (bmi160 == BMI160_NULL) {
@@ -4957,10 +4957,10 @@ return com_rslt;
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_manual_enable(const bmi160_t *bmi160, uint8_t *v_mag_manual_u8)
+uint8_t bmi160_get_mag_manual_enable(const bmi160_t *bmi160, uint8_t *v_mag_manual_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) 
@@ -4998,10 +4998,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_manual_enable(const bmi160_t *bmi160,
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_mag_manual_enable(const bmi160_t *bmi160, uint8_t v_mag_manual_u8)
+uint8_t bmi160_set_mag_manual_enable(const bmi160_t *bmi160, uint8_t v_mag_manual_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = BMI160_INIT_VALUE;
+    uint8_t com_rslt = BMI160_INIT_VALUE;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) 
@@ -5044,10 +5044,10 @@ return com_rslt;
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_read_addr(const bmi160_t *bmi160, uint8_t *v_mag_read_addr_u8)
+uint8_t bmi160_get_mag_read_addr(const bmi160_t *bmi160, uint8_t *v_mag_read_addr_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -5077,10 +5077,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_read_addr(const bmi160_t *bmi160, uin
  *
  */
 
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_mag_read_addr(const bmi160_t *bmi160, uint8_t v_mag_read_addr_u8)
+uint8_t bmi160_set_mag_read_addr(const bmi160_t *bmi160, uint8_t v_mag_read_addr_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) 
     {
@@ -5109,10 +5109,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_mag_read_addr(const bmi160_t *bmi160, uin
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_write_addr(const bmi160_t *bmi160, uint8_t *v_mag_write_addr_u8)
+uint8_t bmi160_get_mag_write_addr(const bmi160_t *bmi160, uint8_t *v_mag_write_addr_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) 
@@ -5144,10 +5144,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_write_addr(const bmi160_t *bmi160, ui
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_mag_write_addr(const bmi160_t *bmi160, uint8_t v_mag_write_addr_u8)
+uint8_t bmi160_set_mag_write_addr(const bmi160_t *bmi160, uint8_t v_mag_write_addr_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) 
     {
@@ -5176,10 +5176,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_mag_write_addr(const bmi160_t *bmi160, ui
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_write_data(const bmi160_t *bmi160, uint8_t *v_mag_write_data_u8)
+uint8_t bmi160_get_mag_write_data(const bmi160_t *bmi160, uint8_t *v_mag_write_data_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -5207,10 +5207,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_write_data(const bmi160_t *bmi160, ui
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_mag_write_data(const bmi160_t *bmi160, uint8_t v_mag_write_data_u8)
+uint8_t bmi160_set_mag_write_data(const bmi160_t *bmi160, uint8_t v_mag_write_data_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) 
     {
@@ -5254,10 +5254,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_mag_write_data(const bmi160_t *bmi160, ui
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_enable_0(const bmi160_t *bmi160, uint8_t v_enable_u8, uint8_t *v_intr_enable_zero_u8)
+uint8_t bmi160_get_intr_enable_0(const bmi160_t *bmi160, uint8_t v_enable_u8, uint8_t *v_intr_enable_zero_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -5339,10 +5339,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_enable_0(const bmi160_t *bmi160, uin
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_enable_0(const bmi160_t *bmi160, uint8_t v_enable_u8, uint8_t v_intr_enable_zero_u8)
+uint8_t bmi160_set_intr_enable_0(const bmi160_t *bmi160, uint8_t v_enable_u8, uint8_t v_intr_enable_zero_u8)
 {
 /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
 uint8_t v_data_u8 = BMI160_INIT_VALUE;
 /* check the bmi160 structure as NULL*/
 if (bmi160 == BMI160_NULL) {
@@ -5453,10 +5453,10 @@ return com_rslt;
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_enable_1(const bmi160_t *bmi160, uint8_t v_enable_u8, uint8_t *v_intr_enable_1_u8)
+uint8_t bmi160_get_intr_enable_1(const bmi160_t *bmi160, uint8_t v_enable_u8, uint8_t *v_intr_enable_1_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -5539,10 +5539,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_enable_1(const bmi160_t *bmi160, uin
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_enable_1(const bmi160_t *bmi160, uint8_t v_enable_u8, uint8_t v_intr_enable_1_u8)
+uint8_t bmi160_set_intr_enable_1(const bmi160_t *bmi160, uint8_t v_enable_u8, uint8_t v_intr_enable_1_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -5647,10 +5647,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_enable_1(const bmi160_t *bmi160, uin
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_enable_2(const bmi160_t *bmi160, uint8_t v_enable_u8, uint8_t *v_intr_enable_2_u8)
+uint8_t bmi160_get_intr_enable_2(const bmi160_t *bmi160, uint8_t v_enable_u8, uint8_t *v_intr_enable_2_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -5707,10 +5707,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_enable_2(const bmi160_t *bmi160, uin
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_enable_2(const bmi160_t *bmi160, uint8_t v_enable_u8, uint8_t v_intr_enable_2_u8)
+uint8_t bmi160_set_intr_enable_2(const bmi160_t *bmi160, uint8_t v_enable_u8, uint8_t v_intr_enable_2_u8)
 {
 /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
 uint8_t v_data_u8 = BMI160_INIT_VALUE;
 /* check the bmi160 structure as NULL*/
 if (bmi160 == BMI160_NULL) {
@@ -5769,10 +5769,10 @@ return com_rslt;
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_step_detector_enable(const bmi160_t *bmi160, uint8_t *v_step_intr_u8)
+uint8_t bmi160_get_step_detector_enable(const bmi160_t *bmi160, uint8_t *v_step_intr_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -5802,10 +5802,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_step_detector_enable(const bmi160_t *bmi1
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_step_detector_enable(const bmi160_t *bmi160, uint8_t v_step_intr_u8)
+uint8_t bmi160_set_step_detector_enable(const bmi160_t *bmi160, uint8_t v_step_intr_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -5844,10 +5844,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_step_detector_enable(const bmi160_t *bmi1
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_edge_ctrl(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_intr_edge_ctrl_u8)
+uint8_t bmi160_get_intr_edge_ctrl(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_intr_edge_ctrl_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -5895,10 +5895,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_edge_ctrl(const bmi160_t *bmi160, ui
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_edge_ctrl(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_intr_edge_ctrl_u8)
+uint8_t bmi160_set_intr_edge_ctrl(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_intr_edge_ctrl_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -5954,10 +5954,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_edge_ctrl(const bmi160_t *bmi160, ui
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_level(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_intr_level_u8)
+uint8_t bmi160_get_intr_level(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_intr_level_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -6005,10 +6005,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_level(const bmi160_t *bmi160, uint8_
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_level(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_intr_level_u8)
+uint8_t bmi160_set_intr_level(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_intr_level_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -6067,10 +6067,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_level(const bmi160_t *bmi160, uint8_
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_output_type(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_intr_output_type_u8)
+uint8_t bmi160_get_intr_output_type(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_intr_output_type_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -6121,10 +6121,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_output_type(const bmi160_t *bmi160, 
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_output_type(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_intr_output_type_u8)
+uint8_t bmi160_set_intr_output_type(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_intr_output_type_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -6183,10 +6183,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_output_type(const bmi160_t *bmi160, 
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_output_enable(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_output_enable_u8)
+uint8_t bmi160_get_output_enable(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_output_enable_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -6237,10 +6237,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_output_enable(const bmi160_t *bmi160, uin
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_output_enable(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_output_enable_u8)
+uint8_t bmi160_set_output_enable(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_output_enable_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -6308,10 +6308,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_output_enable(const bmi160_t *bmi160, uin
 *
 *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_latch_intr(const bmi160_t *bmi160, uint8_t *v_latch_intr_u8)
+uint8_t bmi160_get_latch_intr(const bmi160_t *bmi160, uint8_t *v_latch_intr_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -6359,11 +6359,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_latch_intr(const bmi160_t *bmi160, uint8_
 *
 *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_latch_intr(const bmi160_t *bmi160, uint8_t v_latch_intr_u8)
+uint8_t bmi160_set_latch_intr(const bmi160_t *bmi160, uint8_t v_latch_intr_u8)
 {
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
         return E_BMI160_NULL_PTR;
@@ -6409,10 +6409,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_latch_intr(const bmi160_t *bmi160, uint8_
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_input_enable(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_input_en_u8)
+uint8_t bmi160_get_input_enable(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_input_en_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -6462,10 +6462,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_input_enable(const bmi160_t *bmi160, uint
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_input_enable(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_input_en_u8)
+uint8_t bmi160_set_input_enable(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_input_en_u8)
 {
 /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
 uint8_t v_data_u8 = BMI160_INIT_VALUE;
 /* check the bmi160 structure as NULL*/
 if (bmi160 == BMI160_NULL) {
@@ -6521,10 +6521,10 @@ return com_rslt;
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_low_g(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_intr_low_g_u8)
+uint8_t bmi160_get_intr_low_g(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_intr_low_g_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -6574,10 +6574,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_low_g(const bmi160_t *bmi160, uint8_
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_low_g(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_intr_low_g_u8)
+uint8_t bmi160_set_intr_low_g(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_intr_low_g_u8)
 {
 /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
 uint8_t v_data_u8 = BMI160_INIT_VALUE;
 uint8_t v_step_cnt_stat_u8 = BMI160_INIT_VALUE;
 uint8_t v_step_det_stat_u8 = BMI160_INIT_VALUE;
@@ -6647,10 +6647,10 @@ return com_rslt;
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_high_g(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_intr_high_g_u8)
+uint8_t bmi160_get_intr_high_g(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_intr_high_g_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -6701,10 +6701,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_high_g(const bmi160_t *bmi160, uint8
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_high_g(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_intr_high_g_u8)
+uint8_t bmi160_set_intr_high_g(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_intr_high_g_u8)
 {
 /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
 uint8_t v_data_u8 = BMI160_INIT_VALUE;
 /* check the bmi160 structure as NULL*/
 if (bmi160 == BMI160_NULL) {
@@ -6761,10 +6761,10 @@ return com_rslt;
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_any_motion(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_intr_any_motion_u8)
+uint8_t bmi160_get_intr_any_motion(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_intr_any_motion_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -6815,10 +6815,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_any_motion(const bmi160_t *bmi160, u
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_any_motion(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_intr_any_motion_u8)
+uint8_t bmi160_set_intr_any_motion(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_intr_any_motion_u8)
 {
 /* variable used for return the status of communication result*/
-BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+uint8_t com_rslt = E_BMI160_COMM_RES;
 uint8_t v_data_u8 = BMI160_INIT_VALUE;
 uint8_t sig_mot_stat = BMI160_INIT_VALUE;
 /* check the bmi160 structure as NULL*/
@@ -6826,10 +6826,10 @@ if (bmi160 == BMI160_NULL) {
     return E_BMI160_NULL_PTR;
     } else {
     /* read the status of significant motion interrupt */
-    com_rslt = bmi160_get_intr_significant_motion_select(&sig_mot_stat);
+    com_rslt = bmi160_get_intr_significant_motion_select(bmi160, &sig_mot_stat);
     /* disable the significant motion interrupt */
     if (sig_mot_stat != BMI160_INIT_VALUE)
-        com_rslt += bmi160_set_intr_significant_motion_select(BMI160_INIT_VALUE);
+        com_rslt += bmi160_set_intr_significant_motion_select(bmi160, BMI160_INIT_VALUE);
     switch (v_channel_u8) {
     /* write the any motion interrupt */
     case BMI160_INTR1_MAP_ANY_MOTION:
@@ -6880,10 +6880,10 @@ return com_rslt;
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_nomotion(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_intr_nomotion_u8)
+uint8_t bmi160_get_intr_nomotion(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_intr_nomotion_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -6933,10 +6933,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_nomotion(const bmi160_t *bmi160, uin
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_nomotion(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_intr_nomotion_u8)
+uint8_t bmi160_set_intr_nomotion(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_intr_nomotion_u8)
 {
 /* variable used for return the status of communication result*/
-BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+uint8_t com_rslt = E_BMI160_COMM_RES;
 uint8_t v_data_u8 = BMI160_INIT_VALUE;
 /* check the bmi160 structure as NULL*/
 if (bmi160 == BMI160_NULL) {
@@ -6991,10 +6991,10 @@ return com_rslt;
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_double_tap(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_intr_double_tap_u8)
+uint8_t bmi160_get_intr_double_tap(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_intr_double_tap_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -7042,10 +7042,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_double_tap(const bmi160_t *bmi160, u
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_double_tap(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_intr_double_tap_u8)
+uint8_t bmi160_set_intr_double_tap(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_intr_double_tap_u8)
 {
 /* variable used for return the status of communication result*/
-BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+uint8_t com_rslt = E_BMI160_COMM_RES;
 uint8_t v_data_u8 = BMI160_INIT_VALUE;
 /* check the bmi160 structure as NULL*/
 if (bmi160 == BMI160_NULL) {
@@ -7101,10 +7101,10 @@ return com_rslt;
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_single_tap(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_intr_single_tap_u8)
+uint8_t bmi160_get_intr_single_tap(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_intr_single_tap_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -7154,10 +7154,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_single_tap(const bmi160_t *bmi160, u
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_single_tap(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_intr_single_tap_u8)
+uint8_t bmi160_set_intr_single_tap(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_intr_single_tap_u8)
 {
 /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
 uint8_t v_data_u8 = BMI160_INIT_VALUE;
 /* check the bmi160 structure as NULL*/
 if (bmi160 == BMI160_NULL) {
@@ -7214,10 +7214,10 @@ return com_rslt;
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_orient(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_intr_orient_u8)
+uint8_t bmi160_get_intr_orient(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_intr_orient_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -7268,10 +7268,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_orient(const bmi160_t *bmi160, uint8
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_orient(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_intr_orient_u8)
+uint8_t bmi160_set_intr_orient(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_intr_orient_u8)
 {
 /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
 uint8_t v_data_u8 = BMI160_INIT_VALUE;
 /* check the bmi160 structure as NULL*/
 if (bmi160 == BMI160_NULL) {
@@ -7329,10 +7329,10 @@ return com_rslt;
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_flat(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_intr_flat_u8)
+uint8_t bmi160_get_intr_flat(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_intr_flat_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -7382,10 +7382,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_flat(const bmi160_t *bmi160, uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_flat(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_intr_flat_u8)
+uint8_t bmi160_set_intr_flat(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_intr_flat_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -7442,10 +7442,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_flat(const bmi160_t *bmi160, uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_pmu_trig(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_intr_pmu_trig_u8)
+uint8_t bmi160_get_intr_pmu_trig(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_intr_pmu_trig_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -7494,10 +7494,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_pmu_trig(const bmi160_t *bmi160, uin
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_pmu_trig(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_intr_pmu_trig_u8)
+uint8_t bmi160_set_intr_pmu_trig(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_intr_pmu_trig_u8)
 {
 /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
 uint8_t v_data_u8 = BMI160_INIT_VALUE;
 /* check the bmi160 structure as NULL*/
 if (bmi160 == BMI160_NULL) {
@@ -7555,10 +7555,10 @@ return com_rslt;
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_fifo_full(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_intr_fifo_full_u8)
+uint8_t bmi160_get_intr_fifo_full(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_intr_fifo_full_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -7608,10 +7608,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_fifo_full(const bmi160_t *bmi160, ui
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_fifo_full(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_intr_fifo_full_u8)
+uint8_t bmi160_set_intr_fifo_full(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_intr_fifo_full_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -7670,10 +7670,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_fifo_full(const bmi160_t *bmi160, ui
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_fifo_wm(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_intr_fifo_wm_u8)
+uint8_t bmi160_get_intr_fifo_wm(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_intr_fifo_wm_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -7724,10 +7724,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_fifo_wm(const bmi160_t *bmi160, uint
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_fifo_wm(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_intr_fifo_wm_u8)
+uint8_t bmi160_set_intr_fifo_wm(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_intr_fifo_wm_u8)
 {
 /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
 uint8_t v_data_u8 = BMI160_INIT_VALUE;
 /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -7785,10 +7785,10 @@ uint8_t v_data_u8 = BMI160_INIT_VALUE;
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_data_rdy(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_intr_data_rdy_u8)
+uint8_t bmi160_get_intr_data_rdy(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_intr_data_rdy_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -7838,10 +7838,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_data_rdy(const bmi160_t *bmi160, uin
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_data_rdy(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_intr_data_rdy_u8)
+uint8_t bmi160_set_intr_data_rdy(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_intr_data_rdy_u8)
 {
 /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
 uint8_t v_data_u8 = BMI160_INIT_VALUE;
 /* check the bmi160 structure as NULL*/
 if (bmi160 == BMI160_NULL) {
@@ -7891,10 +7891,10 @@ return com_rslt;
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_tap_source(const bmi160_t *bmi160, uint8_t *v_tap_source_u8)
+uint8_t bmi160_get_intr_tap_source(const bmi160_t *bmi160, uint8_t *v_tap_source_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -7925,10 +7925,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_tap_source(const bmi160_t *bmi160, u
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_tap_source(const bmi160_t *bmi160, uint8_t v_tap_source_u8)
+uint8_t bmi160_set_intr_tap_source(const bmi160_t *bmi160, uint8_t v_tap_source_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -7966,10 +7966,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_tap_source(const bmi160_t *bmi160, u
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_low_high_source(const bmi160_t *bmi160, uint8_t *v_low_high_source_u8)
+uint8_t bmi160_get_intr_low_high_source(const bmi160_t *bmi160, uint8_t *v_low_high_source_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -7999,10 +7999,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_low_high_source(const bmi160_t *bmi1
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_low_high_source(const bmi160_t *bmi160, uint8_t v_low_high_source_u8)
+uint8_t bmi160_set_intr_low_high_source(const bmi160_t *bmi160, uint8_t v_low_high_source_u8)
 {
 /* variable used for return the status of communication result*/
-BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+uint8_t com_rslt = E_BMI160_COMM_RES;
 uint8_t v_data_u8 = BMI160_INIT_VALUE;
 /* check the bmi160 structure as NULL*/
 if (bmi160 == BMI160_NULL) {
@@ -8040,10 +8040,10 @@ return com_rslt;
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_motion_source(const bmi160_t *bmi160, uint8_t *v_motion_source_u8)
+uint8_t bmi160_get_intr_motion_source(const bmi160_t *bmi160, uint8_t *v_motion_source_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -8073,10 +8073,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_motion_source(const bmi160_t *bmi160
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_motion_source(const bmi160_t *bmi160, uint8_t v_motion_source_u8)
+uint8_t bmi160_set_intr_motion_source(const bmi160_t *bmi160, uint8_t v_motion_source_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -8116,10 +8116,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_motion_source(const bmi160_t *bmi160
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_low_g_durn(const bmi160_t *bmi160, uint8_t *v_low_g_durn_u8)
+uint8_t bmi160_get_intr_low_g_durn(const bmi160_t *bmi160, uint8_t *v_low_g_durn_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -8152,10 +8152,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_low_g_durn(const bmi160_t *bmi160, u
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_low_g_durn(const bmi160_t *bmi160, uint8_t v_low_g_durn_u8)
+uint8_t bmi160_set_intr_low_g_durn(const bmi160_t *bmi160, uint8_t v_low_g_durn_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
         return E_BMI160_NULL_PTR;
@@ -8186,10 +8186,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_low_g_durn(const bmi160_t *bmi160, u
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_low_g_thres(const bmi160_t *bmi160, uint8_t *v_low_g_thres_u8)
+uint8_t bmi160_get_intr_low_g_thres(const bmi160_t *bmi160, uint8_t *v_low_g_thres_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -8222,10 +8222,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_low_g_thres(const bmi160_t *bmi160, 
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_low_g_thres(const bmi160_t *bmi160, uint8_t v_low_g_thres_u8)
+uint8_t bmi160_set_intr_low_g_thres(const bmi160_t *bmi160, uint8_t v_low_g_thres_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
         return E_BMI160_NULL_PTR;
@@ -8249,10 +8249,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_low_g_thres(const bmi160_t *bmi160, 
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_low_g_hyst(const bmi160_t *bmi160, uint8_t *v_low_hyst_u8)
+uint8_t bmi160_get_intr_low_g_hyst(const bmi160_t *bmi160, uint8_t *v_low_hyst_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -8278,10 +8278,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_low_g_hyst(const bmi160_t *bmi160, u
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_low_g_hyst(const bmi160_t *bmi160, uint8_t v_low_hyst_u8)
+uint8_t bmi160_set_intr_low_g_hyst(const bmi160_t *bmi160, uint8_t v_low_hyst_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -8314,10 +8314,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_low_g_hyst(const bmi160_t *bmi160, u
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_low_g_mode(const bmi160_t *bmi160, uint8_t *v_low_g_mode_u8)
+uint8_t bmi160_get_intr_low_g_mode(const bmi160_t *bmi160, uint8_t *v_low_g_mode_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -8346,10 +8346,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_low_g_mode(const bmi160_t *bmi160, u
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_low_g_mode(const bmi160_t *bmi160, uint8_t v_low_g_mode_u8)
+uint8_t bmi160_set_intr_low_g_mode(const bmi160_t *bmi160, uint8_t v_low_g_mode_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -8389,10 +8389,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_low_g_mode(const bmi160_t *bmi160, u
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_high_g_hyst(const bmi160_t *bmi160, uint8_t *v_high_g_hyst_u8)
+uint8_t bmi160_get_intr_high_g_hyst(const bmi160_t *bmi160, uint8_t *v_high_g_hyst_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -8426,10 +8426,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_high_g_hyst(const bmi160_t *bmi160, 
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_high_g_hyst(const bmi160_t *bmi160, uint8_t v_high_g_hyst_u8)
+uint8_t bmi160_set_intr_high_g_hyst(const bmi160_t *bmi160, uint8_t v_high_g_hyst_u8)
 {
 /* variable used for return the status of communication result*/
-BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+uint8_t com_rslt = E_BMI160_COMM_RES;
 uint8_t v_data_u8 = BMI160_INIT_VALUE;
 /* check the bmi160 structure as NULL*/
 if (bmi160 == BMI160_NULL) {
@@ -8462,10 +8462,10 @@ return com_rslt;
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_high_g_durn(const bmi160_t *bmi160, uint8_t *v_high_g_durn_u8)
+uint8_t bmi160_get_intr_high_g_durn(const bmi160_t *bmi160, uint8_t *v_high_g_durn_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -8495,10 +8495,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_high_g_durn(const bmi160_t *bmi160, 
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_high_g_durn(const bmi160_t *bmi160, uint8_t v_high_g_durn_u8)
+uint8_t bmi160_set_intr_high_g_durn(const bmi160_t *bmi160, uint8_t v_high_g_durn_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
         return E_BMI160_NULL_PTR;
@@ -8540,10 +8540,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_high_g_durn(const bmi160_t *bmi160, 
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_high_g_thres(const bmi160_t *bmi160, uint8_t *v_high_g_thres_u8)
+uint8_t bmi160_get_intr_high_g_thres(const bmi160_t *bmi160, uint8_t *v_high_g_thres_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -8585,10 +8585,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_high_g_thres(const bmi160_t *bmi160,
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_high_g_thres(const bmi160_t *bmi160, uint8_t v_high_g_thres_u8)
+uint8_t bmi160_set_intr_high_g_thres(const bmi160_t *bmi160, uint8_t v_high_g_thres_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
         return E_BMI160_NULL_PTR;
@@ -8611,10 +8611,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_high_g_thres(const bmi160_t *bmi160,
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_any_motion_durn(const bmi160_t *bmi160, uint8_t *v_any_motion_durn_u8)
+uint8_t bmi160_get_intr_any_motion_durn(const bmi160_t *bmi160, uint8_t *v_any_motion_durn_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -8640,10 +8640,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_any_motion_durn(const bmi160_t *bmi1
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_any_motion_durn(const bmi160_t *bmi160, uint8_t v_any_motion_durn_u8)
+uint8_t bmi160_set_intr_any_motion_durn(const bmi160_t *bmi160, uint8_t v_any_motion_durn_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -8680,10 +8680,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_any_motion_durn(const bmi160_t *bmi1
  *    [(v_slow_no_motion_u8:0)+11] * 10.24s (112.64s-430.08s);
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_slow_no_motion_durn(const bmi160_t *bmi160, uint8_t *v_slow_no_motion_u8)
+uint8_t bmi160_get_intr_slow_no_motion_durn(const bmi160_t *bmi160, uint8_t *v_slow_no_motion_u8)
 {
 /* variable used for return the status of communication result*/
-BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+uint8_t com_rslt = E_BMI160_COMM_RES;
 uint8_t v_data_u8 = BMI160_INIT_VALUE;
 /* check the bmi160 structure as NULL*/
 if (bmi160 == BMI160_NULL) {
@@ -8716,10 +8716,10 @@ return com_rslt;
  *    [(v_slow_no_motion_u8:0)+11] * 10.24s (112.64s-430.08s);
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_slow_no_motion_durn(const bmi160_t *bmi160, uint8_t v_slow_no_motion_u8)
+uint8_t bmi160_set_intr_slow_no_motion_durn(const bmi160_t *bmi160, uint8_t v_slow_no_motion_u8)
 {
 /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
 uint8_t v_data_u8 = BMI160_INIT_VALUE;
 /* check the bmi160 structure as NULL*/
 if (bmi160 == BMI160_NULL) {
@@ -8768,10 +8768,10 @@ return com_rslt;
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_any_motion_thres(const bmi160_t *bmi160, uint8_t *v_any_motion_thres_u8)
+uint8_t bmi160_get_intr_any_motion_thres(const bmi160_t *bmi160, uint8_t *v_any_motion_thres_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -8815,10 +8815,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_any_motion_thres(const bmi160_t *bmi
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_any_motion_thres(const bmi160_t *bmi160, uint8_t v_any_motion_thres_u8)
+uint8_t bmi160_set_intr_any_motion_thres(const bmi160_t *bmi160, uint8_t v_any_motion_thres_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
         return E_BMI160_NULL_PTR;
@@ -8860,9 +8860,9 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_any_motion_thres(const bmi160_t *bmi
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_slow_no_motion_thres(const bmi160_t *bmi160, uint8_t *v_slow_no_motion_thres_u8)
+uint8_t bmi160_get_intr_slow_no_motion_thres(const bmi160_t *bmi160, uint8_t *v_slow_no_motion_thres_u8)
 {
-BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+uint8_t com_rslt  = E_BMI160_COMM_RES;
 uint8_t v_data_u8 = BMI160_INIT_VALUE;
 /* check the bmi160 structure as NULL*/
 if (bmi160 == BMI160_NULL) {
@@ -8906,9 +8906,9 @@ return com_rslt;
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_slow_no_motion_thres(const bmi160_t *bmi160, uint8_t v_slow_no_motion_thres_u8)
+uint8_t bmi160_set_intr_slow_no_motion_thres(const bmi160_t *bmi160, uint8_t v_slow_no_motion_thres_u8)
 {
-BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+uint8_t com_rslt  = E_BMI160_COMM_RES;
 /* check the bmi160 structure as NULL*/
 if (bmi160 == BMI160_NULL) {
     return E_BMI160_NULL_PTR;
@@ -8939,9 +8939,9 @@ return com_rslt;
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_slow_no_motion_select(const bmi160_t *bmi160, uint8_t *v_intr_slow_no_motion_select_u8)
+uint8_t bmi160_get_intr_slow_no_motion_select(const bmi160_t *bmi160, uint8_t *v_intr_slow_no_motion_select_u8)
 {
-BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+uint8_t com_rslt  = E_BMI160_COMM_RES;
 uint8_t v_data_u8 = BMI160_INIT_VALUE;
 /* check the bmi160 structure as NULL*/
 if (bmi160 == BMI160_NULL) {
@@ -8974,10 +8974,10 @@ return com_rslt;
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_slow_no_motion_select(const bmi160_t *bmi160, uint8_t v_intr_slow_no_motion_select_u8)
+uint8_t bmi160_set_intr_slow_no_motion_select(const bmi160_t *bmi160, uint8_t v_intr_slow_no_motion_select_u8)
 {
 /* variable used for return the status of communication result*/
-BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+uint8_t com_rslt = E_BMI160_COMM_RES;
 uint8_t v_data_u8 = BMI160_INIT_VALUE;
 /* check the bmi160 structure as NULL*/
 if (bmi160 == BMI160_NULL) {
@@ -9020,10 +9020,10 @@ return com_rslt;
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_significant_motion_select(const bmi160_t *bmi160, uint8_t *v_intr_significant_motion_select_u8)
+uint8_t bmi160_get_intr_significant_motion_select(const bmi160_t *bmi160, uint8_t *v_intr_significant_motion_select_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -9056,10 +9056,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_significant_motion_select(const bmi1
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_significant_motion_select(const bmi160_t *bmi160, uint8_t v_intr_significant_motion_select_u8)
+uint8_t bmi160_set_intr_significant_motion_select(const bmi160_t *bmi160, uint8_t v_intr_significant_motion_select_u8)
 {
 /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
 uint8_t v_data_u8 = BMI160_INIT_VALUE;
 /* check the bmi160 structure as NULL*/
 if (bmi160 == BMI160_NULL) {
@@ -9102,9 +9102,9 @@ return com_rslt;
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_significant_motion_skip(const bmi160_t *bmi160, uint8_t *v_int_sig_mot_skip_u8)
+uint8_t bmi160_get_intr_significant_motion_skip(const bmi160_t *bmi160, uint8_t *v_int_sig_mot_skip_u8)
 {
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -9138,10 +9138,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_significant_motion_skip(const bmi160
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_significant_motion_skip(const bmi160_t *bmi160, uint8_t v_int_sig_mot_skip_u8)
+uint8_t bmi160_set_intr_significant_motion_skip(const bmi160_t *bmi160, uint8_t v_int_sig_mot_skip_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -9184,10 +9184,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_significant_motion_skip(const bmi160
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_significant_motion_proof(const bmi160_t *bmi160, uint8_t *v_significant_motion_proof_u8)
+uint8_t bmi160_get_intr_significant_motion_proof(const bmi160_t *bmi160, uint8_t *v_significant_motion_proof_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -9222,10 +9222,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_significant_motion_proof(const bmi16
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_significant_motion_proof(const bmi160_t *bmi160, uint8_t v_significant_motion_proof_u8)
+uint8_t bmi160_set_intr_significant_motion_proof(const bmi160_t *bmi160, uint8_t v_significant_motion_proof_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -9271,10 +9271,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_significant_motion_proof(const bmi16
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_tap_durn(const bmi160_t *bmi160, uint8_t *v_tap_durn_u8)
+uint8_t bmi160_get_intr_tap_durn(const bmi160_t *bmi160, uint8_t *v_tap_durn_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -9312,11 +9312,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_tap_durn(const bmi160_t *bmi160, uin
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_tap_durn(const bmi160_t *bmi160, uint8_t v_tap_durn_u8)
+uint8_t bmi160_set_intr_tap_durn(const bmi160_t *bmi160, uint8_t v_tap_durn_u8)
 {
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_tap_durn_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -9380,10 +9380,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_tap_durn(const bmi160_t *bmi160, uin
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_tap_shock(const bmi160_t *bmi160, uint8_t *v_tap_shock_u8)
+uint8_t bmi160_get_intr_tap_shock(const bmi160_t *bmi160, uint8_t *v_tap_shock_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -9412,10 +9412,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_tap_shock(const bmi160_t *bmi160, ui
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_tap_shock(const bmi160_t *bmi160, uint8_t v_tap_shock_u8)
+uint8_t bmi160_set_intr_tap_shock(const bmi160_t *bmi160, uint8_t v_tap_shock_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -9453,10 +9453,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_tap_shock(const bmi160_t *bmi160, ui
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_tap_quiet(const bmi160_t *bmi160, uint8_t *v_tap_quiet_u8)
+uint8_t bmi160_get_intr_tap_quiet(const bmi160_t *bmi160, uint8_t *v_tap_quiet_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -9486,10 +9486,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_tap_quiet(const bmi160_t *bmi160, ui
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_tap_quiet(const bmi160_t *bmi160, uint8_t v_tap_quiet_u8)
+uint8_t bmi160_set_intr_tap_quiet(const bmi160_t *bmi160, uint8_t v_tap_quiet_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -9531,10 +9531,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_tap_quiet(const bmi160_t *bmi160, ui
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_tap_thres(const bmi160_t *bmi160, uint8_t *v_tap_thres_u8)
+uint8_t bmi160_get_intr_tap_thres(const bmi160_t *bmi160, uint8_t *v_tap_thres_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -9569,10 +9569,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_tap_thres(const bmi160_t *bmi160, ui
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_tap_thres(const bmi160_t *bmi160, uint8_t v_tap_thres_u8)
+uint8_t bmi160_set_intr_tap_thres(const bmi160_t *bmi160, uint8_t v_tap_thres_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -9608,9 +9608,9 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_tap_thres(const bmi160_t *bmi160, ui
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_orient_mode(const bmi160_t *bmi160, uint8_t *v_orient_mode_u8)
+uint8_t bmi160_get_intr_orient_mode(const bmi160_t *bmi160, uint8_t *v_orient_mode_u8)
 {
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -9644,10 +9644,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_orient_mode(const bmi160_t *bmi160, 
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_orient_mode(const bmi160_t *bmi160, uint8_t v_orient_mode_u8)
+uint8_t bmi160_set_intr_orient_mode(const bmi160_t *bmi160, uint8_t v_orient_mode_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -9692,10 +9692,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_orient_mode(const bmi160_t *bmi160, 
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_orient_blocking(const bmi160_t *bmi160, uint8_t *v_orient_blocking_u8)
+uint8_t bmi160_get_intr_orient_blocking(const bmi160_t *bmi160, uint8_t *v_orient_blocking_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -9734,10 +9734,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_orient_blocking(const bmi160_t *bmi1
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_orient_blocking(const bmi160_t *bmi160, uint8_t v_orient_blocking_u8)
+uint8_t bmi160_set_intr_orient_blocking(const bmi160_t *bmi160, uint8_t v_orient_blocking_u8)
 {
 /* variable used for return the status of communication result*/
-BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+uint8_t com_rslt = E_BMI160_COMM_RES;
 uint8_t v_data_u8 = BMI160_INIT_VALUE;
 /* check the bmi160 structure as NULL*/
 if (bmi160 == BMI160_NULL) {
@@ -9775,10 +9775,10 @@ return com_rslt;
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_orient_hyst(const bmi160_t *bmi160, uint8_t *v_orient_hyst_u8)
+uint8_t bmi160_get_intr_orient_hyst(const bmi160_t *bmi160, uint8_t *v_orient_hyst_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -9810,10 +9810,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_orient_hyst(const bmi160_t *bmi160, 
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_orient_hyst(const bmi160_t *bmi160, uint8_t v_orient_hyst_u8)
+uint8_t bmi160_set_intr_orient_hyst(const bmi160_t *bmi160, uint8_t v_orient_hyst_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -9843,10 +9843,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_orient_hyst(const bmi160_t *bmi160, 
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_orient_theta(const bmi160_t *bmi160, uint8_t *v_orient_theta_u8)
+uint8_t bmi160_get_intr_orient_theta(const bmi160_t *bmi160, uint8_t *v_orient_theta_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -9874,10 +9874,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_orient_theta(const bmi160_t *bmi160,
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_orient_theta(const bmi160_t *bmi160, uint8_t v_orient_theta_u8)
+uint8_t bmi160_set_intr_orient_theta(const bmi160_t *bmi160, uint8_t v_orient_theta_u8)
 {
 /* variable used for return the status of communication result*/
-BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+uint8_t com_rslt = E_BMI160_COMM_RES;
 uint8_t v_data_u8 = BMI160_INIT_VALUE;
 /* check the bmi160 structure as NULL*/
 if (bmi160 == BMI160_NULL) {
@@ -9914,10 +9914,10 @@ return com_rslt;
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_orient_ud_enable(const bmi160_t *bmi160, uint8_t *v_orient_ud_u8)
+uint8_t bmi160_get_intr_orient_ud_enable(const bmi160_t *bmi160, uint8_t *v_orient_ud_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -9948,10 +9948,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_orient_ud_enable(const bmi160_t *bmi
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_orient_ud_enable(const bmi160_t *bmi160, uint8_t v_orient_ud_u8)
+uint8_t bmi160_set_intr_orient_ud_enable(const bmi160_t *bmi160, uint8_t v_orient_ud_u8)
 {
 /* variable used for return the status of communication result*/
-BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+uint8_t com_rslt = E_BMI160_COMM_RES;
 uint8_t v_data_u8 = BMI160_INIT_VALUE;
 /* check the bmi160 structure as NULL*/
 if (bmi160 == BMI160_NULL) {
@@ -9988,10 +9988,10 @@ return com_rslt;
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_orient_axes_enable(const bmi160_t *bmi160, uint8_t *v_orient_axes_u8)
+uint8_t bmi160_get_intr_orient_axes_enable(const bmi160_t *bmi160, uint8_t *v_orient_axes_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -10022,10 +10022,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_orient_axes_enable(const bmi160_t *b
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_orient_axes_enable(const bmi160_t *bmi160, uint8_t v_orient_axes_u8)
+uint8_t bmi160_set_intr_orient_axes_enable(const bmi160_t *bmi160, uint8_t v_orient_axes_u8)
 {
 /* variable used for return the status of communication result*/
-BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+uint8_t com_rslt = E_BMI160_COMM_RES;
 uint8_t v_data_u8 = BMI160_INIT_VALUE;
 /* check the bmi160 structure as NULL*/
 if (bmi160 == BMI160_NULL) {
@@ -10059,10 +10059,10 @@ return com_rslt;
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_flat_theta(const bmi160_t *bmi160, uint8_t *v_flat_theta_u8)
+uint8_t bmi160_get_intr_flat_theta(const bmi160_t *bmi160, uint8_t *v_flat_theta_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -10089,10 +10089,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_flat_theta(const bmi160_t *bmi160, u
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_flat_theta(const bmi160_t *bmi160, uint8_t v_flat_theta_u8)
+uint8_t bmi160_set_intr_flat_theta(const bmi160_t *bmi160, uint8_t v_flat_theta_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -10131,10 +10131,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_flat_theta(const bmi160_t *bmi160, u
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_flat_hold(const bmi160_t *bmi160, uint8_t *v_flat_hold_u8)
+uint8_t bmi160_get_intr_flat_hold(const bmi160_t *bmi160, uint8_t *v_flat_hold_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -10165,10 +10165,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_flat_hold(const bmi160_t *bmi160, ui
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_flat_hold(const bmi160_t *bmi160, uint8_t v_flat_hold_u8)
+uint8_t bmi160_set_intr_flat_hold(const bmi160_t *bmi160, uint8_t v_flat_hold_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -10201,10 +10201,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_flat_hold(const bmi160_t *bmi160, ui
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_flat_hyst(const bmi160_t *bmi160, uint8_t *v_flat_hyst_u8)
+uint8_t bmi160_get_intr_flat_hyst(const bmi160_t *bmi160, uint8_t *v_flat_hyst_u8)
 {
     /* variable used to return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -10230,10 +10230,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_flat_hyst(const bmi160_t *bmi160, ui
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_flat_hyst(const bmi160_t *bmi160, uint8_t v_flat_hyst_u8)
+uint8_t bmi160_set_intr_flat_hyst(const bmi160_t *bmi160, uint8_t v_flat_hyst_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -10271,10 +10271,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_flat_hyst(const bmi160_t *bmi160, ui
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_foc_accel_z(const bmi160_t *bmi160, uint8_t *v_foc_accel_z_u8)
+uint8_t bmi160_get_foc_accel_z(const bmi160_t *bmi160, uint8_t *v_foc_accel_z_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -10304,10 +10304,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_foc_accel_z(const bmi160_t *bmi160, uint8
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_foc_accel_z(const bmi160_t *bmi160, uint8_t v_foc_accel_z_u8)
+uint8_t bmi160_set_foc_accel_z(const bmi160_t *bmi160, uint8_t v_foc_accel_z_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -10344,10 +10344,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_foc_accel_z(const bmi160_t *bmi160, uint8
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_foc_accel_y(const bmi160_t *bmi160, uint8_t *v_foc_accel_y_u8)
+uint8_t bmi160_get_foc_accel_y(const bmi160_t *bmi160, uint8_t *v_foc_accel_y_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -10381,10 +10381,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_foc_accel_y(const bmi160_t *bmi160, uint8
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_foc_accel_y(const bmi160_t *bmi160, uint8_t v_foc_accel_y_u8)
+uint8_t bmi160_set_foc_accel_y(const bmi160_t *bmi160, uint8_t v_foc_accel_y_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -10425,10 +10425,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_foc_accel_y(const bmi160_t *bmi160, uint8
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_foc_accel_x(const bmi160_t *bmi160, uint8_t *v_foc_accel_x_u8)
+uint8_t bmi160_get_foc_accel_x(const bmi160_t *bmi160, uint8_t *v_foc_accel_x_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -10461,10 +10461,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_foc_accel_x(const bmi160_t *bmi160, uint8
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_foc_accel_x(const bmi160_t *bmi160, uint8_t v_foc_accel_x_u8)
+uint8_t bmi160_set_foc_accel_x(const bmi160_t *bmi160, uint8_t v_foc_accel_x_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -10514,11 +10514,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_foc_accel_x(const bmi160_t *bmi160, uint8
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_foc_trigger(const bmi160_t *bmi160, uint8_t v_axis_u8,
+uint8_t bmi160_set_accel_foc_trigger(const bmi160_t *bmi160, uint8_t v_axis_u8,
 uint8_t v_foc_accel_u8, int8_t *v_accel_offset_s8)
 {
 /* variable used for return the status of communication result*/
-BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+uint8_t com_rslt = E_BMI160_COMM_RES;
 uint8_t v_data_u8 = BMI160_INIT_VALUE;
 int8_t v_status_s8 = SUCCESS_BMI160;
 uint8_t v_timeout_u8 = BMI160_INIT_VALUE;
@@ -10683,12 +10683,12 @@ return com_rslt;
  *    @retval -1 -> Error
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_accel_foc_trigger_xyz(const bmi160_t *bmi160, uint8_t v_foc_accel_x_u8,
+uint8_t bmi160_accel_foc_trigger_xyz(const bmi160_t *bmi160, uint8_t v_foc_accel_x_u8,
 uint8_t v_foc_accel_y_u8, uint8_t v_foc_accel_z_u8, int8_t *v_accel_off_x_s8,
 int8_t *v_accel_off_y_s8, int8_t *v_accel_off_z_s8)
 {
 /* variable used for return the status of communication result*/
-BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+uint8_t com_rslt = E_BMI160_COMM_RES;
 uint8_t focx = BMI160_INIT_VALUE;
 uint8_t focy = BMI160_INIT_VALUE;
 uint8_t focz = BMI160_INIT_VALUE;
@@ -10782,10 +10782,10 @@ return com_rslt;
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_foc_gyro_enable(const bmi160_t *bmi160, uint8_t *v_foc_gyro_u8)
+uint8_t bmi160_get_foc_gyro_enable(const bmi160_t *bmi160, uint8_t *v_foc_gyro_u8)
 {
     /* used for return the status of bus communication */
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -10817,11 +10817,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_foc_gyro_enable(const bmi160_t *bmi160, u
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_foc_gyro_enable(const bmi160_t *bmi160, uint8_t v_foc_gyro_u8, int16_t *v_gyro_off_x_s16,
+uint8_t bmi160_set_foc_gyro_enable(const bmi160_t *bmi160, uint8_t v_foc_gyro_u8, int16_t *v_gyro_off_x_s16,
 int16_t *v_gyro_off_y_s16, int16_t *v_gyro_off_z_s16)
 {
 /* variable used for return the status of communication result*/
-BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+uint8_t com_rslt = E_BMI160_COMM_RES;
 uint8_t v_data_u8 = BMI160_INIT_VALUE;
 uint8_t v_status_s8 = SUCCESS_BMI160;
 uint8_t v_timeout_u8 = BMI160_INIT_VALUE;
@@ -10895,10 +10895,10 @@ return com_rslt;
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_nvm_prog_enable(const bmi160_t *bmi160, uint8_t *v_nvm_prog_u8)
+uint8_t bmi160_get_nvm_prog_enable(const bmi160_t *bmi160, uint8_t *v_nvm_prog_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -10926,10 +10926,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_nvm_prog_enable(const bmi160_t *bmi160, u
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_nvm_prog_enable(const bmi160_t *bmi160, uint8_t v_nvm_prog_u8)
+uint8_t bmi160_set_nvm_prog_enable(const bmi160_t *bmi160, uint8_t v_nvm_prog_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -10966,10 +10966,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_nvm_prog_enable(const bmi160_t *bmi160, u
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_spi3(const bmi160_t *bmi160, uint8_t *v_spi3_u8)
+uint8_t bmi160_get_spi3(const bmi160_t *bmi160, uint8_t *v_spi3_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -10999,10 +10999,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_spi3(const bmi160_t *bmi160, uint8_t *v_s
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_spi3(const bmi160_t *bmi160, uint8_t v_spi3_u8)
+uint8_t bmi160_set_spi3(const bmi160_t *bmi160, uint8_t v_spi3_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -11038,10 +11038,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_spi3(const bmi160_t *bmi160, uint8_t v_sp
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_i2c_wdt_select(const bmi160_t *bmi160, uint8_t *v_i2c_wdt_u8)
+uint8_t bmi160_get_i2c_wdt_select(const bmi160_t *bmi160, uint8_t *v_i2c_wdt_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -11070,10 +11070,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_i2c_wdt_select(const bmi160_t *bmi160, ui
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_i2c_wdt_select(const bmi160_t *bmi160, uint8_t v_i2c_wdt_u8)
+uint8_t bmi160_set_i2c_wdt_select(const bmi160_t *bmi160, uint8_t v_i2c_wdt_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -11108,10 +11108,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_i2c_wdt_select(const bmi160_t *bmi160, ui
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_i2c_wdt_enable(const bmi160_t *bmi160, uint8_t *v_i2c_wdt_u8)
+uint8_t bmi160_get_i2c_wdt_enable(const bmi160_t *bmi160, uint8_t *v_i2c_wdt_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -11139,10 +11139,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_i2c_wdt_enable(const bmi160_t *bmi160, ui
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_i2c_wdt_enable(const bmi160_t *bmi160, uint8_t v_i2c_wdt_u8)
+uint8_t bmi160_set_i2c_wdt_enable(const bmi160_t *bmi160, uint8_t v_i2c_wdt_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -11181,10 +11181,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_i2c_wdt_enable(const bmi160_t *bmi160, ui
  *
 */
 
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_if_mode(const bmi160_t *bmi160, uint8_t *v_if_mode_u8)
+uint8_t bmi160_get_if_mode(const bmi160_t *bmi160, uint8_t *v_if_mode_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) 
@@ -11217,10 +11217,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_if_mode(const bmi160_t *bmi160, uint8_t *
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_if_mode(const bmi160_t *bmi160, uint8_t v_if_mode_u8)
+uint8_t bmi160_set_if_mode(const bmi160_t *bmi160, uint8_t v_if_mode_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) 
@@ -11268,10 +11268,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_if_mode(const bmi160_t *bmi160, uint8_t v
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_sleep_trigger(const bmi160_t *bmi160, uint8_t *v_gyro_sleep_trigger_u8)
+uint8_t bmi160_get_gyro_sleep_trigger(const bmi160_t *bmi160, uint8_t *v_gyro_sleep_trigger_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -11307,10 +11307,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_sleep_trigger(const bmi160_t *bmi160
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_sleep_trigger(const bmi160_t *bmi160, uint8_t v_gyro_sleep_trigger_u8)
+uint8_t bmi160_set_gyro_sleep_trigger(const bmi160_t *bmi160, uint8_t v_gyro_sleep_trigger_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -11348,10 +11348,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_sleep_trigger(const bmi160_t *bmi160
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_wakeup_trigger(const bmi160_t *bmi160, uint8_t *v_gyro_wakeup_trigger_u8)
+uint8_t bmi160_get_gyro_wakeup_trigger(const bmi160_t *bmi160, uint8_t *v_gyro_wakeup_trigger_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -11382,10 +11382,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_wakeup_trigger(const bmi160_t *bmi16
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_wakeup_trigger(const bmi160_t *bmi160, uint8_t v_gyro_wakeup_trigger_u8)
+uint8_t bmi160_set_gyro_wakeup_trigger(const bmi160_t *bmi160, uint8_t v_gyro_wakeup_trigger_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -11422,10 +11422,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_wakeup_trigger(const bmi160_t *bmi16
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_sleep_state(const bmi160_t *bmi160, uint8_t *v_gyro_sleep_state_u8)
+uint8_t bmi160_get_gyro_sleep_state(const bmi160_t *bmi160, uint8_t *v_gyro_sleep_state_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -11454,10 +11454,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_sleep_state(const bmi160_t *bmi160, 
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_sleep_state(const bmi160_t *bmi160, uint8_t v_gyro_sleep_state_u8)
+uint8_t bmi160_set_gyro_sleep_state(const bmi160_t *bmi160, uint8_t v_gyro_sleep_state_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -11493,10 +11493,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_sleep_state(const bmi160_t *bmi160, 
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_wakeup_intr(const bmi160_t *bmi160, uint8_t *v_gyro_wakeup_intr_u8)
+uint8_t bmi160_get_gyro_wakeup_intr(const bmi160_t *bmi160, uint8_t *v_gyro_wakeup_intr_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -11525,10 +11525,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_wakeup_intr(const bmi160_t *bmi160, 
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_wakeup_intr(const bmi160_t *bmi160, uint8_t v_gyro_wakeup_intr_u8)
+uint8_t bmi160_set_gyro_wakeup_intr(const bmi160_t *bmi160, uint8_t v_gyro_wakeup_intr_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -11566,10 +11566,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_wakeup_intr(const bmi160_t *bmi160, 
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_selftest_axis(const bmi160_t *bmi160, uint8_t *v_accel_selftest_axis_u8)
+uint8_t bmi160_get_accel_selftest_axis(const bmi160_t *bmi160, uint8_t *v_accel_selftest_axis_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -11600,10 +11600,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_selftest_axis(const bmi160_t *bmi16
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_selftest_axis(const bmi160_t *bmi160, uint8_t v_accel_selftest_axis_u8)
+uint8_t bmi160_set_accel_selftest_axis(const bmi160_t *bmi160, uint8_t v_accel_selftest_axis_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -11640,10 +11640,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_selftest_axis(const bmi160_t *bmi16
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_selftest_sign(const bmi160_t *bmi160, uint8_t *v_accel_selftest_sign_u8)
+uint8_t bmi160_get_accel_selftest_sign(const bmi160_t *bmi160, uint8_t *v_accel_selftest_sign_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -11672,10 +11672,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_selftest_sign(const bmi160_t *bmi16
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_selftest_sign(const bmi160_t *bmi160, uint8_t v_accel_selftest_sign_u8)
+uint8_t bmi160_set_accel_selftest_sign(const bmi160_t *bmi160, uint8_t v_accel_selftest_sign_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -11713,10 +11713,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_selftest_sign(const bmi160_t *bmi16
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_selftest_amp(const bmi160_t *bmi160, uint8_t *v_accel_selftest_amp_u8)
+uint8_t bmi160_get_accel_selftest_amp(const bmi160_t *bmi160, uint8_t *v_accel_selftest_amp_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -11746,10 +11746,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_selftest_amp(const bmi160_t *bmi160
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_selftest_amp(const bmi160_t *bmi160, uint8_t v_accel_selftest_amp_u8)
+uint8_t bmi160_set_accel_selftest_amp(const bmi160_t *bmi160, uint8_t v_accel_selftest_amp_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -11780,10 +11780,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_selftest_amp(const bmi160_t *bmi160
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_selftest_start(const bmi160_t *bmi160, uint8_t *v_gyro_selftest_start_u8)
+uint8_t bmi160_get_gyro_selftest_start(const bmi160_t *bmi160, uint8_t *v_gyro_selftest_start_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -11806,10 +11806,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_selftest_start(const bmi160_t *bmi16
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_selftest_start(const bmi160_t *bmi160, uint8_t v_gyro_selftest_start_u8)
+uint8_t bmi160_set_gyro_selftest_start(const bmi160_t *bmi160, uint8_t v_gyro_selftest_start_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -11846,10 +11846,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_selftest_start(const bmi160_t *bmi16
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_spi_enable(const bmi160_t *bmi160, uint8_t *v_spi_enable_u8)
+uint8_t bmi160_get_spi_enable(const bmi160_t *bmi160, uint8_t *v_spi_enable_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -11878,10 +11878,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_spi_enable(const bmi160_t *bmi160, uint8_
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_spi_enable(const bmi160_t *bmi160, uint8_t v_spi_enable_u8)
+uint8_t bmi160_set_spi_enable(const bmi160_t *bmi160, uint8_t v_spi_enable_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -11911,10 +11911,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_spi_enable(const bmi160_t *bmi160, uint8_
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_spare0_trim(const bmi160_t *bmi160, uint8_t *v_spare0_trim_u8)
+uint8_t bmi160_get_spare0_trim(const bmi160_t *bmi160, uint8_t *v_spare0_trim_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -11941,10 +11941,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_spare0_trim(const bmi160_t *bmi160, uint8
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_spare0_trim(const bmi160_t *bmi160, uint8_t v_spare0_trim_u8)
+uint8_t bmi160_set_spare0_trim(const bmi160_t *bmi160, uint8_t v_spare0_trim_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -11974,10 +11974,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_spare0_trim(const bmi160_t *bmi160, uint8
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_nvm_counter(const bmi160_t *bmi160, uint8_t *v_nvm_counter_u8)
+uint8_t bmi160_get_nvm_counter(const bmi160_t *bmi160, uint8_t *v_nvm_counter_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -12004,10 +12004,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_nvm_counter(const bmi160_t *bmi160, uint8
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_nvm_counter(const bmi160_t *bmi160, uint8_t v_nvm_counter_u8)
+uint8_t bmi160_set_nvm_counter(const bmi160_t *bmi160, uint8_t v_nvm_counter_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -12039,10 +12039,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_nvm_counter(const bmi160_t *bmi160, uint8
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_offset_compensation_xaxis(const bmi160_t *bmi160, int8_t *v_accel_off_x_s8)
+uint8_t bmi160_get_accel_offset_compensation_xaxis(const bmi160_t *bmi160, int8_t *v_accel_off_x_s8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -12071,10 +12071,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_offset_compensation_xaxis(const bmi
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_offset_compensation_xaxis(const bmi160_t *bmi160, int8_t v_accel_off_x_s8)
+uint8_t bmi160_set_accel_offset_compensation_xaxis(const bmi160_t *bmi160, int8_t v_accel_off_x_s8)
 {
 /* variable used for return the status of communication result*/
-BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+uint8_t com_rslt = E_BMI160_COMM_RES;
 uint8_t v_data_u8 = BMI160_INIT_VALUE;
 uint8_t v_status_s8 = SUCCESS_BMI160;
 /* check the bmi160 structure as NULL*/
@@ -12114,10 +12114,10 @@ if (bmi160 == BMI160_NULL) {
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_offset_compensation_yaxis(const bmi160_t *bmi160, int8_t *v_accel_off_y_s8)
+uint8_t bmi160_get_accel_offset_compensation_yaxis(const bmi160_t *bmi160, int8_t *v_accel_off_y_s8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -12146,10 +12146,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_offset_compensation_yaxis(const bmi
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_offset_compensation_yaxis(const bmi160_t *bmi160, int8_t v_accel_off_y_s8)
+uint8_t bmi160_set_accel_offset_compensation_yaxis(const bmi160_t *bmi160, int8_t v_accel_off_y_s8)
 {
 /* variable used for return the status of communication result*/
-BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+uint8_t com_rslt = E_BMI160_COMM_RES;
 uint8_t v_data_u8 = BMI160_INIT_VALUE;
 uint8_t v_status_s8 = SUCCESS_BMI160;
 /* check the bmi160 structure as NULL*/
@@ -12189,10 +12189,10 @@ if (bmi160 == BMI160_NULL) {
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_offset_compensation_zaxis(const bmi160_t *bmi160, int8_t *v_accel_off_z_s8)
+uint8_t bmi160_get_accel_offset_compensation_zaxis(const bmi160_t *bmi160, int8_t *v_accel_off_z_s8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -12221,10 +12221,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_offset_compensation_zaxis(const bmi
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_offset_compensation_zaxis(const bmi160_t *bmi160, int8_t v_accel_off_z_s8)
+uint8_t bmi160_set_accel_offset_compensation_zaxis(const bmi160_t *bmi160, int8_t v_accel_off_z_s8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     uint8_t v_status_s8 = SUCCESS_BMI160;
     /* check the bmi160 structure as NULL*/
@@ -12265,10 +12265,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_offset_compensation_zaxis(const bmi
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_offset_compensation_xaxis(const bmi160_t *bmi160, int16_t *v_gyro_off_x_s16)
+uint8_t bmi160_get_gyro_offset_compensation_xaxis(const bmi160_t *bmi160, int16_t *v_gyro_off_x_s16)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data1_u8r = BMI160_INIT_VALUE;
     uint8_t v_data2_u8r = BMI160_INIT_VALUE;
     int16_t v_data3_u8r, v_data4_u8r = BMI160_INIT_VALUE;
@@ -12308,10 +12308,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_offset_compensation_xaxis(const bmi1
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_offset_compensation_xaxis(const bmi160_t *bmi160, int16_t v_gyro_off_x_s16)
+uint8_t bmi160_set_gyro_offset_compensation_xaxis(const bmi160_t *bmi160, int16_t v_gyro_off_x_s16)
 {
 /* variable used for return the status of communication result*/
-BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+uint8_t com_rslt = E_BMI160_COMM_RES;
 uint8_t v_data1_u8r, v_data2_u8r = BMI160_INIT_VALUE;
 uint16_t v_data3_u8r = BMI160_INIT_VALUE;
 uint8_t v_status_s8 = SUCCESS_BMI160;
@@ -12366,10 +12366,10 @@ return com_rslt;
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_offset_compensation_yaxis(const bmi160_t *bmi160, int16_t *v_gyro_off_y_s16)
+uint8_t bmi160_get_gyro_offset_compensation_yaxis(const bmi160_t *bmi160, int16_t *v_gyro_off_y_s16)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data1_u8r = BMI160_INIT_VALUE;
     uint8_t v_data2_u8r = BMI160_INIT_VALUE;
     int16_t v_data3_u8r, v_data4_u8r = BMI160_INIT_VALUE;
@@ -12410,10 +12410,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_offset_compensation_yaxis(const bmi1
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_offset_compensation_yaxis(const bmi160_t *bmi160, int16_t v_gyro_off_y_s16)
+uint8_t bmi160_set_gyro_offset_compensation_yaxis(const bmi160_t *bmi160, int16_t v_gyro_off_y_s16)
 {
 /* variable used for return the status of communication result*/
-BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+uint8_t com_rslt = E_BMI160_COMM_RES;
 uint8_t v_data1_u8r, v_data2_u8r = BMI160_INIT_VALUE;
 uint16_t v_data3_u8r = BMI160_INIT_VALUE;
 uint8_t v_status_s8 = SUCCESS_BMI160;
@@ -12471,10 +12471,10 @@ return com_rslt;
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_offset_compensation_zaxis(const bmi160_t *bmi160, int16_t *v_gyro_off_z_s16)
+uint8_t bmi160_get_gyro_offset_compensation_zaxis(const bmi160_t *bmi160, int16_t *v_gyro_off_z_s16)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data1_u8r = BMI160_INIT_VALUE;
     uint8_t v_data2_u8r = BMI160_INIT_VALUE;
     int16_t v_data3_u8r, v_data4_u8r = BMI160_INIT_VALUE;
@@ -12518,10 +12518,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_offset_compensation_zaxis(const bmi1
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_offset_compensation_zaxis(const bmi160_t *bmi160, int16_t v_gyro_off_z_s16)
+uint8_t bmi160_set_gyro_offset_compensation_zaxis(const bmi160_t *bmi160, int16_t v_gyro_off_z_s16)
 {
 /* variable used for return the status of communication result*/
-BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+uint8_t com_rslt = E_BMI160_COMM_RES;
 uint8_t v_data1_u8r, v_data2_u8r = BMI160_INIT_VALUE;
 uint16_t v_data3_u8r = BMI160_INIT_VALUE;
 uint8_t v_status_s8 = SUCCESS_BMI160;
@@ -12581,10 +12581,10 @@ return com_rslt;
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_offset_enable(const bmi160_t *bmi160, uint8_t *v_accel_off_enable_u8)
+uint8_t bmi160_get_accel_offset_enable(const bmi160_t *bmi160, uint8_t *v_accel_off_enable_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -12616,10 +12616,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_offset_enable(const bmi160_t *bmi16
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_offset_enable(const bmi160_t *bmi160, uint8_t v_accel_off_enable_u8)
+uint8_t bmi160_set_accel_offset_enable(const bmi160_t *bmi160, uint8_t v_accel_off_enable_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -12653,10 +12653,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_offset_enable(const bmi160_t *bmi16
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_offset_enable(const bmi160_t *bmi160, uint8_t *v_gyro_off_enable_u8)
+uint8_t bmi160_get_gyro_offset_enable(const bmi160_t *bmi160, uint8_t *v_gyro_off_enable_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -12687,10 +12687,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_offset_enable(const bmi160_t *bmi160
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_offset_enable(const bmi160_t *bmi160, uint8_t v_gyro_off_enable_u8)
+uint8_t bmi160_set_gyro_offset_enable(const bmi160_t *bmi160, uint8_t v_gyro_off_enable_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -12722,10 +12722,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_offset_enable(const bmi160_t *bmi160
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_step_count(const bmi160_t *bmi160, int16_t *v_step_cnt_s16)
+uint8_t bmi160_read_step_count(const bmi160_t *bmi160, int16_t *v_step_cnt_s16)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     /* array having the step counter LSB and MSB data
     v_data_u8[0] - LSB
     v_data_u8[1] - MSB*/
@@ -12760,10 +12760,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_read_step_count(const bmi160_t *bmi160, int16
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_step_config(const bmi160_t *bmi160, uint16_t *v_step_config_u16)
+uint8_t bmi160_get_step_config(const bmi160_t *bmi160, uint16_t *v_step_config_u16)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data1_u8r = BMI160_INIT_VALUE;
     uint8_t v_data2_u8r = BMI160_INIT_VALUE;
     uint16_t v_data3_u8r = BMI160_INIT_VALUE;
@@ -12811,10 +12811,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_step_config(const bmi160_t *bmi160, uint1
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_step_config(const bmi160_t *bmi160, uint16_t v_step_config_u16)
+uint8_t bmi160_set_step_config(const bmi160_t *bmi160, uint16_t v_step_config_u16)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data1_u8r = BMI160_INIT_VALUE;
     uint8_t v_data2_u8r = BMI160_INIT_VALUE;
     uint16_t v_data3_u16 = BMI160_INIT_VALUE;
@@ -12868,10 +12868,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_step_config(const bmi160_t *bmi160, uint1
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_step_counter_enable(const bmi160_t *bmi160, uint8_t *v_step_counter_u8)
+uint8_t bmi160_get_step_counter_enable(const bmi160_t *bmi160, uint8_t *v_step_counter_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -12896,10 +12896,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_step_counter_enable(const bmi160_t *bmi16
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_step_counter_enable(const bmi160_t *bmi160, uint8_t v_step_counter_u8)
+uint8_t bmi160_set_step_counter_enable(const bmi160_t *bmi160, uint8_t v_step_counter_u8)
 {
 /* variable used for return the status of communication result*/
-BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+uint8_t com_rslt = E_BMI160_COMM_RES;
 uint8_t v_data_u8 = BMI160_INIT_VALUE;
 /* check the bmi160 structure as NULL*/
 if (bmi160 == BMI160_NULL) {
@@ -12937,22 +12937,22 @@ if (bmi160 == BMI160_NULL) {
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_step_mode(const bmi160_t *bmi160, uint8_t v_step_mode_u8)
+uint8_t bmi160_set_step_mode(const bmi160_t *bmi160, uint8_t v_step_mode_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
 
     switch (v_step_mode_u8) {
     case BMI160_STEP_NORMAL_MODE:
-        com_rslt = bmi160_set_step_config(STEP_CONFIG_NORMAL);
+        com_rslt = bmi160_set_step_config(bmi160, STEP_CONFIG_NORMAL);
         HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     break;
     case BMI160_STEP_SENSITIVE_MODE:
-        com_rslt = bmi160_set_step_config(STEP_CONFIG_SENSITIVE);
+        com_rslt = bmi160_set_step_config(bmi160, STEP_CONFIG_SENSITIVE);
         HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     break;
     case BMI160_STEP_ROBUST_MODE:
-        com_rslt = bmi160_set_step_config(STEP_CONFIG_ROBUST);
+        com_rslt = bmi160_set_step_config(bmi160, STEP_CONFIG_ROBUST);
         HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     break;
     default:
@@ -12979,19 +12979,19 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_step_mode(const bmi160_t *bmi160, uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_map_significant_motion_intr(const bmi160_t *bmi160, uint8_t v_significant_u8)
+uint8_t bmi160_map_significant_motion_intr(const bmi160_t *bmi160, uint8_t v_significant_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_sig_motion_u8 = BMI160_INIT_VALUE;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     uint8_t v_any_motion_intr1_stat_u8 = BMI160_ENABLE_ANY_MOTION_INTR1;
     uint8_t v_any_motion_intr2_stat_u8 = BMI160_ENABLE_ANY_MOTION_INTR2;
     uint8_t v_any_motion_axis_stat_u8 = BMI160_ENABLE_ANY_MOTION_AXIS;
     /* enable the significant motion interrupt */
-    com_rslt = bmi160_get_intr_significant_motion_select(&v_sig_motion_u8);
+    com_rslt = bmi160_get_intr_significant_motion_select(bmi160, &v_sig_motion_u8);
     if (v_sig_motion_u8 != BMI160_SIG_MOTION_STAT_HIGH)
-        com_rslt += bmi160_set_intr_significant_motion_select(BMI160_SIG_MOTION_INTR_ENABLE);
+        com_rslt += bmi160_set_intr_significant_motion_select(bmi160, BMI160_SIG_MOTION_INTR_ENABLE);
     switch (v_significant_u8) {
     case BMI160_MAP_INTR1:
         /* interrupt */
@@ -13044,10 +13044,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_map_significant_motion_intr(const bmi160_t *b
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_map_step_detector_intr(const bmi160_t *bmi160, uint8_t v_step_detector_u8)
+uint8_t bmi160_map_step_detector_intr(const bmi160_t *bmi160, uint8_t v_step_detector_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_step_det_u8 = BMI160_INIT_VALUE;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     uint8_t v_low_g_intr_u81_stat_u8 = BMI160_LOW_G_INTR_STAT;
@@ -13106,10 +13106,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_map_step_detector_intr(const bmi160_t *bmi160
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_clear_step_counter(const bmi160_t *bmi160)
+uint8_t bmi160_clear_step_counter(const bmi160_t *bmi160)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     /* clear the step counter*/
     com_rslt = bmi160_set_command_register(bmi160, RESET_STEP_COUNTER);
     HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
@@ -13155,9 +13155,9 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_clear_step_counter(const bmi160_t *bmi160)
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_command_register(const bmi160_t *bmi160,uint8_t v_command_reg_u8)
+uint8_t bmi160_set_command_register(const bmi160_t *bmi160,uint8_t v_command_reg_u8)
 {
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) 
     {
@@ -13184,10 +13184,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_command_register(const bmi160_t *bmi160,u
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_target_page(const bmi160_t *bmi160, uint8_t *v_target_page_u8)
+uint8_t bmi160_get_target_page(const bmi160_t *bmi160, uint8_t *v_target_page_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) 
@@ -13216,10 +13216,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_target_page(const bmi160_t *bmi160, uint8
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_target_page(const bmi160_t *bmi160, uint8_t v_target_page_u8)
+uint8_t bmi160_set_target_page(const bmi160_t *bmi160, uint8_t v_target_page_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) 
@@ -13263,10 +13263,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_target_page(const bmi160_t *bmi160, uint8
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_paging_enable(const bmi160_t *bmi160, uint8_t *v_page_enable_u8)
+uint8_t bmi160_get_paging_enable(const bmi160_t *bmi160, uint8_t *v_page_enable_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) 
@@ -13300,10 +13300,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_paging_enable(const bmi160_t *bmi160, uin
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_paging_enable(const bmi160_t *bmi160, uint8_t v_page_enable_u8)
+uint8_t bmi160_set_paging_enable(const bmi160_t *bmi160, uint8_t v_page_enable_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
@@ -13340,10 +13340,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_paging_enable(const bmi160_t *bmi160, uin
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_pullup_configuration(const bmi160_t *bmi160, uint8_t *v_control_pullup_u8)
+uint8_t bmi160_get_pullup_configuration(const bmi160_t *bmi160, uint8_t *v_control_pullup_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt  = E_BMI160_COMM_RES;
+    uint8_t com_rslt  = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) 
@@ -13373,10 +13373,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_pullup_configuration(const bmi160_t *bmi1
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_pullup_configuration(const bmi160_t *bmi160, uint8_t v_control_pullup_u8)
+uint8_t bmi160_set_pullup_configuration(const bmi160_t *bmi160, uint8_t v_control_pullup_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) 
@@ -13417,7 +13417,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_pullup_configuration(const bmi160_t *bmi1
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_second_if_mag_compensate_xyz(const bmi160_t *bmi160, struct bmi160_mag_fifo_data_t mag_fifo_data,
+uint8_t bmi160_second_if_mag_compensate_xyz(const bmi160_t *bmi160, struct bmi160_mag_fifo_data_t mag_fifo_data,
 uint8_t v_mag_second_if_u8)
 {
 int8_t com_rslt = BMI160_INIT_VALUE;
@@ -13470,15 +13470,15 @@ case BMI160_SEC_IF_BMM150:
     (v_mag_r_u16 >> BMI160_SHIFT_BIT_POSITION_BY_02_BITS);
     /* Compensated mag x data */
     processed_data.x =
-    bmi160_bmm150_mag_compensate_X(v_mag_x_s16,
+    bmi160_bmm150_mag_compensate_X(bmi160, v_mag_x_s16,
     v_mag_r_u16);
     /* Compensated mag y data */
     processed_data.y =
-    bmi160_bmm150_mag_compensate_Y(v_mag_y_s16,
+    bmi160_bmm150_mag_compensate_Y(bmi160, v_mag_y_s16,
     v_mag_r_u16);
     /* Compensated mag z data */
     processed_data.z =
-    bmi160_bmm150_mag_compensate_Z(v_mag_z_s16,
+    bmi160_bmm150_mag_compensate_Z(bmi160, v_mag_z_s16,
     v_mag_r_u16);
 break;
 case BMI160_SEC_IF_AKM09911:
@@ -13496,13 +13496,13 @@ case BMI160_SEC_IF_AKM09911:
     | (mag_fifo_data.mag_z_lsb));
     /* Compensated for X data */
     processed_data.x =
-    bmi160_bst_akm09911_compensate_X(v_mag_x_s16);
+    bmi160_bst_akm09911_compensate_X(bmi160, v_mag_x_s16);
     /* Compensated for Y data */
     processed_data.y =
-    bmi160_bst_akm09911_compensate_Y(v_mag_y_s16);
+    bmi160_bst_akm09911_compensate_Y(bmi160, v_mag_y_s16);
     /* Compensated for Z data */
     processed_data.z =
-    bmi160_bst_akm09911_compensate_Z(v_mag_z_s16);
+    bmi160_bst_akm09911_compensate_Z(bmi160, v_mag_z_s16);
 break;
 case BMI160_SEC_IF_AKM09912:
     /* x data*/
@@ -13519,13 +13519,13 @@ case BMI160_SEC_IF_AKM09912:
     | (mag_fifo_data.mag_z_lsb));
     /* Compensated for X data */
     processed_data.x =
-    bmi160_bst_akm09912_compensate_X(v_mag_x_s16);
+    bmi160_bst_akm09912_compensate_X(bmi160, v_mag_x_s16);
     /* Compensated for Y data */
     processed_data.y =
-    bmi160_bst_akm09912_compensate_Y(v_mag_y_s16);
+    bmi160_bst_akm09912_compensate_Y(bmi160, v_mag_y_s16);
     /* Compensated for Z data */
     processed_data.z =
-    bmi160_bst_akm09912_compensate_Z(v_mag_z_s16);
+    bmi160_bst_akm09912_compensate_Z(bmi160, v_mag_z_s16);
 break;
 case BMI160_SEC_IF_YAS532:
     /* read the xyy1 data*/
@@ -13675,9 +13675,9 @@ break;
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_fifo_header_data(bmi160, const bmi160_t *bmi160, uint8_t v_mag_if_u8)
+uint8_t bmi160_read_fifo_header_data(bmi160, const bmi160_t *bmi160, uint8_t v_mag_if_u8)
 {
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     struct bmi160_fifo_data_header_t header_data;
     /* read the whole fifo data*/
     com_rslt =
@@ -13713,10 +13713,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_read_fifo_header_data(bmi160, const bmi160_t 
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_fifo_header_data_user_defined_length(const bmi160_t *bmi160, uint16_t v_fifo_user_length_u16, uint8_t v_mag_if_mag_u8,
+uint8_t bmi160_read_fifo_header_data_user_defined_length(const bmi160_t *bmi160, uint16_t v_fifo_user_length_u16, uint8_t v_mag_if_mag_u8,
 struct bmi160_fifo_data_header_t *fifo_header_data)
 {
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_accel_index_u8 = BMI160_INIT_VALUE;
     uint8_t v_gyro_index_u8 = BMI160_INIT_VALUE;
     uint8_t v_mag_index_u8 = BMI160_INIT_VALUE;
@@ -13850,7 +13850,7 @@ struct bmi160_fifo_data_header_t *fifo_header_data)
             mag_data.mag_r_y2_msb = (v_fifo_data_u8[v_fifo_index_u16 +
             BMI160_FIFO_R_MSB_DATA]);
 
-            com_rslt = bmi160_second_if_mag_compensate_xyz(mag_data,v_mag_if_mag_u8);
+            com_rslt = bmi160_second_if_mag_compensate_xyz(bmi160, mag_data,v_mag_if_mag_u8);
              /* compensated mag x */
             fifo_header_data->mag_fifo[v_gyro_index_u8].x
             = processed_data.x;
@@ -13958,7 +13958,7 @@ struct bmi160_fifo_data_header_t *fifo_header_data)
             mag_data.mag_r_y2_msb = (v_fifo_data_u8[v_fifo_index_u16 +
             BMI160_FIFO_R_MSB_DATA]);
             /* Processing the compensation data*/
-            com_rslt = bmi160_second_if_mag_compensate_xyz(mag_data,v_mag_if_mag_u8);
+            com_rslt = bmi160_second_if_mag_compensate_xyz(bmi160, mag_data,v_mag_if_mag_u8);
              /* compensated mag x */
             fifo_header_data->mag_fifo[v_mag_index_u8].x = processed_data.x;
             /* compensated mag y */
@@ -14046,7 +14046,7 @@ struct bmi160_fifo_data_header_t *fifo_header_data)
             BMI160_FIFO_R_LSB_DATA]);
             mag_data.mag_r_y2_msb = (v_fifo_data_u8[v_fifo_index_u16 +
             BMI160_FIFO_R_MSB_DATA]);
-            com_rslt = bmi160_second_if_mag_compensate_xyz(mag_data, v_mag_if_mag_u8);
+            com_rslt = bmi160_second_if_mag_compensate_xyz(bmi160, mag_data, v_mag_if_mag_u8);
              /* compensated mag x */
             fifo_header_data->mag_fifo[v_mag_index_u8].x = processed_data.x;
             /* compensated mag y */
@@ -14115,7 +14115,7 @@ struct bmi160_fifo_data_header_t *fifo_header_data)
             BMI160_FIFO_R_LSB_DATA]);
             mag_data.mag_r_y2_msb = (v_fifo_data_u8[v_fifo_index_u16 +
             BMI160_FIFO_R_MSB_DATA]);
-            com_rslt = bmi160_second_if_mag_compensate_xyz(mag_data,v_mag_if_mag_u8);
+            com_rslt = bmi160_second_if_mag_compensate_xyz(bmi160, mag_data,v_mag_if_mag_u8);
              /* compensated mag x */
             fifo_header_data->mag_fifo[v_mag_index_u8].x = processed_data.x;
             /* compensated mag y */
@@ -14276,9 +14276,9 @@ return com_rslt;
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_fifo_headerless_mode(const bmi160_t *bmi160, uint8_t v_mag_if_u8) {
+uint8_t bmi160_read_fifo_headerless_mode(const bmi160_t *bmi160, uint8_t v_mag_if_u8) {
 
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     struct bmi160_fifo_data_header_less_t headerless_data;
     /* read the whole FIFO data*/
     com_rslt =
@@ -14315,7 +14315,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_read_fifo_headerless_mode(const bmi160_t *bmi
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE
+uint8_t
 bmi160_read_fifo_headerless_mode_user_defined_length(const bmi160_t *bmi160, uint16_t v_fifo_user_length_u16,
 struct bmi160_fifo_data_header_less_t *fifo_data,
 uint8_t v_mag_if_mag_u8)
@@ -14326,7 +14326,7 @@ uint32_t v_fifo_length_u16 = BMI160_INIT_VALUE;
 uint8_t v_accel_index_u8 = BMI160_INIT_VALUE;
 uint8_t v_gyro_index_u8 = BMI160_INIT_VALUE;
 uint8_t v_mag_index_u8 = BMI160_INIT_VALUE;
-BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+uint8_t com_rslt = E_BMI160_COMM_RES;
 fifo_data->accel_frame_count = BMI160_INIT_VALUE;
 fifo_data->mag_frame_count = BMI160_INIT_VALUE;
 fifo_data->gyro_frame_count = BMI160_INIT_VALUE;
@@ -14365,7 +14365,7 @@ v_fifo_index_u16 < v_fifo_length_u16;) {
         BMI160_FIFO_R_LSB_DATA]);
         mag_data.mag_r_y2_msb = (v_fifo_data_u8[v_fifo_index_u16 +
         BMI160_FIFO_R_MSB_DATA]);
-        com_rslt = bmi160_second_if_mag_compensate_xyz(mag_data, v_mag_if_mag_u8);
+        com_rslt = bmi160_second_if_mag_compensate_xyz(bmi160, mag_data, v_mag_if_mag_u8);
         /* compensated mag x */
         fifo_data->mag_fifo[v_mag_index_u8].x = processed_data.x;
         /* compensated mag y */
@@ -14442,7 +14442,7 @@ v_fifo_index_u16 < v_fifo_length_u16;) {
         BMI160_FIFO_R_LSB_DATA]);
         mag_data.mag_r_y2_msb = (v_fifo_data_u8[v_fifo_index_u16 +
         BMI160_FIFO_R_MSB_DATA]);
-         com_rslt = bmi160_second_if_mag_compensate_xyz(mag_data, v_mag_if_mag_u8);
+         com_rslt = bmi160_second_if_mag_compensate_xyz(bmi160, mag_data, v_mag_if_mag_u8);
          /* compensated mag x */
         fifo_data->mag_fifo[v_mag_index_u8].x = processed_data.x;
         /* compensated mag y */
@@ -14498,7 +14498,7 @@ v_fifo_index_u16 < v_fifo_length_u16;) {
         BMI160_FIFO_R_LSB_DATA]);
         mag_data.mag_r_y2_msb = (v_fifo_data_u8[v_fifo_index_u16 +
         BMI160_FIFO_R_MSB_DATA]);
-         com_rslt = bmi160_second_if_mag_compensate_xyz(mag_data, v_mag_if_mag_u8);
+         com_rslt = bmi160_second_if_mag_compensate_xyz(bmi160, mag_data, v_mag_if_mag_u8);
          /* compensated mag x */
         fifo_data->mag_fifo[v_mag_index_u8].x = processed_data.x;
         /* compensated mag y */
@@ -14648,7 +14648,7 @@ v_fifo_index_u16 < v_fifo_length_u16;) {
         BMI160_FIFO_R_LSB_DATA]);
         mag_data.mag_r_y2_msb = (v_fifo_data_u8[v_fifo_index_u16 +
         BMI160_FIFO_R_MSB_DATA]);
-        com_rslt = bmi160_second_if_mag_compensate_xyz(mag_data, v_mag_if_mag_u8);
+        com_rslt = bmi160_second_if_mag_compensate_xyz(bmi160, mag_data, v_mag_if_mag_u8);
          /* compensated mag x */
         fifo_data->mag_fifo[v_mag_index_u8].x = processed_data.x;
         /* compensated mag y */
@@ -14693,23 +14693,23 @@ v_fifo_index_u16 < v_fifo_length_u16;) {
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bmm150_mag_compensate_xyz(const bmi160_t *bmi160, struct bmi160_mag_xyz_s32_t *mag_comp_xyz)
+uint8_t bmi160_bmm150_mag_compensate_xyz(const bmi160_t *bmi160, struct bmi160_mag_xyz_s32_t *mag_comp_xyz)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     struct bmi160_mag_xyzr_t mag_xyzr;
 
-    com_rslt = bmi160_read_mag_xyzr(&mag_xyzr);
+    com_rslt = bmi160_read_mag_xyzr(bmi160, &mag_xyzr);
     if (com_rslt)
         return com_rslt;
     /* Compensation for X axis */
-    mag_comp_xyz->x = bmi160_bmm150_mag_compensate_X(mag_xyzr.x, mag_xyzr.r);
+    mag_comp_xyz->x = bmi160_bmm150_mag_compensate_X(bmi160, bmi160, mag_xyzr.x, mag_xyzr.r);
 
     /* Compensation for Y axis */
-    mag_comp_xyz->y = bmi160_bmm150_mag_compensate_Y(mag_xyzr.y, mag_xyzr.r);
+    mag_comp_xyz->y = bmi160_bmm150_mag_compensate_Y(bmi160, bmi160, mag_xyzr.y, mag_xyzr.r);
 
     /* Compensation for Z axis */
-    mag_comp_xyz->z = bmi160_bmm150_mag_compensate_Z(mag_xyzr.z, mag_xyzr.r);
+    mag_comp_xyz->z = bmi160_bmm150_mag_compensate_Z(bmi160, mag_xyzr.z, mag_xyzr.r);
 
     return com_rslt;
 }
@@ -14897,19 +14897,19 @@ int32_t bmi160_bmm150_mag_compensate_Z(const bmi160_t *bmi160, int16_t v_mag_dat
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bmm150_mag_interface_init(const bmi160_t *bmi160, uint8_t *v_chip_id_u8)
+uint8_t bmi160_bmm150_mag_interface_init(const bmi160_t *bmi160, uint8_t *v_chip_id_u8)
 {
     /* This variable used for provide the communication
     results*/
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = BMI160_INIT_VALUE;
+    uint8_t com_rslt = BMI160_INIT_VALUE;
     uint8_t v_pull_value_u8 = BMI160_INIT_VALUE;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     /* accel operation mode to normal*/
     com_rslt = bmi160_set_command_register(bmi160, ACCEL_MODE_NORMAL);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     /* write the mag power mode as NORMAL*/
-    com_rslt += bmi160_set_mag_interface_normal();
+    com_rslt += bmi160_set_mag_interface_normal(bmi160);
     /* register 0x7E write the 0x37, 0x9A and 0x30*/
     com_rslt += bmi160_set_command_register(bmi160, BMI160_COMMAND_REG_ONE);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
@@ -14918,36 +14918,36 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_bmm150_mag_interface_init(const bmi160_t *bmi
     com_rslt += bmi160_set_command_register(bmi160, BMI160_COMMAND_REG_THREE);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     /*switch the page1*/
-    com_rslt += bmi160_set_target_page(BMI160_WRITE_TARGET_PAGE1);
+    com_rslt += bmi160_set_target_page(bmi160, BMI160_WRITE_TARGET_PAGE1);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     bmi160_get_target_page(&v_data_u8);
-    com_rslt += bmi160_set_paging_enable(bmi160,BMI160_WRITE_ENABLE_PAGE1);
+    com_rslt += bmi160_set_paging_enable(bmi160, BMI160_WRITE_ENABLE_PAGE1);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
-    bmi160_get_paging_enable(bmi160,&v_data_u8);
+    bmi160_get_paging_enable(bmi160, &v_data_u8);
     /* enable the pullup configuration from
     the register 0x05 bit 4 and 5 as 10*/
-    bmi160_get_pullup_configuration(&v_pull_value_u8);
+    bmi160_get_pullup_configuration(bmi160, &v_pull_value_u8);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     v_pull_value_u8 = v_pull_value_u8 | BMI160_PULL_UP_DATA;
-    com_rslt += bmi160_set_pullup_configuration(v_pull_value_u8);
+    com_rslt += bmi160_set_pullup_configuration(bmi160, v_pull_value_u8);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     /*switch the page0*/
-    com_rslt += bmi160_set_target_page(BMI160_WRITE_TARGET_PAGE0);
+    com_rslt += bmi160_set_target_page(bmi160, BMI160_WRITE_TARGET_PAGE0);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     bmi160_get_target_page(&v_data_u8);
     /* Write the BMM150 i2c address*/
     com_rslt += bmi160_set_i2c_device_addr(bmi160, BMI160_AUX_BMM150_I2C_ADDRESS);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     /* enable the mag interface to manual mode*/
-    com_rslt += bmi160_set_mag_manual_enable(bmi160,BMI160_MANUAL_ENABLE);
+    com_rslt += bmi160_set_mag_manual_enable(bmi160, BMI160_MANUAL_ENABLE);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
-    bmi160_get_mag_manual_enable(bmi160,&v_data_u8);
+    bmi160_get_mag_manual_enable(bmi160, &v_data_u8);
     /*Enable the MAG interface */
-    com_rslt += bmi160_set_if_mode(BMI160_ENABLE_MAG_IF_MODE);
+    com_rslt += bmi160_set_if_mode(bmi160, BMI160_ENABLE_MAG_IF_MODE);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
-    bmi160_get_if_mode(&v_data_u8);
+    bmi160_get_if_mode(bmi160, &v_data_u8);
     /* Mag normal mode*/
-    com_rslt += bmi160_bmm150_mag_wakeup();
+    com_rslt += bmi160_bmm150_mag_wakeup(bmi160);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     /* Read the BMM150 device id is 0x32*/
     com_rslt += bmi160_set_mag_read_addr(bmi160, BMI160_BMM150_CHIP_ID);
@@ -14961,11 +14961,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_bmm150_mag_interface_init(const bmi160_t *bmi
     com_rslt += bmi160_set_mag_write_addr(bmi160, BMI160_BMM150_POWE_MODE_REG);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     /* read the mag trim values*/
-    com_rslt += bmi160_read_bmm150_mag_trim();
+    com_rslt += bmi160_read_bmm150_mag_trim(bmi160);
     /* To avoid the auto mode enable when manual mode operation running*/
     V_bmm150_maual_auto_condition_u8 = BMI160_MANUAL_ENABLE;
     /* write the XY and Z repetitions*/
-    com_rslt += bmi160_set_bmm150_mag_presetmode(BMI160_MAG_PRESETMODE_REGULAR);
+    com_rslt += bmi160_set_bmm150_mag_presetmode(bmi160, BMI160_MAG_PRESETMODE_REGULAR);
     /* To avoid the auto mode enable when manual mode operation running*/
     V_bmm150_maual_auto_condition_u8 = BMI160_MANUAL_DISABLE;
     /* Set the power mode of mag as force mode*/
@@ -14976,7 +14976,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_bmm150_mag_interface_init(const bmi160_t *bmi
     /* write into power mode register*/
     com_rslt += bmi160_set_mag_write_addr(bmi160, BMI160_BMM150_POWE_MODE_REG);
     /* write the mag v_data_bw_u8 as 25Hz*/
-    com_rslt += bmi160_set_mag_output_data_rate(BMI160_MAG_OUTPUT_DATA_RATE_25HZ);
+    com_rslt += bmi160_set_mag_output_data_rate(bmi160, BMI160_MAG_OUTPUT_DATA_RATE_25HZ);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 
     /* When mag interface is auto mode - The mag read address
@@ -14984,9 +14984,9 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_bmm150_mag_interface_init(const bmi160_t *bmi
     com_rslt += bmi160_set_mag_read_addr(bmi160, BMI160_BMM150_DATA_REG);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     /* enable mag interface to auto mode*/
-    com_rslt += bmi160_set_mag_manual_enable(bmi160,BMI160_MANUAL_DISABLE);
+    com_rslt += bmi160_set_mag_manual_enable(bmi160, BMI160_MANUAL_DISABLE);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
-    bmi160_get_mag_manual_enable(bmi160,&v_data_u8);
+    bmi160_get_mag_manual_enable(bmi160, &v_data_u8);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 
     return com_rslt;
@@ -15002,9 +15002,9 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_bmm150_mag_interface_init(const bmi160_t *bmi
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bmm150_mag_wakeup(const bmi160_t *bmi160)
+uint8_t bmi160_bmm150_mag_wakeup(const bmi160_t *bmi160)
 {   /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = BMI160_INIT_VALUE;
+    uint8_t com_rslt = BMI160_INIT_VALUE;
     uint8_t v_try_times_u8 = BMI160_BMM150_MAX_RETRY_WAKEUP;
     uint8_t v_power_control_bit_u8 = BMI160_INIT_VALUE;
     uint8_t i = BMI160_INIT_VALUE;
@@ -15051,29 +15051,29 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_bmm150_mag_wakeup(const bmi160_t *bmi160)
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_bmm150_mag_and_secondary_if_power_mode(const bmi160_t *bmi160, uint8_t v_mag_sec_if_pow_mode_u8)
+uint8_t bmi160_set_bmm150_mag_and_secondary_if_power_mode(const bmi160_t *bmi160, uint8_t v_mag_sec_if_pow_mode_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = BMI160_INIT_VALUE;
+    uint8_t com_rslt = BMI160_INIT_VALUE;
     /* set the accel power mode to NORMAL*/
     com_rslt = bmi160_set_command_register(bmi160, ACCEL_MODE_NORMAL);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     /* set mag interface manual mode*/
     if (bmi160->mag_manual_enable != BMI160_MANUAL_ENABLE)    {
-        com_rslt += bmi160_set_mag_manual_enable(bmi160,BMI160_MANUAL_ENABLE);
+        com_rslt += bmi160_set_mag_manual_enable(bmi160, BMI160_MANUAL_ENABLE);
         HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     }
     switch (v_mag_sec_if_pow_mode_u8) {
     case BMI160_MAG_FORCE_MODE:
         /* set the secondary mag power mode as NORMAL*/
-        com_rslt += bmi160_set_mag_interface_normal();
+        com_rslt += bmi160_set_mag_interface_normal(bmi160);
         /* set the mag power mode as FORCE mode*/
-        com_rslt += bmi160_bmm150_mag_set_power_mode(FORCE_MODE);
+        com_rslt += bmi160_bmm150_mag_set_power_mode(bmi160, FORCE_MODE);
         HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     break;
     case BMI160_MAG_SUSPEND_MODE:
         /* set the mag power mode as SUSPEND mode*/
-        com_rslt += bmi160_bmm150_mag_set_power_mode(SUSPEND_MODE);
+        com_rslt += bmi160_bmm150_mag_set_power_mode(bmi160, SUSPEND_MODE);
         HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
         /* set the secondary mag power mode as SUSPEND*/
         com_rslt += bmi160_set_command_register(bmi160, MAG_MODE_SUSPEND);
@@ -15085,7 +15085,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_bmm150_mag_and_secondary_if_power_mode(co
     }
     if (bmi160->mag_manual_enable == BMI160_MANUAL_ENABLE) {
         /* set mag interface auto mode*/
-        com_rslt += bmi160_set_mag_manual_enable(bmi160,BMI160_MANUAL_DISABLE);
+        com_rslt += bmi160_set_mag_manual_enable(bmi160, BMI160_MANUAL_DISABLE);
         HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     }
     return com_rslt;
@@ -15122,13 +15122,13 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_bmm150_mag_and_secondary_if_power_mode(co
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bmm150_mag_set_power_mode(const bmi160_t *bmi160, uint8_t v_mag_pow_mode_u8)
+uint8_t bmi160_bmm150_mag_set_power_mode(const bmi160_t *bmi160, uint8_t v_mag_pow_mode_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     /* set mag interface manual mode*/
     if (bmi160->mag_manual_enable != BMI160_MANUAL_ENABLE) {
-        com_rslt = bmi160_set_mag_manual_enable(bmi160,BMI160_MANUAL_ENABLE);
+        com_rslt = bmi160_set_mag_manual_enable(bmi160, BMI160_MANUAL_ENABLE);
         HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
         if (com_rslt != SUCCESS_BMI160)
             return com_rslt;
@@ -15137,7 +15137,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_bmm150_mag_set_power_mode(const bmi160_t *bmi
     switch (v_mag_pow_mode_u8) {
     case FORCE_MODE:
         /* Set the power control bit enabled */
-        com_rslt = bmi160_bmm150_mag_wakeup();
+        com_rslt = bmi160_bmm150_mag_wakeup(bmi160);
         /* write the mag power mode as FORCE mode*/
         com_rslt += bmi160_set_mag_write_data(bmi160, BMI160_BMM150_FORCE_MODE);
         HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
@@ -15147,7 +15147,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_bmm150_mag_set_power_mode(const bmi160_t *bmi
         mode operation running*/
         V_bmm150_maual_auto_condition_u8 = BMI160_MANUAL_ENABLE;
         /* set the preset mode */
-        com_rslt += bmi160_set_bmm150_mag_presetmode(BMI160_MAG_PRESETMODE_REGULAR);
+        com_rslt += bmi160_set_bmm150_mag_presetmode(bmi160, BMI160_MAG_PRESETMODE_REGULAR);
         HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
         /* To avoid the auto mode enable when manual
         mode operation running*/
@@ -15169,7 +15169,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_bmm150_mag_set_power_mode(const bmi160_t *bmi
     }
     /* set mag interface auto mode*/
     if (bmi160->mag_manual_enable == BMI160_MANUAL_ENABLE) {
-        com_rslt += bmi160_set_mag_manual_enable(bmi160,BMI160_MANUAL_DISABLE);
+        com_rslt += bmi160_set_mag_manual_enable(bmi160, BMI160_MANUAL_DISABLE);
         HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     }
     return com_rslt;
@@ -15208,13 +15208,13 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_bmm150_mag_set_power_mode(const bmi160_t *bmi
  *    @retval -1 -> Error
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_bmm150_mag_presetmode(const bmi160_t *bmi160, uint8_t v_mode_u8)
+uint8_t bmi160_set_bmm150_mag_presetmode(const bmi160_t *bmi160, uint8_t v_mode_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     /* set mag interface manual mode*/
     if (bmi160->mag_manual_enable != BMI160_MANUAL_ENABLE)
-            com_rslt = bmi160_set_mag_manual_enable(bmi160,BMI160_MANUAL_ENABLE);
+            com_rslt = bmi160_set_mag_manual_enable(bmi160, BMI160_MANUAL_ENABLE);
     switch (v_mode_u8) 
     {
     case BMI160_MAG_PRESETMODE_LOWPOWER:
@@ -15315,7 +15315,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_bmm150_mag_presetmode(const bmi160_t *bmi
         HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
         /* set mag interface auto mode*/
         if (bmi160->mag_manual_enable == BMI160_MANUAL_ENABLE)
-            com_rslt = bmi160_set_mag_manual_enable(bmi160,BMI160_MANUAL_DISABLE);
+            com_rslt = bmi160_set_mag_manual_enable(bmi160, BMI160_MANUAL_DISABLE);
         }
     return com_rslt;
 }
@@ -15344,12 +15344,12 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_bmm150_mag_presetmode(const bmi160_t *bmi
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_bmm150_mag_trim(const bmi160_t *bmi160)
+uint8_t bmi160_read_bmm150_mag_trim(const bmi160_t *bmi160)
 {
     /* This variable used for provide the communication
     results*/
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     /* Array holding the bmm150 trim data
     */
     uint8_t v_data_u8[BMI160_MAG_TRIM_DATA_SIZE] = {
@@ -15510,10 +15510,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_read_bmm150_mag_trim(const bmi160_t *bmi160)
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bst_akm_mag_interface_init(const bmi160_t *bmi160, uint8_t v_akm_i2c_address_u8)
+uint8_t bmi160_bst_akm_mag_interface_init(const bmi160_t *bmi160, uint8_t v_akm_i2c_address_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_pull_value_u8 = BMI160_INIT_VALUE;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     uint8_t v_akm_chip_id_u8 = BMI160_INIT_VALUE;
@@ -15633,11 +15633,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_bst_akm_mag_interface_init(const bmi160_t *bm
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_bst_akm_sensitivity_data(const bmi160_t *bmi160)
+uint8_t bmi160_read_bst_akm_sensitivity_data(const bmi160_t *bmi160)
 {
     /* This variable used for provide the communication
     results*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     /* Array holding the sensitivity ax,ay and az data*/
     uint8_t v_data_u8[BMI160_AKM_SENSITIVITY_DATA_SIZE] = {
     BMI160_INIT_VALUE,
@@ -15887,21 +15887,21 @@ int32_t bmi160_bst_akm09912_compensate_Z(const bmi160_t *bmi160, int16_t v_bst_a
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bst_akm09911_compensate_xyz(const bmi160_t *bmi160, struct bmi160_bst_akm_xyz_t *bst_akm_xyz)
+uint8_t bmi160_bst_akm09911_compensate_xyz(const bmi160_t *bmi160, struct bmi160_bst_akm_xyz_t *bst_akm_xyz)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     struct bmi160_mag_t mag_xyz;
 
-    com_rslt = bmi160_read_mag_xyz(&mag_xyz, BST_AKM);
+    com_rslt = bmi160_read_mag_xyz(bmi160, &mag_xyz, BST_AKM);
     /* Compensation for X axis */
-    bst_akm_xyz->x = bmi160_bst_akm09911_compensate_X(mag_xyz.x);
+    bst_akm_xyz->x = bmi160_bst_akm09911_compensate_X(bmi160, mag_xyz.x);
 
     /* Compensation for Y axis */
-    bst_akm_xyz->y = bmi160_bst_akm09911_compensate_Y(mag_xyz.y);
+    bst_akm_xyz->y = bmi160_bst_akm09911_compensate_Y(bmi160, mag_xyz.y);
 
     /* Compensation for Z axis */
-    bst_akm_xyz->z = bmi160_bst_akm09911_compensate_Z(mag_xyz.z);
+    bst_akm_xyz->z = bmi160_bst_akm09911_compensate_Z(bmi160, mag_xyz.z);
 
     return com_rslt;
 }
@@ -15928,21 +15928,21 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_bst_akm09911_compensate_xyz(const bmi160_t *b
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bst_akm09912_compensate_xyz(const bmi160_t *bmi160, struct bmi160_bst_akm_xyz_t *bst_akm_xyz)
+uint8_t bmi160_bst_akm09912_compensate_xyz(const bmi160_t *bmi160, struct bmi160_bst_akm_xyz_t *bst_akm_xyz)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     struct bmi160_mag_t mag_xyz;
 
-    com_rslt = bmi160_read_mag_xyz(&mag_xyz, BST_AKM);
+    com_rslt = bmi160_read_mag_xyz(bmi160, &mag_xyz, BST_AKM);
     /* Compensation for X axis */
-    bst_akm_xyz->x = bmi160_bst_akm09912_compensate_X(mag_xyz.x);
+    bst_akm_xyz->x = bmi160_bst_akm09912_compensate_X(bmi160, mag_xyz.x);
 
     /* Compensation for Y axis */
-    bst_akm_xyz->y = bmi160_bst_akm09912_compensate_Y(mag_xyz.y);
+    bst_akm_xyz->y = bmi160_bst_akm09912_compensate_Y(bmi160, mag_xyz.y);
 
     /* Compensation for Z axis */
-    bst_akm_xyz->z = bmi160_bst_akm09912_compensate_Z(mag_xyz.z);
+    bst_akm_xyz->z = bmi160_bst_akm09912_compensate_Z(bmi160, mag_xyz.z);
 
     return com_rslt;
 }
@@ -15976,10 +15976,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_bst_akm09912_compensate_xyz(const bmi160_t *b
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bst_akm_set_powermode(const bmi160_t *bmi160, uint8_t v_akm_pow_mode_u8)
+uint8_t bmi160_bst_akm_set_powermode(const bmi160_t *bmi160, uint8_t v_akm_pow_mode_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     /* set mag interface manual mode*/
     if (bmi160->mag_manual_enable != BMI160_MANUAL_ENABLE) {
         com_rslt = bmi160_set_mag_manual_enable(bmi160,BMI160_MANUAL_ENABLE);
@@ -16052,10 +16052,10 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_bst_akm_set_powermode(const bmi160_t *bmi160,
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_bst_akm_and_secondary_if_powermode(const bmi160_t *bmi160, uint8_t v_mag_sec_if_pow_mode_u8)
+uint8_t bmi160_set_bst_akm_and_secondary_if_powermode(const bmi160_t *bmi160, uint8_t v_mag_sec_if_pow_mode_u8)
 {
     /* variable used for return the status of communication result*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     /* accel operation mode to normal*/
     com_rslt = bmi160_set_command_register(bmi160, ACCEL_MODE_NORMAL);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
@@ -16102,11 +16102,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_bst_akm_and_secondary_if_powermode(const 
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yamaha_yas532_mag_interface_init(const bmi160_t *bmi160)
+uint8_t bmi160_bst_yamaha_yas532_mag_interface_init(const bmi160_t *bmi160)
 {
     /* This variable used for provide the communication
     results*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_pull_value_u8 = BMI160_INIT_VALUE;
     uint8_t v_data_u8 = BMI160_INIT_VALUE;
     uint8_t i = BMI160_INIT_VALUE;
@@ -16207,11 +16207,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yamaha_yas532_mag_interface_init(const bm
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yas532_set_initial_values(const bmi160_t *bmi160)
+uint8_t bmi160_bst_yas532_set_initial_values(const bmi160_t *bmi160)
 {
 /* This variable used for provide the communication
     results*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     /* write testr1 as 0x00*/
     com_rslt = bmi160_set_mag_write_data(bmi160, BMI160_YAS532_WRITE_TESTR1);
     HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
@@ -16249,11 +16249,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yas532_set_initial_values(const bmi160_t 
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yas532_magnetic_measure_set_offset(const bmi160_t *bmi160)
+uint8_t bmi160_bst_yas532_magnetic_measure_set_offset(const bmi160_t *bmi160)
 {
     /* This variable used for provide the communication
     results*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     /* used for offset value set to the offset register*/
     int8_t v_hard_offset_s8[BMI160_HARD_OFFSET_DATA_SIZE] = {
     BMI160_INIT_VALUE,
@@ -16311,11 +16311,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yas532_magnetic_measure_set_offset(const 
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yamaha_yas532_calib_values(const bmi160_t *bmi160)
+uint8_t bmi160_bst_yamaha_yas532_calib_values(const bmi160_t *bmi160)
 {
     /* This variable used for provide the communication
     results*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     /* Array holding the YAS532 calibration values */
     uint8_t v_data_u8[BMI160_YAS532_CALIB_DATA_SIZE] = {
     BMI160_INIT_VALUE, BMI160_INIT_VALUE,
@@ -16498,11 +16498,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yamaha_yas532_calib_values(const bmi160_t
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yas532_xy1y2_to_linear(const bmi160_t *bmi160, uint16_t *v_xy1y2_u16, int32_t *xy1y2_linear)
+uint8_t bmi160_bst_yas532_xy1y2_to_linear(const bmi160_t *bmi160, uint16_t *v_xy1y2_u16, int32_t *xy1y2_linear)
 {
     /* This variable used for provide the communication
     results*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = SUCCESS_BMI160;
+    uint8_t com_rslt = SUCCESS_BMI160;
     static const uint16_t v_calib_data[] = {
     3721, 3971, 4221, 4471};
     uint8_t i = BMI160_INIT_VALUE;
@@ -16550,12 +16550,12 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yas532_xy1y2_to_linear(const bmi160_t *bm
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yas532_normal_measurement_data(const bmi160_t *bmi160, uint8_t v_acquisition_command_u8, uint8_t *v_busy_u8,
+uint8_t bmi160_bst_yas532_normal_measurement_data(const bmi160_t *bmi160, uint8_t v_acquisition_command_u8, uint8_t *v_busy_u8,
 uint16_t *v_temp_u16, uint16_t *v_xy1y2_u16, uint8_t *v_overflow_u8)
 {
     /* This variable used for provide the communication
     results*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     /* Array holding the YAS532 xyy1 data*/
     uint8_t v_data_u8[BMI160_YAS_XY1Y2T_DATA_SIZE] = {
     BMI160_INIT_VALUE,
@@ -16643,12 +16643,12 @@ uint16_t *v_temp_u16, uint16_t *v_xy1y2_u16, uint8_t *v_overflow_u8)
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yas532_measurement_xyz_data(const bmi160_t *bmi160, struct yas532_vector *xyz_data, uint8_t *v_overflow_s8, uint8_t v_temp_correction_u8,
+uint8_t bmi160_bst_yas532_measurement_xyz_data(const bmi160_t *bmi160, struct yas532_vector *xyz_data, uint8_t *v_overflow_s8, uint8_t v_temp_correction_u8,
 uint8_t v_acquisition_command_u8)
 {
     /* This variable used for provide the communication
     results*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     /* Array holding the linear calculation output*/
     int32_t v_xy1y2_linear_s32[BMI160_YAS_XY1Y2_DATA_SIZE] = {
     BMI160_INIT_VALUE,
@@ -16787,12 +16787,12 @@ if (v_busy_u8)
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yas532_fifo_xyz_data(const bmi160_t *bmi160, uint16_t *v_xy1y2_u16, uint8_t v_temp_correction_u8,
+uint8_t bmi160_bst_yas532_fifo_xyz_data(const bmi160_t *bmi160, uint16_t *v_xy1y2_u16, uint8_t v_temp_correction_u8,
 int8_t v_overflow_s8, uint16_t v_temp_u16, uint8_t v_busy_u8)
 {
     /* This variable used for provide the communication
     results*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     /* Array holding the linear calculation output*/
     int32_t v_xy1y2_linear_s32[BMI160_YAS_XY1Y2_DATA_SIZE] = {
     BMI160_INIT_VALUE,
@@ -16925,9 +16925,9 @@ if (v_busy_u8)
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yas532_acquisition_command_register(const bmi160_t *bmi160, uint8_t v_command_reg_data_u8)
+uint8_t bmi160_bst_yas532_acquisition_command_register(const bmi160_t *bmi160, uint8_t v_command_reg_data_u8)
 {
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
 
     if (bmi160->mag_manual_enable != BMI160_MANUAL_ENABLE)
             com_rslt = bmi160_set_mag_manual_enable(bmi160,BMI160_MANUAL_ENABLE);
@@ -16958,11 +16958,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yas532_acquisition_command_register(const
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yas532_set_offset(const int8_t *p_offset_s8)
+uint8_t bmi160_bst_yas532_set_offset(const int8_t *p_offset_s8)
 {
     /* This variable used for provide the communication
     results*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
 
     if (bmi160->mag_manual_enable != BMI160_MANUAL_ENABLE)
         com_rslt = bmi160_set_mag_manual_enable(bmi160,BMI160_MANUAL_ENABLE);
@@ -17004,11 +17004,11 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yas532_set_offset(const int8_t *p_offset_
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yamaha_yas537_mag_interface_init(const bmi160_t *bmi160)
+uint8_t bmi160_bst_yamaha_yas537_mag_interface_init(const bmi160_t *bmi160)
 {
 /* This variable used for provide the communication
 results*/
-BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+uint8_t com_rslt = E_BMI160_COMM_RES;
 uint8_t v_pull_value_u8 = BMI160_INIT_VALUE;
 uint8_t v_data_u8 = BMI160_INIT_VALUE;
 uint8_t i = BMI160_INIT_VALUE;
@@ -17106,11 +17106,11 @@ return com_rslt;
 *
 *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yamaha_yas537_calib_values(const bmi160_t *bmi160, uint8_t v_rcoil_u8)
+uint8_t bmi160_bst_yamaha_yas537_calib_values(const bmi160_t *bmi160, uint8_t v_rcoil_u8)
 {
 /* This variable used for provide the communication
 results*/
-BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+uint8_t com_rslt = E_BMI160_COMM_RES;
 /* Array holding the YAS532 calibration values */
 uint8_t a_data_u8[BMI160_YAS537_CALIB_DATA_SIZE] = {
 BMI160_INIT_VALUE, BMI160_INIT_VALUE,
@@ -17428,9 +17428,9 @@ return com_rslt;
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yas537_acquisition_command_register(const bmi160_t *bmi160, uint8_t v_command_reg_data_u8)
+uint8_t bmi160_bst_yas537_acquisition_command_register(const bmi160_t *bmi160, uint8_t v_command_reg_data_u8)
 {
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
 
     if (bmi160->mag_manual_enable != BMI160_MANUAL_ENABLE)
             com_rslt = bmi160_set_mag_manual_enable(bmi160,BMI160_MANUAL_ENABLE);
@@ -17491,12 +17491,12 @@ static void xy1y2_to_xyz(const bmi160_t *bmi160, uint16_t *xy1y2, int32_t *xyz)
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yamaha_yas537_read_xy1y2_data(const bmi160_t *bmi160, uint8_t *v_coil_stat_u8, uint8_t *v_busy_u8,
+uint8_t bmi160_bst_yamaha_yas537_read_xy1y2_data(const bmi160_t *bmi160, uint8_t *v_coil_stat_u8, uint8_t *v_busy_u8,
 uint16_t *v_temperature_u16, uint16_t *xy1y2, uint8_t *v_ouflow_u8)
 {
     /* This variable used for provide the communication
     results*/
-    BMI160_RETURN_FUNCTION_TYPE com_rslt = E_BMI160_COMM_RES;
+    uint8_t com_rslt = E_BMI160_COMM_RES;
     /* Array holding the YAS532 calibration values */
     uint8_t a_data_u8[BMI160_YAS_XY1Y2T_DATA_SIZE] = {
     BMI160_INIT_VALUE, BMI160_INIT_VALUE,
@@ -17589,7 +17589,7 @@ uint16_t *v_temperature_u16, uint16_t *xy1y2, uint8_t *v_ouflow_u8)
  *
  *
  */
-static BMI160_RETURN_FUNCTION_TYPE invalid_magnetic_field(const bmi160_t *bmi160, uint16_t *v_cur_u16, uint16_t *v_last_u16)
+static uint8_t invalid_magnetic_field(const bmi160_t *bmi160, uint16_t *v_cur_u16, uint16_t *v_last_u16)
 {
     int16_t invalid_thresh[] = {1500, 1500, 1500};
     uint8_t i = BMI160_INIT_VALUE;
@@ -17612,7 +17612,7 @@ static BMI160_RETURN_FUNCTION_TYPE invalid_magnetic_field(const bmi160_t *bmi160
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yamaha_yas537_measure_xyz_data(const bmi160_t *bmi160, uint8_t *v_ouflow_u8, struct yas_vector *vector_xyz)
+uint8_t bmi160_bst_yamaha_yas537_measure_xyz_data(const bmi160_t *bmi160, uint8_t *v_ouflow_u8, struct yas_vector *vector_xyz)
 {
     int32_t a_xyz_tmp_s32[BMI160_YAS_TEMP_DATA_SIZE] = {
     BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE};
@@ -17628,7 +17628,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yamaha_yas537_measure_xyz_data(const bmi1
     com_rslt = bmi160_bst_yamaha_yas537_read_xy1y2_data(bmi160, &v_rcoil_u8, &v_busy_u8,
     &v_temperature_u16, a_xy1y2_u16, v_ouflow_u8);
     /* linear calculation*/
-    xy1y2_to_xyz(a_xy1y2_u16, vector_xyz->yas537_vector_xyz);
+    xy1y2_to_xyz(bmi160, a_xy1y2_u16, vector_xyz->yas537_vector_xyz);
     if (yas537_data.transform != BMI160_NULL) {
         for (i = 0; i < 3; i++) {
             a_xyz_tmp_s32[i] = ((yas537_data.transform[i + 3]
@@ -17702,7 +17702,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yamaha_yas537_measure_xyz_data(const bmi1
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yamaha_yas537_fifo_xyz_data(const bmi160_t *bmi160, uint16_t *a_xy1y2_u16, uint8_t v_over_flow_u8, uint8_t v_rcoil_u8, uint8_t v_busy_u8)
+uint8_t bmi160_bst_yamaha_yas537_fifo_xyz_data(const bmi160_t *bmi160, uint16_t *a_xy1y2_u16, uint8_t v_over_flow_u8, uint8_t v_rcoil_u8, uint8_t v_busy_u8)
 {
 
 int32_t a_xyz_tmp_s32[BMI160_YAS_TEMP_DATA_SIZE] = {
@@ -17710,7 +17710,7 @@ BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE};
 uint8_t i = BMI160_INIT_VALUE;
 int8_t com_rslt = BMI160_INIT_VALUE;
 /* linear calculation*/
-xy1y2_to_xyz(a_xy1y2_u16, fifo_vector_xyz.yas537_vector_xyz);
+xy1y2_to_xyz(bmi160, a_xy1y2_u16, fifo_vector_xyz.yas537_vector_xyz);
 if (yas537_data.transform != BMI160_NULL) {
     for (i = 0; i < 3; i++) {
         a_xyz_tmp_s32[i] = ((yas537_data.transform[i + 3]

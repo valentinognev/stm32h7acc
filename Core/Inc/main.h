@@ -31,15 +31,14 @@ extern "C" {
 
 #include "stm32h5xx_ll_usart.h"
 #include "stm32h5xx_ll_rcc.h"
+#include "stm32h5xx_ll_system.h"
+#include "stm32h5xx_ll_gpio.h"
+#include "stm32h5xx_ll_exti.h"
 #include "stm32h5xx_ll_bus.h"
 #include "stm32h5xx_ll_cortex.h"
-#include "stm32h5xx_ll_system.h"
 #include "stm32h5xx_ll_utils.h"
 #include "stm32h5xx_ll_pwr.h"
-#include "stm32h5xx_ll_gpio.h"
 #include "stm32h5xx_ll_dma.h"
-
-#include "stm32h5xx_ll_exti.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -81,26 +80,26 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define BUTTON_Pin GPIO_PIN_13
+#define BUTTON_Pin LL_GPIO_PIN_13
 #define BUTTON_GPIO_Port GPIOC
-#define ACCL1_CS_Pin GPIO_PIN_4
+#define ACCL1_CS_Pin LL_GPIO_PIN_4
 #define ACCL1_CS_GPIO_Port GPIOA
-#define IMU_SCK_Pin GPIO_PIN_5
+#define IMU_SCK_Pin LL_GPIO_PIN_5
 #define IMU_SCK_GPIO_Port GPIOA
-#define IMU_MISO_Pin GPIO_PIN_6
+#define IMU_MISO_Pin LL_GPIO_PIN_6
 #define IMU_MISO_GPIO_Port GPIOA
-#define IMU_MOSI_Pin GPIO_PIN_7
+#define IMU_MOSI_Pin LL_GPIO_PIN_7
 #define IMU_MOSI_GPIO_Port GPIOA
-#define ACCL1_CSC4_Pin GPIO_PIN_4
+#define ACCL1_CSC4_Pin LL_GPIO_PIN_4
 #define ACCL1_CSC4_GPIO_Port GPIOC
 #define ACCL1_CSC4_EXTI_IRQn EXTI4_IRQn
-#define ACCL2_CS_Pin GPIO_PIN_5
+#define ACCL2_CS_Pin LL_GPIO_PIN_5
 #define ACCL2_CS_GPIO_Port GPIOC
-#define ACCL7_CS_Pin GPIO_PIN_0
+#define ACCL7_CS_Pin LL_GPIO_PIN_0
 #define ACCL7_CS_GPIO_Port GPIOB
-#define ACCL3_CS_Pin GPIO_PIN_1
+#define ACCL3_CS_Pin LL_GPIO_PIN_1
 #define ACCL3_CS_GPIO_Port GPIOB
-#define DIODE_Pin GPIO_PIN_2
+#define DIODE_Pin LL_GPIO_PIN_2
 #define DIODE_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */

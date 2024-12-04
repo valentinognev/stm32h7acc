@@ -290,12 +290,12 @@ define the data types manually
 
     If your communication function looks like this:
 
-    write_my_bus_xy(uint8_t device_addr, uint8_t register_addr,
+    write_my_bus_xy(const bmi160_t *bmi160, uint8_t device_addr, uint8_t register_addr,
     uint8_t * data, uint8_t length);
 
     The BMI160_WR_FUNC_PTR would equal:
 
-    BMI160_WR_FUNC_PTR int8_t (* bus_write)(uint8_t,
+    BMI160_WR_FUNC_PTR int8_t (* bus_write)(const bmi160_t *bmi160, uint8_t,
     uint8_t, uint8_t *, uint8_t)
 
     Parameters can be mixed as needed refer to the
@@ -303,7 +303,7 @@ define the data types manually
 
 
 */
-#define BMI160_WR_FUNC_PTR int8_t (*bus_write)(uint8_t, uint8_t,\
+#define BMI160_WR_FUNC_PTR int8_t (*bus_write)(const bmi160_t *bmi160, uint8_t, uint8_t,\
 uint8_t *, uint8_t)
 /**< link macro between API function calls and bus write function
     @note The bus write function can change since this is a
@@ -334,12 +334,12 @@ uint8_t *, uint8_t)
 
     If your communication function looks like this:
 
-    read_my_bus_xy(uint8_t device_addr, uint8_t register_addr,
+    read_my_bus_xy(const bmi160_t *bmi160, uint8_t device_addr, uint8_t register_addr,
     uint8_t * data, uint8_t length);
 
     The BMI160_RD_FUNC_PTR would equal:
 
-    BMI160_RD_FUNC_PTR int8_t (* bus_read)(uint8_t,
+    BMI160_RD_FUNC_PTR int8_t (* bus_read)(const bmi160_t *bmi160, uint8_t,
     uint8_t, uint8_t *, uint8_t)
 
     Parameters can be mixed as needed refer to the
@@ -348,11 +348,11 @@ uint8_t *, uint8_t)
 */
 #define BMI160_SPI_RD_MASK (0x80)   /* for spi read transactions on SPI the
             MSB has to be set */
-#define BMI160_RD_FUNC_PTR int8_t (*bus_read)(uint8_t,\
+#define BMI160_RD_FUNC_PTR int8_t (*bus_read)(const bmi160_t *bmi160, uint8_t,\
             uint8_t, uint8_t *, uint8_t)
 
 #define BMI160_BRD_FUNC_PTR int8_t \
-(*burst_read)(uint8_t, uint8_t, uint8_t *, uint32_t)
+(*burst_read)(const bmi160_t *bmi160, uint8_t, uint8_t, uint8_t *, uint32_t)
 
 /**< link macro between API function calls and bus read function
     @note The bus write function can change since this is a
@@ -1067,7 +1067,7 @@ static const int8_t INVALID_OFFSET[] = {0x7f, 0x7f, 0x7f};
 #define AKM_POWER_DOWN_MODE_DATA        (0x00)
 #define AKM_FUSE_ROM_MODE                (0x1F)
 #define AKM_POWER_MODE_REG                (0x31)
-#define    AKM_SINGLE_MEASUREMENT_MODE        (0x01)
+#define AKM_SINGLE_MEASUREMENT_MODE        (0x01)
 #define AKM_DATA_REGISTER                (0x11)
 /*! AKM09912 Register definition */
 #define AKM_CHIP_ID_REG            (0x01)
@@ -1098,7 +1098,7 @@ static const int8_t INVALID_OFFSET[] = {0x7f, 0x7f, 0x7f};
 #define    BMI160_BMM150_DIG_DIG_Z4_MSB    (13)
 #define    BMI160_BMM150_DIG_DIG_XYZ1_LSB    (14)
 #define    BMI160_BMM150_DIG_DIG_XYZ1_MSB    (15)
-#define BMI160_FIFO_FRAME_CNT            (146)
+#define    BMI160_FIFO_FRAME_CNT            (146)
 #define    BMI160_FRAME_COUNT                (1)
 
 /**************************************************************/
@@ -1108,11 +1108,14 @@ static const int8_t INVALID_OFFSET[] = {0x7f, 0x7f, 0x7f};
 *    @brief bmi160 structure
 *    This structure holds all relevant information about bmi160
 */
-struct bmi160_t {
-uint8_t chip_id;/**< chip id of BMI160 */
-uint8_t dev_addr;/**< device address of BMI160 */
-int8_t mag_manual_enable;/**< used for check the mag manual/auto mode status */
-};
+typedef struct  
+{
+    uint8_t chip_id;/**< chip id of BMI160 */
+    GPIO_TypeDef* cs_port;
+    uint32_t cs_pin;
+    SPI_HandleTypeDef spi;
+    int8_t mag_manual_enable;/**< used for check the mag manual/auto mode status */
+} bmi160_t;
 /*!
  * @brief Structure containing bmm150 and akm09911
  *    magnetometer values for x,y and
@@ -3705,7 +3708,7 @@ uint8_t mag_r_y2_msb;
  *
 */
 /* renamed from bmi160_init to avoid conflict with UPM code */
-BMI160_RETURN_FUNCTION_TYPE bmi160_init_bus(struct bmi160_t *bmi160);
+BMI160_RETURN_FUNCTION_TYPE bmi160_init_bus(bmi160_t *bmi160);
 /**************************************************/
 /**\name     FUNCTION FOR READ AND WRITE REGISTERS  */
 /*************************************************/
@@ -3726,8 +3729,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_init_bus(struct bmi160_t *bmi160);
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_write_reg(uint8_t v_addr_u8,
-uint8_t *v_data_u8, uint8_t v_len_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_write_reg(const bmi160_t *bmi160, uint8_t v_addr_u8, uint8_t *v_data_u8, uint8_t v_len_u8);
 /*!
  * @brief
  *    This API reads the data from
@@ -3745,8 +3747,7 @@ uint8_t *v_data_u8, uint8_t v_len_u8);
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_reg(uint8_t v_addr_u8,
-uint8_t *v_data_u8, uint8_t v_len_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_read_reg(const bmi160_t *bmi160, uint8_t v_addr_u8, uint8_t *v_data_u8, uint8_t v_len_u8);
 /**************************************************/
 /**\name     FUNCTION FOR ERROR CODES  */
 /*************************************************/
@@ -3766,7 +3767,7 @@ uint8_t *v_data_u8, uint8_t v_len_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_fatal_err(uint8_t
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_fatal_err(const bmi160_t *bmi160, uint8_t
 *v_fatal_err_u8);
 /*!
  *    @brief This API used to read the error code
@@ -3792,7 +3793,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_fatal_err(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_err_code(uint8_t
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_err_code(const bmi160_t *bmi160, uint8_t
 *v_error_code_u8);
 /*!
  *    @brief This API Reads the i2c error code from the
@@ -3809,7 +3810,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_err_code(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_i2c_fail_err(uint8_t
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_i2c_fail_err(const bmi160_t *bmi160, uint8_t
 *v_i2c_error_code_u8);
  /*!
  *    @brief This API Reads the dropped command error
@@ -3826,7 +3827,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_i2c_fail_err(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_drop_cmd_err(uint8_t
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_drop_cmd_err(const bmi160_t *bmi160, uint8_t
 *v_drop_cmd_err_u8);
 /*!
  *    @brief This API reads the magnetometer data ready
@@ -3846,7 +3847,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_drop_cmd_err(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_dada_rdy_err(uint8_t
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_dada_rdy_err(const bmi160_t *bmi160, uint8_t
 *v_mag_data_rdy_err_u8);
 /*!
  *    @brief This API reads the error status
@@ -3866,7 +3867,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_dada_rdy_err(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_error_status(uint8_t *v_fatal_er_u8r,
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_error_status(const bmi160_t *bmi160, uint8_t *v_fatal_er_u8r,
 uint8_t *v_err_code_u8, uint8_t *v_i2c_fail_err_u8,
 uint8_t *v_drop_cmd_err_u8, uint8_t *v_mag_data_rdy_err_u8);
 /******************************************************************/
@@ -3898,7 +3899,7 @@ uint8_t *v_drop_cmd_err_u8, uint8_t *v_mag_data_rdy_err_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_power_mode_stat(uint8_t
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_power_mode_stat(const bmi160_t *bmi160, uint8_t
 *v_mag_power_mode_stat_u8);
 /*!
  *    @brief This API reads the gyroscope power mode from
@@ -3925,7 +3926,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_power_mode_stat(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_power_mode_stat(uint8_t
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_power_mode_stat(const bmi160_t *bmi160, uint8_t
 *v_gyro_power_mode_stat_u8);
 /*!
  *    @brief This API reads the accelerometer power mode from
@@ -3953,7 +3954,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_power_mode_stat(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_power_mode_stat(uint8_t
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_power_mode_stat(const bmi160_t *bmi160, uint8_t
 *v_accel_power_mode_stat_u8);
 /*!
  *    @brief This API switch mag interface to normal mode
@@ -3964,7 +3965,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_power_mode_stat(uint8_t
  *    @retval -1 -> Error
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_mag_interface_normal(void);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_mag_interface_normal(const bmi160_t *bmi160);
 /**************************************************/
 /**\name     FUNCTION FOR Mag XYZ data read */
 /*************************************************/
@@ -3990,7 +3991,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_mag_interface_normal(void);
  *    @retval -1 -> Error
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_mag_x(int16_t *v_mag_x_s16,
+BMI160_RETURN_FUNCTION_TYPE bmi160_read_mag_x(const bmi160_t *bmi160, int16_t *v_mag_x_s16,
 uint8_t v_sensor_select_u8);
 /*!
  *    @brief This API reads magnetometer data Y values
@@ -4013,7 +4014,7 @@ uint8_t v_sensor_select_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_mag_y(int16_t *v_mag_y_s16,
+BMI160_RETURN_FUNCTION_TYPE bmi160_read_mag_y(const bmi160_t *bmi160, int16_t *v_mag_y_s16,
 uint8_t v_sensor_select_u8);
 /*!
  *    @brief This API reads magnetometer data Z values
@@ -4036,7 +4037,7 @@ uint8_t v_sensor_select_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_mag_z(int16_t *v_mag_z_s16,
+BMI160_RETURN_FUNCTION_TYPE bmi160_read_mag_z(const bmi160_t *bmi160, int16_t *v_mag_z_s16,
 uint8_t v_sensor_select_u8);
 /*!
  *    @brief This API reads magnetometer data RHALL values
@@ -4053,8 +4054,7 @@ uint8_t v_sensor_select_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_mag_r(
-int16_t *v_mag_r_s16);
+BMI160_RETURN_FUNCTION_TYPE bmi160_read_mag_r(const bmi160_t *bmi160, int16_t *v_mag_r_s16);
 /*!
  *    @brief This API reads magnetometer data X,Y,Z values
  *    from the register 0x04 to 0x09
@@ -4076,8 +4076,7 @@ int16_t *v_mag_r_s16);
  *    @retval -1 -> Error *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_mag_xyz(
-struct bmi160_mag_t *mag, uint8_t v_sensor_select_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_read_mag_xyz(const bmi160_t *bmi160, struct bmi160_mag_t *mag, uint8_t v_sensor_select_u8);
  /*!*
  *    @brief This API reads magnetometer data X,Y,Z,r
  *    values from the register 0x04 to 0x0B
@@ -4095,8 +4094,7 @@ struct bmi160_mag_t *mag, uint8_t v_sensor_select_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_mag_xyzr(
-struct bmi160_mag_xyzr_t *mag);
+BMI160_RETURN_FUNCTION_TYPE bmi160_read_mag_xyzr(const bmi160_t *bmi160, struct bmi160_mag_xyzr_t *mag);
 /**************************************************/
 /**\name     FUNCTION FOR GYRO XYZ DATA READ  */
 /*************************************************/
@@ -4119,8 +4117,7 @@ struct bmi160_mag_xyzr_t *mag);
  *    @retval -1 -> Error
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_gyro_x(
-int16_t *v_gyro_x_s16);
+BMI160_RETURN_FUNCTION_TYPE bmi160_read_gyro_x(const bmi160_t *bmi160, int16_t *v_gyro_x_s16);
 /*!
  *    @brief This API reads gyro data Y values
  *    form the register 0x0E and 0x0F
@@ -4141,8 +4138,7 @@ int16_t *v_gyro_x_s16);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_gyro_y(
-int16_t *v_gyro_y_s16);
+BMI160_RETURN_FUNCTION_TYPE bmi160_read_gyro_y(const bmi160_t *bmi160, int16_t *v_gyro_y_s16);
 /*!
  *    @brief This API reads gyro data Z values
  *    form the register 0x10 and 0x11
@@ -4163,8 +4159,7 @@ int16_t *v_gyro_y_s16);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_gyro_z(
-int16_t *v_gyro_z_s16);
+BMI160_RETURN_FUNCTION_TYPE bmi160_read_gyro_z(const bmi160_t *bmi160, int16_t *v_gyro_z_s16);
 /*!
  *    @brief This API reads gyro data X,Y,Z values
  *    from the register 0x0C to 0x11
@@ -4185,8 +4180,7 @@ int16_t *v_gyro_z_s16);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_gyro_xyz(
-struct bmi160_gyro_t *gyro);
+BMI160_RETURN_FUNCTION_TYPE bmi160_read_gyro_xyz(const bmi160_t *bmi160, struct bmi160_gyro_t *gyro);
 /**************************************************/
 /**\name     FUNCTION FOR ACCEL XYZ DATA READ  */
 /*************************************************/
@@ -4211,8 +4205,7 @@ struct bmi160_gyro_t *gyro);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_accel_x(
-int16_t *v_accel_x_s16);
+BMI160_RETURN_FUNCTION_TYPE bmi160_read_accel_x(const bmi160_t *bmi160, int16_t *v_accel_x_s16);
 /*!
  *    @brief This API reads accelerometer data Y values
  *    form the register 0x14 and 0x15
@@ -4234,8 +4227,7 @@ int16_t *v_accel_x_s16);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_accel_y(
-int16_t *v_accel_y_s16);
+BMI160_RETURN_FUNCTION_TYPE bmi160_read_accel_y(const bmi160_t *bmi160, int16_t *v_accel_y_s16);
 /*!
  *    @brief This API reads accelerometer data Z values
  *    form the register 0x16 and 0x17
@@ -4257,8 +4249,7 @@ int16_t *v_accel_y_s16);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_accel_z(
-int16_t *v_accel_z_s16);
+BMI160_RETURN_FUNCTION_TYPE bmi160_read_accel_z(const bmi160_t *bmi160, int16_t *v_accel_z_s16);
 /*!
  *    @brief This API reads accelerometer data X,Y,Z values
  *    from the register 0x12 to 0x17
@@ -4280,8 +4271,7 @@ int16_t *v_accel_z_s16);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_accel_xyz(
-struct bmi160_accel_t *accel);
+BMI160_RETURN_FUNCTION_TYPE bmi160_read_accel_xyz(const bmi160_t *bmi160, struct bmi160_accel_t *accel);
 /**************************************************/
 /**\name     FUNCTION FOR SENSOR TIME */
 /*************************************************/
@@ -4300,8 +4290,7 @@ struct bmi160_accel_t *accel);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_sensor_time(
-uint32_t *v_sensor_time_u32);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_sensor_time(uint32_t *v_sensor_time_u32);
 /**************************************************/
 /**\name     FUNCTION FOR GYRO SLEF TEST  */
 /*************************************************/
@@ -4323,7 +4312,7 @@ uint32_t *v_sensor_time_u32);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_selftest(uint8_t
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_selftest(const bmi160_t *bmi160, uint8_t
 *v_gyro_selftest_u8);
 /**************************************************/
 /**\name     FUNCTION FOR MANUAL INTERFACE  */
@@ -4348,7 +4337,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_selftest(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_manual_operation_stat(uint8_t
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_manual_operation_stat(const bmi160_t *bmi160, uint8_t
 *v_mag_manual_stat_u8);
 /**************************************************/
 /**\name     FUNCTION FOR FAST OFFSET READY  */
@@ -4368,7 +4357,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_manual_operation_stat(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_foc_rdy(uint8_t
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_foc_rdy(const bmi160_t *bmi160, uint8_t
 *v_foc_rdy_u8);
 /**************************************************/
 /**\name     FUNCTION FOR NVM READY  */
@@ -4391,7 +4380,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_foc_rdy(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_nvm_rdy(uint8_t
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_nvm_rdy(const bmi160_t *bmi160, uint8_t
 *v_nvm_rdy_u8);
 /**************************************************/
 /**\name     FUNCTION FOR DATA READY FOR MAG, GYRO, AND ACCEL */
@@ -4411,7 +4400,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_nvm_rdy(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_data_rdy_mag(uint8_t
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_data_rdy_mag(const bmi160_t *bmi160, uint8_t
 *v_data_rdy_u8);
 /*!
  *    @brief This API reads the status of gyro data ready form the
@@ -4429,7 +4418,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_data_rdy_mag(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_data_rdy(uint8_t
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_data_rdy(const bmi160_t *bmi160, uint8_t
 *v_data_rdy_u8);
 /*!
  *    @brief This API reads the status of accel data ready form the
@@ -4447,7 +4436,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_data_rdy(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_data_rdy(uint8_t
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_data_rdy(const bmi160_t *bmi160, uint8_t
 *drdy_acc);
 /**************************************************/
 /**\name     FUNCTION FOR STEP INTERRUPT STATUS  */
@@ -4476,7 +4465,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_data_rdy(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_step_intr(uint8_t
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_step_intr(const bmi160_t *bmi160, uint8_t
 *v_step_intr_u8);
 /**************************************************/
 /**\name     FUNCTION FOR SIGNIFICANT INTERRUPT STATUS  */
@@ -4508,7 +4497,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_step_intr(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_significant_intr(uint8_t
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_significant_intr(const bmi160_t *bmi160, uint8_t
 *sigmot_intr);
 /**************************************************/
 /**\name     FUNCTION FOR ANY MOTION INTERRUPT STATUS  */
@@ -4536,7 +4525,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_significant_intr(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_any_motion_intr(uint8_t
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_any_motion_intr(const bmi160_t *bmi160, uint8_t
 *v_any_motion_intr_u8);
 /**************************************************/
 /**\name     FUNCTION FOR PMU TRIGGER INTERRUPT STATUS  */
@@ -4566,7 +4555,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_any_motion_intr(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_pmu_trigger_intr(uint8_t
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_pmu_trigger_intr(const bmi160_t *bmi160, uint8_t
 *v_pmu_trigger_intr_u8);
 /**************************************************/
 /**\name     FUNCTION FOR DOUBLE TAB STATUS  */
@@ -4611,7 +4600,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_pmu_trigger_intr(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_double_tap_intr(uint8_t
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_double_tap_intr(const bmi160_t *bmi160, uint8_t
 *v_double_tap_intr_u8);
 /**************************************************/
 /**\name     FUNCTION FOR SINGLE TAB STATUS  */
@@ -4656,7 +4645,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_double_tap_intr(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_single_tap_intr(uint8_t
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_single_tap_intr(const bmi160_t *bmi160, uint8_t
 *v_single_tap_intr_u8);
 /**************************************************/
 /**\name     FUNCTION FOR ORIENT INTERRUPT STATUS  */
@@ -4703,7 +4692,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_single_tap_intr(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_orient_intr(uint8_t
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_orient_intr(const bmi160_t *bmi160, uint8_t
 *v_orient_intr_u8);
 /**************************************************/
 /**\name     FUNCTION FOR FLAT INTERRUPT STATUS  */
@@ -4743,7 +4732,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_orient_intr(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_flat_intr(uint8_t
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_flat_intr(const bmi160_t *bmi160, uint8_t
 *v_flat_intr_u8);
 /**************************************************/
 /**\name     FUNCTION FOR HIGH_G INTERRUPT STATUS  */
@@ -4788,7 +4777,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat0_flat_intr(uint8_t
  *    @retval -1 -> Error
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat1_high_g_intr(uint8_t
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat1_high_g_intr(const bmi160_t *bmi160, uint8_t
 *v_high_g_intr_u8);
 /**************************************************/
 /**\name     FUNCTION FOR LOW_G INTERRUPT STATUS  */
@@ -4830,7 +4819,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat1_high_g_intr(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat1_low_g_intr(uint8_t
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat1_low_g_intr(const bmi160_t *bmi160, uint8_t
 *v_low_g_intr_u8);
 /**************************************************/
 /**\name     FUNCTION FOR DATA READY INTERRUPT STATUS  */
@@ -4862,7 +4851,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat1_low_g_intr(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat1_data_rdy_intr(uint8_t
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat1_data_rdy_intr(const bmi160_t *bmi160, uint8_t
 *v_data_rdy_intr_u8);
 /**************************************************/
 /**\name     FUNCTIONS FOR FIFO FULL AND WATER MARK INTERRUPT STATUS*/
@@ -4892,7 +4881,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat1_data_rdy_intr(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat1_fifo_full_intr(uint8_t
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat1_fifo_full_intr(const bmi160_t *bmi160, uint8_t
 *v_fifo_full_intr_u8);
 /*!
  *    @brief This API reads data
@@ -4920,7 +4909,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat1_fifo_full_intr(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat1_fifo_wm_intr(uint8_t
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat1_fifo_wm_intr(const bmi160_t *bmi160, uint8_t
 *v_fifo_wm_intr_u8);
 /**************************************************/
 /**\name     FUNCTIONS FOR NO MOTION INTERRUPT STATUS*/
@@ -4958,7 +4947,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat1_fifo_wm_intr(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat1_nomotion_intr(uint8_t
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat1_nomotion_intr(const bmi160_t *bmi160, uint8_t
 *nomo_intr);
 /**************************************************/
 /**\name     FUNCTIONS FOR ANY MOTION FIRST XYZ AND SIGN INTERRUPT STATUS*/
@@ -4980,7 +4969,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat1_nomotion_intr(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_any_motion_first_x(uint8_t
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_any_motion_first_x(const bmi160_t *bmi160, uint8_t
 *v_anymotion_first_x_u8);
 /*!
  *    @brief This API reads the status of any motion first y interrupt
@@ -5002,7 +4991,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_any_motion_first_x(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_any_motion_first_y(uint8_t
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_any_motion_first_y(const bmi160_t *bmi160, uint8_t
 *v_any_motion_first_y_u8);
 /*!
  *    @brief This API reads the status of any motion first z interrupt
@@ -5025,7 +5014,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_any_motion_first_y(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_any_motion_first_z(uint8_t
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_any_motion_first_z(const bmi160_t *bmi160, uint8_t
 *v_any_motion_first_z_u8);
 /*!
  *    @brief This API reads the any motion sign status from the
@@ -5047,7 +5036,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_any_motion_first_z(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_any_motion_sign(uint8_t
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_any_motion_sign(const bmi160_t *bmi160, uint8_t
 *v_anymotion_sign_u8);
 /**************************************************/
 /**\name     FUNCTIONS FOR TAP FIRST XYZ AND SIGN INTERRUPT STATUS*/
@@ -5071,7 +5060,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_any_motion_sign(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_tap_first_x(uint8_t
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_tap_first_x(const bmi160_t *bmi160, uint8_t
 *v_tap_first_x_u8);
 /*!
  *    @brief This API reads the tap first y interrupt status from the
@@ -5094,7 +5083,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_tap_first_x(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_tap_first_y(uint8_t
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_tap_first_y(const bmi160_t *bmi160, uint8_t
 *v_tap_first_y_u8);
 /*!
  *    @brief This API reads the tap first z interrupt status  from the
@@ -5117,7 +5106,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_tap_first_y(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_tap_first_z(uint8_t
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_tap_first_z(const bmi160_t *bmi160, uint8_t
 *v_tap_first_z_u8);
 /*!
  *    @brief This API reads the tap sign status from the
@@ -5139,7 +5128,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_tap_first_z(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_tap_sign(uint8_t
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_tap_sign(const bmi160_t *bmi160, uint8_t
 *tap_sign);
 /**************************************************/
 /**\name     FUNCTIONS FOR HIGH_G FIRST XYZ AND SIGN INTERRUPT STATUS*/
@@ -5165,7 +5154,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat2_tap_sign(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat3_high_g_first_x(uint8_t
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat3_high_g_first_x(const bmi160_t *bmi160, uint8_t
 *v_high_g_first_x_u8);
 /*!
  *    @brief This API reads the high_g first y status from the
@@ -5188,7 +5177,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat3_high_g_first_x(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat3_high_g_first_y(uint8_t
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat3_high_g_first_y(const bmi160_t *bmi160, uint8_t
 *v_high_g_first_y_u8);
 /*!
  *    @brief This API reads the high_g first z status from the
@@ -5211,7 +5200,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat3_high_g_first_y(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat3_high_g_first_z(uint8_t
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat3_high_g_first_z(const bmi160_t *bmi160, uint8_t
 *v_high_g_first_z_u8);
 /*!
  *    @brief This API reads the high sign status from the
@@ -5234,7 +5223,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat3_high_g_first_z(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat3_high_g_sign(uint8_t
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat3_high_g_sign(const bmi160_t *bmi160, uint8_t
 *v_high_g_sign_u8);
 /**************************************************/
 /**\name     FUNCTIONS FOR ORIENT XY AND Z INTERRUPT STATUS*/
@@ -5259,7 +5248,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat3_high_g_sign(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat3_orient_xy(uint8_t
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat3_orient_xy(const bmi160_t *bmi160, uint8_t
 *v_orient_xy_u8);
 /*!
  *    @brief This API reads the status of orient z plane
@@ -5278,7 +5267,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat3_orient_xy(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat3_orient_z(uint8_t
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat3_orient_z(const bmi160_t *bmi160, uint8_t
 *v_orient_z_u8);
 /**************************************************/
 /**\name     FUNCTIONS FOR FLAT INTERRUPT STATUS*/
@@ -5301,7 +5290,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat3_orient_z(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat3_flat(uint8_t
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat3_flat(const bmi160_t *bmi160, uint8_t
 *flat);
 /**************************************************/
 /**\name     FUNCTION FOR TEMPERATUE READ */
@@ -5322,7 +5311,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_stat3_flat(uint8_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_temp(int16_t
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_temp(const bmi160_t *bmi160, int16_t
 *v_temp_s16);
 /**************************************************/
 /**\name     FUNCTION FOR FIFO LENGTH AND FIFO DATA READ */
@@ -5343,8 +5332,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_temp(int16_t
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_fifo_length(
-uint32_t *v_fifo_length_u32);
+BMI160_RETURN_FUNCTION_TYPE bmi160_fifo_length(uint32_t *v_fifo_length_u32);
 /*!
  *    @brief This API reads the fifo data of the sensor
  *    from the register 0x24
@@ -5364,8 +5352,7 @@ uint32_t *v_fifo_length_u32);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_fifo_data(
-uint8_t *v_fifodata_u8, uint16_t v_fifo_length_u16);
+BMI160_RETURN_FUNCTION_TYPE bmi160_fifo_data(const bmi160_t *bmi160, uint8_t *v_fifodata_u8, uint16_t v_fifo_length_u16);
 /**************************************************/
 /**\name     FUNCTION FOR ACCEL CONFIGURATIONS */
 /*************************************************/
@@ -5398,8 +5385,7 @@ uint8_t *v_fifodata_u8, uint16_t v_fifo_length_u16);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_output_data_rate(
-uint8_t *v_output_data_rate_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_output_data_rate(const bmi160_t *bmi160, uint8_t *v_output_data_rate_u8);
 /*!
  *    @brief This API is used to set the
  *    accel output date rate form the register 0x40 bit 0 to 3
@@ -5461,8 +5447,7 @@ uint8_t *v_output_data_rate_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_output_data_rate(
-uint8_t v_output_data_rate_u8, uint8_t v_accel_bw_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_output_data_rate(const bmi160_t *bmi160, uint8_t v_output_data_rate_u8, uint8_t v_accel_bw_u8);
 /*!
  *    @brief This API is used to get the
  *    accel bandwidth from the register 0x40 bit 4 to 6
@@ -5508,7 +5493,7 @@ uint8_t v_output_data_rate_u8, uint8_t v_accel_bw_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_bw(uint8_t *v_bw_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_bw(const bmi160_t *bmi160, uint8_t *v_bw_u8);
 /*!
  *    @brief This API is used to set the
  *    accel bandwidth from the register 0x40 bit 4 to 6
@@ -5554,7 +5539,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_bw(uint8_t *v_bw_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_bw(uint8_t v_bw_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_bw(const bmi160_t *bmi160, uint8_t v_bw_u8);
 /*!
  *    @brief This API is used to get the accel
  *    under sampling parameter form the register 0x40 bit 7
@@ -5576,8 +5561,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_bw(uint8_t v_bw_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_under_sampling_parameter(
-uint8_t *v_accel_under_sampling_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_under_sampling_parameter(const bmi160_t *bmi160, uint8_t *v_accel_under_sampling_u8);
 /*!
  *    @brief This API is used to set the accel
  *    under sampling parameter form the register 0x40 bit 7
@@ -5599,8 +5583,7 @@ uint8_t *v_accel_under_sampling_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_under_sampling_parameter(
-uint8_t v_accel_under_sampling_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_under_sampling_parameter(const bmi160_t *bmi160, uint8_t v_accel_under_sampling_u8);
 /*!
  *    @brief This API is used to get the ranges
  *    (g values) of the accel from the register 0x41 bit 0 to 3
@@ -5624,8 +5607,7 @@ uint8_t v_accel_under_sampling_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_range(
-uint8_t *v_range_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_range(const bmi160_t *bmi160, uint8_t *v_range_u8);
 /*!
  *    @brief This API is used to set the ranges
  *    (g values) of the accel from the register 0x41 bit 0 to 3
@@ -5649,8 +5631,7 @@ uint8_t *v_range_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_range(
-uint8_t v_range_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_range(const bmi160_t *bmi160, uint8_t v_range_u8);
 /**************************************************/
 /**\name     FUNCTION FOR GYRO CONFIGURATIONS */
 /*************************************************/
@@ -5687,8 +5668,7 @@ uint8_t v_range_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_output_data_rate(
-uint8_t *gyro_output_typer);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_output_data_rate(const bmi160_t *bmi160, uint8_t *gyro_output_typer);
 /*!
  *    @brief This API is used to set the
  *    gyroscope output data rate from the register 0x42 bit 0 to 3
@@ -5722,8 +5702,7 @@ uint8_t *gyro_output_typer);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_output_data_rate(
-uint8_t gyro_output_typer);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_output_data_rate(const bmi160_t *bmi160, uint8_t gyro_output_typer);
 /*!
  *    @brief This API is used to get the
  *    data of gyro from the register 0x42 bit 4 to 5
@@ -5746,7 +5725,7 @@ uint8_t gyro_output_typer);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_bw(uint8_t *v_bw_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_bw(const bmi160_t *bmi160, uint8_t *v_bw_u8);
 /*!
  *    @brief This API is used to set the
  *    data of gyro from the register 0x42 bit 4 to 5
@@ -5769,7 +5748,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_bw(uint8_t *v_bw_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_bw(uint8_t v_bw_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_bw(const bmi160_t *bmi160, uint8_t v_bw_u8);
 /*!
  *    @brief This API reads the range
  *    of gyro from the register 0x43 bit 0 to 2
@@ -5789,8 +5768,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_bw(uint8_t v_bw_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_range(
-uint8_t *v_range_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_range(const bmi160_t *bmi160, uint8_t *v_range_u8);
 /*!
  *    @brief This API set the range
  *    of gyro from the register 0x43 bit 0 to 2
@@ -5810,8 +5788,7 @@ uint8_t *v_range_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_range(
-uint8_t v_range_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_range(const bmi160_t *bmi160, uint8_t v_range_u8);
 /**************************************************/
 /**\name     FUNCTION FOR MAG CONFIGURATIONS */
 /*************************************************/
@@ -5850,7 +5827,7 @@ uint8_t v_range_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_output_data_rate(uint8_t *odr);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_output_data_rate(const bmi160_t *bmi160, uint8_t *odr);
 /*!
  *    @brief This API is used to set the
  *    output data rate of magnetometer from the register 0x44 bit 0 to 3
@@ -5886,7 +5863,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_output_data_rate(uint8_t *odr);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_mag_output_data_rate(uint8_t odr);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_mag_output_data_rate(const bmi160_t *bmi160, uint8_t odr);
 /**************************************************/
 /**\name     FUNCTION FOR FIFO CONFIGURATIONS */
 /*************************************************/
@@ -5906,8 +5883,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_mag_output_data_rate(uint8_t odr);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_fifo_down_gyro(
-uint8_t *v_fifo_down_gyro_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_fifo_down_gyro(const bmi160_t *bmi160, uint8_t *v_fifo_down_gyro_u8);
  /*!
  *    @brief This API is used to set Down sampling
  *    for gyro (2**downs_gyro) in the register 0x45 bit 0 to 2
@@ -5924,8 +5900,7 @@ uint8_t *v_fifo_down_gyro_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_fifo_down_gyro(
-uint8_t v_fifo_down_gyro_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_fifo_down_gyro(const bmi160_t *bmi160, uint8_t v_fifo_down_gyro_u8);
 /*!
  *    @brief This API is used to read gyro fifo filter data
  *    from the register 0x45 bit 3
@@ -5944,8 +5919,7 @@ uint8_t v_fifo_down_gyro_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_fifo_filter_data(
-uint8_t *v_gyro_fifo_filter_data_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_fifo_filter_data(const bmi160_t *bmi160, uint8_t *v_gyro_fifo_filter_data_u8);
 /*!
  *    @brief This API is used to set gyro fifo filter data
  *    from the register 0x45 bit 3
@@ -5964,8 +5938,7 @@ uint8_t *v_gyro_fifo_filter_data_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_fifo_filter_data(
-uint8_t v_gyro_fifo_filter_data_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_fifo_filter_data(const bmi160_t *bmi160, uint8_t v_gyro_fifo_filter_data_u8);
 /*!
  *    @brief This API is used to read Down sampling
  *    for accel (2*downs_accel) from the register 0x45 bit 4 to 6
@@ -5983,8 +5956,7 @@ uint8_t v_gyro_fifo_filter_data_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_fifo_down_accel(
-uint8_t *v_fifo_down_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_fifo_down_accel(const bmi160_t *bmi160, uint8_t *v_fifo_down_u8);
  /*!
  *    @brief This API is used to set Down sampling
  *    for accel (2*downs_accel) from the register 0x45 bit 4 to 6
@@ -6002,8 +5974,7 @@ uint8_t *v_fifo_down_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_fifo_down_accel(
-uint8_t v_fifo_down_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_fifo_down_accel(const bmi160_t *bmi160, uint8_t v_fifo_down_u8);
 /*!
  *    @brief This API is used to read accel fifo filter data
  *    from the register 0x45 bit 7
@@ -6023,8 +5994,7 @@ uint8_t v_fifo_down_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_fifo_filter_data(
-uint8_t *v_accel_fifo_filter_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_fifo_filter_data(const bmi160_t *bmi160, uint8_t *v_accel_fifo_filter_u8);
 /*!
  *    @brief This API is used to set accel fifo filter data
  *    from the register 0x45 bit 7
@@ -6044,8 +6014,7 @@ uint8_t *v_accel_fifo_filter_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_fifo_filter_data(
-uint8_t v_accel_fifo_filter_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_fifo_filter_data(const bmi160_t *bmi160, uint8_t v_accel_fifo_filter_u8);
 /**************************************************/
 /**\name     FUNCTION FOR FIFO WATER MARK ENABLE */
 /*************************************************/
@@ -6065,8 +6034,7 @@ uint8_t v_accel_fifo_filter_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_fifo_wm(
-uint8_t *v_fifo_wm_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_fifo_wm(const bmi160_t *bmi160, uint8_t *v_fifo_wm_u8);
 /*!
  *    @brief This API is used to Trigger an interrupt
  *    when FIFO contains water mark level from the register 0x46 bit 0 to 7
@@ -6083,8 +6051,7 @@ uint8_t *v_fifo_wm_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_fifo_wm(
-uint8_t v_fifo_wm_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_fifo_wm(const bmi160_t *bmi160, uint8_t v_fifo_wm_u8);
 /**************************************************/
 /**\name     FUNCTION FOR FIFO CONFIGURATIONS */
 /*************************************************/
@@ -6107,8 +6074,7 @@ uint8_t v_fifo_wm_u8);
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_fifo_time_enable(
-uint8_t *v_fifo_time_enable_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_fifo_time_enable(const bmi160_t *bmi160, uint8_t *v_fifo_time_enable_u8);
 /*!
  *    @brief This API set fifo sensor time
  *    frame after the last valid data frame form the register  0x47 bit 1
@@ -6128,8 +6094,7 @@ uint8_t *v_fifo_time_enable_u8);
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_fifo_time_enable(
-uint8_t v_fifo_time_enable_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_fifo_time_enable(const bmi160_t *bmi160, uint8_t v_fifo_time_enable_u8);
 /*!
  *    @brief This API reads FIFO tag interrupt2 enable status
  *    from the resister 0x47 bit 2
@@ -6149,8 +6114,7 @@ uint8_t v_fifo_time_enable_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_fifo_tag_intr2_enable(
-uint8_t *v_fifo_tag_intr2_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_fifo_tag_intr2_enable(const bmi160_t *bmi160, uint8_t *v_fifo_tag_intr2_u8);
 /*!
  *    @brief This API set FIFO tag interrupt2 enable status
  *    from the resister 0x47 bit 2
@@ -6170,8 +6134,7 @@ uint8_t *v_fifo_tag_intr2_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_fifo_tag_intr2_enable(
-uint8_t v_fifo_tag_intr2_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_fifo_tag_intr2_enable(const bmi160_t *bmi160, uint8_t v_fifo_tag_intr2_u8);
 /*!
  *    @brief This API get FIFO tag interrupt1 enable status
  *    from the resister 0x47 bit 3
@@ -6188,8 +6151,7 @@ uint8_t v_fifo_tag_intr2_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_fifo_tag_intr1_enable(
-uint8_t *v_fifo_tag_intr1_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_fifo_tag_intr1_enable(const bmi160_t *bmi160, uint8_t *v_fifo_tag_intr1_u8);
 /*!
  *    @brief This API set FIFO tag interrupt1 enable status
  *    from the resister 0x47 bit 3
@@ -6206,8 +6168,7 @@ uint8_t *v_fifo_tag_intr1_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_fifo_tag_intr1_enable(
-uint8_t v_fifo_tag_intr1_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_fifo_tag_intr1_enable(const bmi160_t *bmi160, uint8_t v_fifo_tag_intr1_u8);
 /*!
  *    @brief This API reads FIFO frame
  *    header enable from the register 0x47 bit 4
@@ -6224,8 +6185,7 @@ uint8_t v_fifo_tag_intr1_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_fifo_header_enable(
-uint8_t *v_fifo_header_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_fifo_header_enable(const bmi160_t *bmi160, uint8_t *v_fifo_header_u8);
 /*!
  *    @brief This API set FIFO frame
  *    header enable from the register 0x47 bit 4
@@ -6242,8 +6202,7 @@ uint8_t *v_fifo_header_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_fifo_header_enable(
-uint8_t v_fifo_header_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_fifo_header_enable(const bmi160_t *bmi160, uint8_t v_fifo_header_u8);
 /*!
  *    @brief This API is used to read stored
  *    magnetometer data in FIFO (all 3 axes) from the register 0x47 bit 5
@@ -6260,8 +6219,7 @@ uint8_t v_fifo_header_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_fifo_mag_enable(
-uint8_t *v_fifo_mag_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_fifo_mag_enable(const bmi160_t *bmi160, uint8_t *v_fifo_mag_u8);
 /*!
  *    @brief This API is used to set stored
  *    magnetometer data in FIFO (all 3 axes) from the register 0x47 bit 5
@@ -6278,8 +6236,7 @@ uint8_t *v_fifo_mag_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_fifo_mag_enable(
-uint8_t v_fifo_mag_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_fifo_mag_enable(const bmi160_t *bmi160, uint8_t v_fifo_mag_u8);
 /*!
  *    @brief This API is used to read stored
  *    accel data in FIFO (all 3 axes) from the register 0x47 bit 6
@@ -6298,8 +6255,7 @@ uint8_t v_fifo_mag_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_fifo_accel_enable(
-uint8_t *v_fifo_accel_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_fifo_accel_enable(const bmi160_t *bmi160, uint8_t *v_fifo_accel_u8);
 /*!
  *    @brief This API is used to set stored
  *    accel data in FIFO (all 3 axes) from the register 0x47 bit 6
@@ -6318,8 +6274,7 @@ uint8_t *v_fifo_accel_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_fifo_accel_enable(
-uint8_t v_fifo_accel_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_fifo_accel_enable(const bmi160_t *bmi160, uint8_t v_fifo_accel_u8);
 /*!
  *    @brief This API is used to read stored
  *     gyro data in FIFO (all 3 axes) from the resister 0x47 bit 7
@@ -6338,8 +6293,7 @@ uint8_t v_fifo_accel_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_fifo_gyro_enable(
-uint8_t *v_fifo_gyro_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_fifo_gyro_enable(const bmi160_t *bmi160, uint8_t *v_fifo_gyro_u8);
 /*!
  *    @brief This API is used to set stored
  *    gyro data in FIFO (all 3 axes) from the resister 0x47 bit 7
@@ -6358,8 +6312,7 @@ uint8_t *v_fifo_gyro_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_fifo_gyro_enable(
-uint8_t v_fifo_gyro_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_fifo_gyro_enable(const bmi160_t *bmi160, uint8_t v_fifo_gyro_u8);
 /***************************************************************/
 /**\name    FUNCTION FOR MAG I2C ADDRESS SELECTION          */
 /***************************************************************/
@@ -6379,8 +6332,7 @@ uint8_t v_fifo_gyro_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_i2c_device_addr(
-uint8_t *v_i2c_device_addr_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_i2c_device_addr(const bmi160_t *bmi160, uint8_t *v_i2c_device_addr_u8);
 /*!
  *    @brief This API is used to set
  *    I2C device address of auxiliary mag from the register 0x4B bit 1 to 7
@@ -6397,8 +6349,7 @@ uint8_t *v_i2c_device_addr_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_i2c_device_addr(
-uint8_t v_i2c_device_addr_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_i2c_device_addr(const bmi160_t *bmi160, uint8_t v_i2c_device_addr_u8);
 /*!
  *    @brief This API is used to read
  *    Burst data length (1,2,6,8 byte) from the register 0x4C bit 0 to 1
@@ -6416,8 +6367,7 @@ uint8_t v_i2c_device_addr_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_burst(
-uint8_t *v_mag_burst_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_burst(const bmi160_t *bmi160, uint8_t *v_mag_burst_u8);
 /*!
  *    @brief This API is used to set
  *    Burst data length (1,2,6,8 byte) from the register 0x4C bit 0 to 1
@@ -6435,8 +6385,7 @@ uint8_t *v_mag_burst_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_mag_burst(
-uint8_t v_mag_burst_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_mag_burst(const bmi160_t *bmi160, uint8_t v_mag_burst_u8);
 /***************************************************************/
 /**\name    FUNCTION FOR MAG OFFSET         */
 /***************************************************************/
@@ -6459,8 +6408,7 @@ uint8_t v_mag_burst_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_offset(
-uint8_t *v_mag_offset_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_offset(const bmi160_t *bmi160, uint8_t *v_mag_offset_u8);
 /*!
  *    @brief This API is used to set
  *    trigger-readout offset in units of 2.5 ms. If set to zero,
@@ -6480,8 +6428,7 @@ uint8_t *v_mag_offset_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_mag_offset(
-uint8_t v_mag_offset_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_mag_offset(const bmi160_t *bmi160, uint8_t v_mag_offset_u8);
 /***************************************************************/
 /**\name    FUNCTION FOR MAG MANUAL/AUTO MODE SELECTION          */
 /***************************************************************/
@@ -6509,8 +6456,7 @@ uint8_t v_mag_offset_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_manual_enable(
-uint8_t *v_mag_manual_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_manual_enable(const bmi160_t *bmi160, uint8_t *v_mag_manual_u8);
 /*!
  *    @brief This API is used to set
  *    Enable register access on MAG_IF[2] or MAG_IF[3] writes.
@@ -6535,8 +6481,7 @@ uint8_t *v_mag_manual_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_mag_manual_enable(
-uint8_t v_mag_manual_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_mag_manual_enable(const bmi160_t *bmi160, uint8_t v_mag_manual_u8);
 /***************************************************************/
 /**\name    FUNCTIONS FOR MAG READ, WRITE AND WRITE DATA ADDRESS  */
 /***************************************************************/
@@ -6558,8 +6503,7 @@ uint8_t v_mag_manual_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_read_addr(
-uint8_t *v_mag_read_addr_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_read_addr(const bmi160_t *bmi160, uint8_t *v_mag_read_addr_u8);
 /*!
  *    @brief This API is used to set
  *    magnetometer write address from the register 0x4D bit 0 to 7
@@ -6577,8 +6521,7 @@ uint8_t *v_mag_read_addr_u8);
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_mag_read_addr(
-uint8_t v_mag_read_addr_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_mag_read_addr(const bmi160_t *bmi160, uint8_t v_mag_read_addr_u8);
 /*!
  *    @brief This API is used to read
  *    magnetometer write address from the register 0x4E bit 0 to 7
@@ -6596,8 +6539,7 @@ uint8_t v_mag_read_addr_u8);
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_write_addr(
-uint8_t *v_mag_write_addr_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_write_addr(const bmi160_t *bmi160, uint8_t *v_mag_write_addr_u8);
 /*!
  *    @brief This API is used to set
  *    magnetometer write address from the register 0x4E bit 0 to 7
@@ -6615,8 +6557,7 @@ uint8_t *v_mag_write_addr_u8);
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_mag_write_addr(
-uint8_t v_mag_write_addr_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_mag_write_addr(const bmi160_t *bmi160, uint8_t v_mag_write_addr_u8);
 /*!
  *    @brief This API is used to read magnetometer write data
  *    form the resister 0x4F bit 0 to 7
@@ -6634,8 +6575,7 @@ uint8_t v_mag_write_addr_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_write_data(
-uint8_t *v_mag_write_data_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_mag_write_data(const bmi160_t *bmi160, uint8_t *v_mag_write_data_u8);
 /*!
  *    @brief This API is used to set magnetometer write data
  *    form the resister 0x4F bit 0 to 7
@@ -6653,8 +6593,7 @@ uint8_t *v_mag_write_data_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_mag_write_data(
-uint8_t v_mag_write_data_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_mag_write_data(const bmi160_t *bmi160, uint8_t v_mag_write_data_u8);
 /***************************************************************/
 /**\name    FUNCTION FOR INTERRUPT ENABLE OF
 ANY-MOTION XYZ, DOUBLE AND SINGLE TAP, ORIENT AND FLAT         */
@@ -6691,8 +6630,7 @@ ANY-MOTION XYZ, DOUBLE AND SINGLE TAP, ORIENT AND FLAT         */
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_enable_0(
-uint8_t enable, uint8_t *v_intr_enable_zero_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_enable_0(const bmi160_t *bmi160, uint8_t enable, uint8_t *v_intr_enable_zero_u8);
 /*!
  *    @brief  This API is used to set
  *    interrupt enable from the register 0x50 bit 0 to 7
@@ -6725,8 +6663,7 @@ uint8_t enable, uint8_t *v_intr_enable_zero_u8);
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_enable_0(
-uint8_t enable, uint8_t v_intr_enable_zero_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_enable_0(const bmi160_t *bmi160, uint8_t enable, uint8_t v_intr_enable_zero_u8);
 /***************************************************************/
 /**\name    FUNCTION FOR INTERRUPT ENABLE OF
 HIGH_G XYZ, LOW_G, DATA READY, FIFO FULL AND FIFO WATER MARK  */
@@ -6765,8 +6702,7 @@ HIGH_G XYZ, LOW_G, DATA READY, FIFO FULL AND FIFO WATER MARK  */
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_enable_1(
-uint8_t enable, uint8_t *v_intr_enable_1_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_enable_1(const bmi160_t *bmi160, uint8_t enable, uint8_t *v_intr_enable_1_u8);
 /*!
  *    @brief  This API is used to set
  *    interrupt enable byte1 from the register 0x51 bit 0 to 6
@@ -6801,8 +6737,7 @@ uint8_t enable, uint8_t *v_intr_enable_1_u8);
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_enable_1(
-uint8_t enable, uint8_t v_intr_enable_1_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_enable_1(const bmi160_t *bmi160, uint8_t enable, uint8_t v_intr_enable_1_u8);
 /***************************************************************/
 /**\name    FUNCTION FOR INTERRUPT ENABLE OF
 NO MOTION XYZ  */
@@ -6835,8 +6770,7 @@ NO MOTION XYZ  */
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_enable_2(
-uint8_t enable, uint8_t *v_intr_enable_2_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_enable_2(const bmi160_t *bmi160, uint8_t enable, uint8_t *v_intr_enable_2_u8);
 /*!
  *    @brief  This API is used to set
  *    interrupt enable byte2 from the register bit 0x52 bit 0 to 3
@@ -6865,8 +6799,7 @@ uint8_t enable, uint8_t *v_intr_enable_2_u8);
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_enable_2(
-uint8_t enable, uint8_t v_intr_enable_2_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_enable_2(const bmi160_t *bmi160, uint8_t enable, uint8_t v_intr_enable_2_u8);
 /***************************************************************/
 /**\name    FUNCTION FOR INTERRUPT ENABLE OF
   STEP DETECTOR */
@@ -6889,8 +6822,7 @@ uint8_t enable, uint8_t v_intr_enable_2_u8);
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_step_detector_enable(
-uint8_t *v_step_intr_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_step_detector_enable(const bmi160_t *bmi160, uint8_t *v_step_intr_u8);
  /*!
  *    @brief This API is used to set
  *    interrupt enable step detector interrupt from
@@ -6909,8 +6841,7 @@ uint8_t *v_step_intr_u8);
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_step_detector_enable(
-uint8_t v_step_intr_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_step_detector_enable(const bmi160_t *bmi160, uint8_t v_step_intr_u8);
 /***************************************************************/
 /**\name    FUNCTION FOR INTERRUPT CONTROL */
 /***************************************************************/
@@ -6938,8 +6869,7 @@ uint8_t v_step_intr_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_edge_ctrl(
-uint8_t v_channel_u8, uint8_t *v_intr_edge_ctrl_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_edge_ctrl(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_intr_edge_ctrl_u8);
 /*!
  *    @brief  Configure trigger condition of interrupt1
  *    and interrupt2 pin from the register 0x53
@@ -6964,8 +6894,7 @@ uint8_t v_channel_u8, uint8_t *v_intr_edge_ctrl_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_edge_ctrl(
-uint8_t v_channel_u8, uint8_t v_intr_edge_ctrl_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_edge_ctrl(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_intr_edge_ctrl_u8);
 /*!
  *    @brief  API used for get the Configure level condition of interrupt1
  *    and interrupt2 pin form the register 0x53
@@ -6990,8 +6919,7 @@ uint8_t v_channel_u8, uint8_t v_intr_edge_ctrl_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_level(
-uint8_t v_channel_u8, uint8_t *v_intr_level_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_level(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_intr_level_u8);
 /*!
  *    @brief  API used for set the Configure level condition of interrupt1
  *    and interrupt2 pin form the register 0x53
@@ -7016,8 +6944,7 @@ uint8_t v_channel_u8, uint8_t *v_intr_level_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_level(
-uint8_t v_channel_u8, uint8_t v_intr_level_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_level(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_intr_level_u8);
 /*!
  *    @brief  API used to get configured output enable of interrupt1
  *    and interrupt2 from the register 0x53
@@ -7045,8 +6972,7 @@ uint8_t v_channel_u8, uint8_t v_intr_level_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_output_type(
-uint8_t v_channel_u8, uint8_t *v_intr_output_type_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_output_type(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_intr_output_type_u8);
 /*!
  *    @brief  API used to set output enable of interrupt1
  *    and interrupt2 from the register 0x53
@@ -7074,8 +7000,7 @@ uint8_t v_channel_u8, uint8_t *v_intr_output_type_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_output_type(
-uint8_t v_channel_u8, uint8_t v_intr_output_type_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_output_type(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_intr_output_type_u8);
  /*!
  *    @brief API used to get the Output enable for interrupt1
  *    and interrupt1 pin from the register 0x53
@@ -7103,8 +7028,7 @@ uint8_t v_channel_u8, uint8_t v_intr_output_type_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_output_enable(
-uint8_t v_channel_u8, uint8_t *v_output_enable_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_output_enable(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_output_enable_u8);
  /*!
  *    @brief API used to set the Output enable for interrupt1
  *    and interrupt1 pin from the register 0x53
@@ -7132,8 +7056,7 @@ uint8_t v_channel_u8, uint8_t *v_output_enable_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_output_enable(
-uint8_t v_channel_u8, uint8_t v_output_enable_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_output_enable(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_output_enable_u8);
 /***************************************************************/
 /**\name    FUNCTION FOR INTERRUPT LATCH INTERRUPT  */
 /***************************************************************/
@@ -7173,8 +7096,7 @@ uint8_t v_channel_u8, uint8_t v_output_enable_u8);
 *
 *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_latch_intr(
-uint8_t *v_latch_intr_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_latch_intr(const bmi160_t *bmi160, uint8_t *v_latch_intr_u8);
 /*!
 *    @brief This API is used to set the latch duration
 *    from the register 0x54 bit 0 to 3
@@ -7211,8 +7133,7 @@ uint8_t *v_latch_intr_u8);
 *
 *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_latch_intr(
-uint8_t v_latch_intr_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_latch_intr(const bmi160_t *bmi160, uint8_t v_latch_intr_u8);
 /*!
  *    @brief API used to get input enable for interrupt1
  *    and interrupt2 pin from the register 0x54
@@ -7240,8 +7161,7 @@ uint8_t v_latch_intr_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_input_enable(
-uint8_t v_channel_u8, uint8_t *v_input_en_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_input_enable(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_input_en_u8);
 /*!
  *    @brief API used to set input enable for interrupt1
  *    and interrupt2 pin from the register 0x54
@@ -7269,8 +7189,7 @@ uint8_t v_channel_u8, uint8_t *v_input_en_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_input_enable(
-uint8_t v_channel_u8, uint8_t v_input_en_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_input_enable(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_input_en_u8);
 /***************************************************************/
 /**\name    FUNCTION FOR INTERRUPT1 AND INTERRUPT2 MAPPING */
 /***************************************************************/
@@ -7301,8 +7220,7 @@ uint8_t v_channel_u8, uint8_t v_input_en_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_low_g(
-uint8_t v_channel_u8, uint8_t *v_intr_low_g_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_low_g(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_intr_low_g_u8);
  /*!
  *    @brief set the Low g interrupt mapped to interrupt1
  *    and interrupt2 from the register 0x55 and 0x57
@@ -7330,8 +7248,7 @@ uint8_t v_channel_u8, uint8_t *v_intr_low_g_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_low_g(
-uint8_t v_channel_u8, uint8_t v_intr_low_g_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_low_g(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_intr_low_g_u8);
 /*!
  *    @brief Reads the HIGH g interrupt mapped to interrupt1
  *    and interrupt2 from the register 0x55 and 0x57
@@ -7360,8 +7277,7 @@ uint8_t v_channel_u8, uint8_t v_intr_low_g_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_high_g(
-uint8_t v_channel_u8, uint8_t *v_intr_high_g_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_high_g(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_intr_high_g_u8);
 /*!
  *    @brief Write the HIGH g interrupt mapped to interrupt1
  *    and interrupt2 from the register 0x55 and 0x57
@@ -7390,8 +7306,7 @@ uint8_t v_channel_u8, uint8_t *v_intr_high_g_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_high_g(
-uint8_t v_channel_u8, uint8_t v_intr_high_g_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_high_g(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_intr_high_g_u8);
 /*!
  *    @brief Reads the Any motion interrupt
  *    interrupt mapped to interrupt1
@@ -7420,8 +7335,7 @@ uint8_t v_channel_u8, uint8_t v_intr_high_g_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_any_motion(
-uint8_t v_channel_u8, uint8_t *v_intr_any_motion_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_any_motion(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_intr_any_motion_u8);
 /*!
  *    @brief Write the Any motion interrupt
  *    interrupt mapped to interrupt1
@@ -7450,8 +7364,7 @@ uint8_t v_channel_u8, uint8_t *v_intr_any_motion_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_any_motion(
-uint8_t v_channel_u8, uint8_t v_intr_any_motion_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_any_motion(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_intr_any_motion_u8);
 /*!
  *    @brief Reads the No motion interrupt
  *    interrupt mapped to interrupt1
@@ -7479,8 +7392,7 @@ uint8_t v_channel_u8, uint8_t v_intr_any_motion_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_nomotion(
-uint8_t v_channel_u8, uint8_t *v_intr_nomotion_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_nomotion(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_intr_nomotion_u8);
 /*!
  *    @brief Write the No motion interrupt
  *    interrupt mapped to interrupt1
@@ -7508,8 +7420,7 @@ uint8_t v_channel_u8, uint8_t *v_intr_nomotion_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_nomotion(
-uint8_t v_channel_u8, uint8_t v_intr_nomotion_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_nomotion(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_intr_nomotion_u8);
 /*!
  *    @brief Reads the Double Tap interrupt
  *    interrupt mapped to interrupt1
@@ -7536,8 +7447,7 @@ uint8_t v_channel_u8, uint8_t v_intr_nomotion_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_double_tap(
-uint8_t v_channel_u8, uint8_t *v_intr_double_tap_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_double_tap(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_intr_double_tap_u8);
 /*!
  *    @brief Write the Double Tap interrupt
  *    interrupt mapped to interrupt1
@@ -7564,8 +7474,7 @@ uint8_t v_channel_u8, uint8_t *v_intr_double_tap_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_double_tap(
-uint8_t v_channel_u8, uint8_t v_intr_double_tap_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_double_tap(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_intr_double_tap_u8);
 /*!
  *    @brief Reads the Single Tap interrupt
  *    interrupt mapped to interrupt1
@@ -7593,8 +7502,7 @@ uint8_t v_channel_u8, uint8_t v_intr_double_tap_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_single_tap(
-uint8_t v_channel_u8, uint8_t *v_intr_single_tap_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_single_tap(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_intr_single_tap_u8);
 /*!
  *    @brief Write the Single Tap interrupt
  *    interrupt mapped to interrupt1
@@ -7622,8 +7530,7 @@ uint8_t v_channel_u8, uint8_t *v_intr_single_tap_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_single_tap(
-uint8_t v_channel_u8, uint8_t v_intr_single_tap_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_single_tap(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_intr_single_tap_u8);
 /*!
  *    @brief Reads the Orient interrupt
  *    interrupt mapped to interrupt1
@@ -7652,8 +7559,7 @@ uint8_t v_channel_u8, uint8_t v_intr_single_tap_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_orient(
-uint8_t v_channel_u8, uint8_t *v_intr_orient_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_orient(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_intr_orient_u8);
 /*!
  *    @brief Write the Orient interrupt
  *    interrupt mapped to interrupt1
@@ -7682,8 +7588,7 @@ uint8_t v_channel_u8, uint8_t *v_intr_orient_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_orient(
-uint8_t v_channel_u8, uint8_t v_intr_orient_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_orient(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_intr_orient_u8);
  /*!
  *    @brief Reads the Flat interrupt
  *    mapped to interrupt1
@@ -7711,8 +7616,7 @@ uint8_t v_channel_u8, uint8_t v_intr_orient_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_flat(
-uint8_t v_channel_u8, uint8_t *v_intr_flat_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_flat(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_intr_flat_u8);
  /*!
  *    @brief Write the Flat interrupt
  *    mapped to interrupt1
@@ -7740,8 +7644,7 @@ uint8_t v_channel_u8, uint8_t *v_intr_flat_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_flat(
-uint8_t v_channel_u8, uint8_t v_intr_flat_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_flat(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_intr_flat_u8);
 /*!
  *    @brief Reads PMU trigger interrupt mapped to interrupt1
  *    and interrupt2 form the register 0x56 bit 0 and 4
@@ -7768,8 +7671,7 @@ uint8_t v_channel_u8, uint8_t v_intr_flat_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_pmu_trig(
-uint8_t v_channel_u8, uint8_t *v_intr_pmu_trig_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_pmu_trig(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_intr_pmu_trig_u8);
 /*!
  *    @brief Write PMU trigger interrupt mapped to interrupt1
  *    and interrupt2 form the register 0x56 bit 0 and 4
@@ -7796,8 +7698,7 @@ uint8_t v_channel_u8, uint8_t *v_intr_pmu_trig_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_pmu_trig(
-uint8_t v_channel_u8, uint8_t v_intr_pmu_trig_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_pmu_trig(const bmi160_t *bmi160, int8_t v_channel_u8, uint8_t v_intr_pmu_trig_u8);
 /*!
  *    @brief Reads FIFO Full interrupt mapped to interrupt1
  *    and interrupt2 form the register 0x56 bit 5 and 1
@@ -7825,8 +7726,7 @@ uint8_t v_channel_u8, uint8_t v_intr_pmu_trig_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_fifo_full(
-uint8_t v_channel_u8, uint8_t *v_intr_fifo_full_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_fifo_full(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_intr_fifo_full_u8);
 /*!
  *    @brief Write FIFO Full interrupt mapped to interrupt1
  *    and interrupt2 form the register 0x56 bit 5 and 1
@@ -7854,8 +7754,7 @@ uint8_t v_channel_u8, uint8_t *v_intr_fifo_full_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_fifo_full(
-uint8_t v_channel_u8, uint8_t v_intr_fifo_full_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_fifo_full(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_intr_fifo_full_u8);
 /*!
  *    @brief Reads FIFO Watermark interrupt mapped to interrupt1
  *    and interrupt2 form the register 0x56 bit 6 and 2
@@ -7884,8 +7783,7 @@ uint8_t v_channel_u8, uint8_t v_intr_fifo_full_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_fifo_wm(
-uint8_t v_channel_u8, uint8_t *v_intr_fifo_wm_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_fifo_wm(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_intr_fifo_wm_u8);
 /*!
  *    @brief Write FIFO Watermark interrupt mapped to interrupt1
  *    and interrupt2 form the register 0x56 bit 6 and 2
@@ -7914,8 +7812,7 @@ uint8_t v_channel_u8, uint8_t *v_intr_fifo_wm_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_fifo_wm(
-uint8_t v_channel_u8, uint8_t v_intr_fifo_wm_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_fifo_wm(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_intr_fifo_wm_u8);
 /*!
  *    @brief Reads Data Ready interrupt mapped to interrupt1
  *    and interrupt2 form the register 0x56
@@ -7943,8 +7840,7 @@ uint8_t v_channel_u8, uint8_t v_intr_fifo_wm_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_data_rdy(
-uint8_t v_channel_u8, uint8_t *v_intr_data_rdy_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_data_rdy(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t *v_intr_data_rdy_u8);
 /*!
  *    @brief Write Data Ready interrupt mapped to interrupt1
  *    and interrupt2 form the register 0x56
@@ -7972,8 +7868,7 @@ uint8_t v_channel_u8, uint8_t *v_intr_data_rdy_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_data_rdy(
-uint8_t v_channel_u8, uint8_t v_intr_data_rdy_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_data_rdy(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_intr_data_rdy_u8);
 /***************************************************************/
 /**\name    FUNCTION FOR TAP SOURCE CONFIGURATION          */
 /***************************************************************/
@@ -7996,8 +7891,7 @@ uint8_t v_channel_u8, uint8_t v_intr_data_rdy_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_tap_source(
-uint8_t *v_tap_source_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_tap_source(const bmi160_t *bmi160, uint8_t *v_tap_source_u8);
  /*!
  *    @brief This API write data source for the interrupt
  *    engine for the single and double tap interrupts from the register
@@ -8017,8 +7911,7 @@ uint8_t *v_tap_source_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_tap_source(
-uint8_t v_tap_source_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_tap_source(const bmi160_t *bmi160, uint8_t v_tap_source_u8);
 /***************************************************************/
 /**\name    FUNCTION FOR LOW_G AND HIGH_G SOURCE CONFIGURATION */
 /***************************************************************/
@@ -8040,8 +7933,7 @@ uint8_t v_tap_source_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_low_high_source(
-uint8_t *v_low_high_source_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_low_high_source(const bmi160_t *bmi160, uint8_t *v_low_high_source_u8);
  /*!
  *    @brief This API write Data source for the
  *    interrupt engine for the low and high g interrupts
@@ -8060,8 +7952,7 @@ uint8_t *v_low_high_source_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_low_high_source(
-uint8_t v_low_high_source_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_low_high_source(const bmi160_t *bmi160, uint8_t v_low_high_source_u8);
 /***************************************************************/
 /**\name    FUNCTION FOR MOTION SOURCE CONFIGURATION          */
 /***************************************************************/
@@ -8083,8 +7974,7 @@ uint8_t v_low_high_source_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_motion_source(
-uint8_t *v_motion_source_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_motion_source(const bmi160_t *bmi160, uint8_t *v_motion_source_u8);
  /*!
  *    @brief This API write Data source for the
  *    interrupt engine for the nomotion and anymotion interrupts
@@ -8103,8 +7993,7 @@ uint8_t *v_motion_source_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_motion_source(
-uint8_t v_motion_source_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_motion_source(const bmi160_t *bmi160, uint8_t v_motion_source_u8);
 /***************************************************************/
 /**\name    FUNCTION FOR LOW_G DURATION CONFIGURATION          */
 /***************************************************************/
@@ -8129,8 +8018,7 @@ uint8_t v_motion_source_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_low_g_durn(
-uint8_t *v_low_durn_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_low_g_durn(const bmi160_t *bmi160, uint8_t *v_low_durn_u8);
  /*!
  *    @brief This API is used to write the low_g duration from register
  *    0x5A bit 0 to 7
@@ -8152,8 +8040,7 @@ uint8_t *v_low_durn_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_low_g_durn(
-uint8_t v_low_durn_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_low_g_durn(const bmi160_t *bmi160, uint8_t v_low_durn_u8);
 /***************************************************************/
 /**\name    FUNCTION FOR LOW_G THRESH CONFIGURATION          */
 /***************************************************************/
@@ -8178,8 +8065,7 @@ uint8_t v_low_durn_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_low_g_thres(
-uint8_t *v_low_g_thres_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_low_g_thres(const bmi160_t *bmi160, uint8_t *v_low_g_thres_u8);
 /*!
  *    @brief This API is used to write Threshold
  *    definition for the low-g interrupt from the register 0x5B bit 0 to 7
@@ -8201,8 +8087,7 @@ uint8_t *v_low_g_thres_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_low_g_thres(
-uint8_t v_low_g_thres_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_low_g_thres(const bmi160_t *bmi160, uint8_t v_low_g_thres_u8);
 /***************************************************************/
 /**\name    FUNCTION FOR LOW_G HYSTERESIS CONFIGURATION     */
 /***************************************************************/
@@ -8220,8 +8105,7 @@ uint8_t v_low_g_thres_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_low_g_hyst(
-uint8_t *v_low_hyst_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_low_g_hyst(const bmi160_t *bmi160, uint8_t *v_low_hyst_u8);
  /*!
  *    @brief This API write Low-g interrupt hysteresis
  *    from the register 0x5C bit 0 to 1
@@ -8236,8 +8120,7 @@ uint8_t *v_low_hyst_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_low_g_hyst(
-uint8_t v_low_hyst_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_low_g_hyst(const bmi160_t *bmi160, uint8_t v_low_hyst_u8);
 /***************************************************************/
 /**\name    FUNCTION FOR LOW_G MODE CONFIGURATION     */
 /***************************************************************/
@@ -8258,8 +8141,7 @@ uint8_t v_low_hyst_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_low_g_mode(
-uint8_t *v_low_g_mode_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_low_g_mode(const bmi160_t *bmi160, uint8_t *v_low_g_mode_u8);
 /*!
  *    @brief This API write Low-g interrupt mode
  *    from the register 0x5C bit 2
@@ -8277,8 +8159,7 @@ uint8_t *v_low_g_mode_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_low_g_mode(
-uint8_t v_low_g_mode_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_low_g_mode(const bmi160_t *bmi160, uint8_t v_low_g_mode_u8);
 /***************************************************************/
 /**\name    FUNCTION FOR HIGH_G HYST CONFIGURATION     */
 /***************************************************************/
@@ -8303,8 +8184,7 @@ uint8_t v_low_g_mode_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_high_g_hyst(
-uint8_t *v_high_g_hyst_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_high_g_hyst(const bmi160_t *bmi160, uint8_t *v_high_g_hyst_u8);
 /*!
  *    @brief This API write High-g interrupt hysteresis
  *    from the register 0x5C bit 6 and 7
@@ -8326,8 +8206,7 @@ uint8_t *v_high_g_hyst_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_high_g_hyst(
-uint8_t v_high_g_hyst_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_high_g_hyst(const bmi160_t *bmi160, uint8_t v_high_g_hyst_u8);
 /***************************************************************/
 /**\name    FUNCTION FOR HIGH_G DURATION CONFIGURATION     */
 /***************************************************************/
@@ -8349,8 +8228,7 @@ uint8_t v_high_g_hyst_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_high_g_durn(
-uint8_t *v_high_g_durn_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_high_g_durn(const bmi160_t *bmi160, uint8_t *v_high_g_durn_u8);
 /*!
  *    @brief This API is used to write Delay
  *    time definition for the high-g interrupt from the register
@@ -8369,8 +8247,7 @@ uint8_t *v_high_g_durn_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_high_g_durn(
-uint8_t v_high_g_durn_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_high_g_durn(const bmi160_t *bmi160, uint8_t v_high_g_durn_u8);
 /***************************************************************/
 /**\name    FUNCTION FOR HIGH_G THRESHOLD CONFIGURATION     */
 /***************************************************************/
@@ -8405,8 +8282,7 @@ uint8_t v_high_g_durn_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_high_g_thres(
-uint8_t *v_high_g_thres_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_high_g_thres(const bmi160_t *bmi160, uint8_t *v_high_g_thres_u8);
 /*!
  *    @brief This API is used to write Threshold
  *    definition for the high-g interrupt from the register 0x5E 0 to 7
@@ -8438,8 +8314,7 @@ uint8_t *v_high_g_thres_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_high_g_thres(
-uint8_t v_high_g_thres_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_high_g_thres(const bmi160_t *bmi160, uint8_t v_high_g_thres_u8);
 /***************************************************************/
 /**\name    FUNCTION FOR ANY MOTION DURATION CONFIGURATION     */
 /***************************************************************/
@@ -8457,8 +8332,7 @@ uint8_t v_high_g_thres_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_any_motion_durn(
-uint8_t *v_any_motion_durn_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_any_motion_durn(const bmi160_t *bmi160, uint8_t *v_any_motion_durn_u8);
 /*!
  *    @brief This API write any motion duration
  *    from the register 0x5F bit 0 and 1
@@ -8473,8 +8347,7 @@ uint8_t *v_any_motion_durn_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_any_motion_durn(
-uint8_t nomotion);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_any_motion_durn(const bmi160_t *bmi160, uint8_t nomotion);
 /***************************************************************/
 /**\name    FUNCTION FOR SLOW NO MOTION DURATION CONFIGURATION  */
 /***************************************************************/
@@ -8499,8 +8372,7 @@ uint8_t nomotion);
  *    [(v_slow_no_motion_u8:0)+11] * 10.24s (112.64s-430.08s);
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_slow_no_motion_durn(
-uint8_t *v_slow_no_motion_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_slow_no_motion_durn(const bmi160_t *bmi160, uint8_t *v_slow_no_motion_u8);
  /*!
  *    @brief This API write Slow/no-motion
  *    interrupt trigger delay duration from the register 0x5F bit 2 to 7
@@ -8522,8 +8394,7 @@ uint8_t *v_slow_no_motion_u8);
  *    [(v_slow_no_motion_u8:0)+11] * 10.24s (112.64s-430.08s);
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_slow_no_motion_durn(
-uint8_t v_slow_no_motion_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_slow_no_motion_durn(const bmi160_t *bmi160, uint8_t v_slow_no_motion_u8);
 /***************************************************************/
 /**\name    FUNCTION FOR ANY MOTION THRESHOLD CONFIGURATION  */
 /***************************************************************/
@@ -8558,8 +8429,7 @@ uint8_t v_slow_no_motion_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_any_motion_thres(
-uint8_t *v_any_motion_thres_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_any_motion_thres(const bmi160_t *bmi160, uint8_t *v_any_motion_thres_u8);
 /*!
  *    @brief This API is used to write threshold
  *    definition for the any-motion interrupt
@@ -8591,8 +8461,7 @@ uint8_t *v_any_motion_thres_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_any_motion_thres(
-uint8_t v_any_motion_thres_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_any_motion_thres(const bmi160_t *bmi160, uint8_t v_any_motion_thres_u8);
 /***************************************************************/
 /**\name    FUNCTION FOR SLO/NO MOTION THRESHOLD CONFIGURATION  */
 /***************************************************************/
@@ -8628,8 +8497,7 @@ uint8_t v_any_motion_thres_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_slow_no_motion_thres(
-uint8_t *v_slow_no_motion_thres_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_slow_no_motion_thres(const bmi160_t *bmi160, uint8_t *v_slow_no_motion_thres_u8);
  /*!
  *    @brief This API is used to write threshold
  *    for the slow/no-motion interrupt
@@ -8662,8 +8530,7 @@ uint8_t *v_slow_no_motion_thres_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_slow_no_motion_thres(
-uint8_t v_slow_no_motion_thres_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_slow_no_motion_thres(const bmi160_t *bmi160, uint8_t v_slow_no_motion_thres_u8);
 /***************************************************************/
 /**\name    FUNCTION FOR SLO/NO MOTION SELECT CONFIGURATION  */
 /***************************************************************/
@@ -8688,8 +8555,7 @@ uint8_t v_slow_no_motion_thres_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_slow_no_motion_select(
-uint8_t *v_intr_slow_no_motion_select_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_slow_no_motion_select(const bmi160_t *bmi160, uint8_t *v_intr_slow_no_motion_select_u8);
  /*!
  *    @brief This API is used to write
  *    the slow/no-motion selection from the register 0x62 bit 0
@@ -8711,8 +8577,7 @@ uint8_t *v_intr_slow_no_motion_select_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_slow_no_motion_select(
-uint8_t v_intr_slow_no_motion_select_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_slow_no_motion_select(const bmi160_t *bmi160, uint8_t v_intr_slow_no_motion_select_u8);
 /***************************************************************/
 /**\name    FUNCTION FOR SIGNIFICANT MOTION SELECT CONFIGURATION*/
 /***************************************************************/
@@ -8737,8 +8602,7 @@ uint8_t v_intr_slow_no_motion_select_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_significant_motion_select(
-uint8_t *int_sig_mot_sel);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_significant_motion_select(const bmi160_t *bmi160, uint8_t *int_sig_mot_sel);
  /*!
  *    @brief This API is used to write, select
  *    the significant or any motion interrupt from the register 0x62 bit 1
@@ -8760,8 +8624,7 @@ uint8_t *int_sig_mot_sel);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_significant_motion_select(
-uint8_t int_sig_mot_sel);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_significant_motion_select(const bmi160_t *bmi160, uint8_t int_sig_mot_sel);
  /*!
  *    @brief This API is used to read
  *    the significant skip time from the register 0x62 bit  2 and 3
@@ -8784,8 +8647,7 @@ uint8_t int_sig_mot_sel);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_significant_motion_skip(
-uint8_t *v_int_sig_mot_skip_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_significant_motion_skip(const bmi160_t *bmi160, uint8_t *v_int_sig_mot_skip_u8);
  /*!
  *    @brief This API is used to write
  *    the significant skip time from the register 0x62 bit  2 and 3
@@ -8808,8 +8670,7 @@ uint8_t *v_int_sig_mot_skip_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_significant_motion_skip(
-uint8_t v_int_sig_mot_skip_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_significant_motion_skip(const bmi160_t *bmi160, uint8_t v_int_sig_mot_skip_u8);
  /*!
  *    @brief This API is used to read
  *    the significant proof time from the register 0x62 bit  4 and 5
@@ -8833,8 +8694,7 @@ uint8_t v_int_sig_mot_skip_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_significant_motion_proof(
-uint8_t *int_sig_mot_proof);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_significant_motion_proof(const bmi160_t *bmi160, uint8_t *int_sig_mot_proof);
  /*!
  *    @brief This API is used to write
  *    the significant proof time from the register 0x62 bit  4 and 5
@@ -8858,8 +8718,7 @@ uint8_t *int_sig_mot_proof);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_significant_motion_proof(
-uint8_t int_sig_mot_proof);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_significant_motion_proof(const bmi160_t *bmi160, uint8_t int_sig_mot_proof);
 /***************************************************************/
 /**\name    FUNCTION FOR TAP DURATION CONFIGURATION*/
 /***************************************************************/
@@ -8888,8 +8747,7 @@ uint8_t int_sig_mot_proof);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_tap_durn(
-uint8_t *v_tap_durn_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_tap_durn(const bmi160_t *bmi160, uint8_t *v_tap_durn_u8);
 /*!
  *    @brief This API is used to write the tap duration
  *    from the register 0x63 bit 0 to 2
@@ -8915,8 +8773,7 @@ uint8_t *v_tap_durn_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_tap_durn(
-uint8_t v_tap_durn_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_tap_durn(const bmi160_t *bmi160, uint8_t v_tap_durn_u8);
 /***************************************************************/
 /**\name    FUNCTION FOR TAP SHOCK CONFIGURATION*/
 /***************************************************************/
@@ -8937,8 +8794,7 @@ uint8_t v_tap_durn_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_tap_shock(
-uint8_t *v_tap_shock_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_tap_shock(const bmi160_t *bmi160, uint8_t *v_tap_shock_u8);
  /*!
  *    @brief This API write the
  *    tap shock duration from the register 0x63 bit 2
@@ -8956,8 +8812,7 @@ uint8_t *v_tap_shock_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_tap_shock(
-uint8_t v_tap_shock_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_tap_shock(const bmi160_t *bmi160, uint8_t v_tap_shock_u8);
 /***************************************************************/
 /**\name    FUNCTION FOR TAP QUIET CONFIGURATION*/
 /***************************************************************/
@@ -8979,8 +8834,7 @@ uint8_t v_tap_shock_u8);
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_tap_quiet(
-uint8_t *v_tap_quiet_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_tap_quiet(const bmi160_t *bmi160, uint8_t *v_tap_quiet_u8);
 /*!
  *    @brief This API write
  *    tap quiet duration from the register 0x63 bit 7
@@ -8999,8 +8853,7 @@ uint8_t *v_tap_quiet_u8);
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_tap_quiet(
-uint8_t v_tap_quiet_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_tap_quiet(const bmi160_t *bmi160, uint8_t v_tap_quiet_u8);
 /***************************************************************/
 /**\name    FUNCTION FOR TAP THRESHOLD CONFIGURATION*/
 /***************************************************************/
@@ -9026,8 +8879,7 @@ uint8_t v_tap_quiet_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_tap_thres(
-uint8_t *v_tap_thres_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_tap_thres(const bmi160_t *bmi160, uint8_t *v_tap_thres_u8);
  /*!
  *    @brief This API write Threshold of the
  *    single/double tap interrupt from the register 0x64 bit 0 to 4
@@ -9050,8 +8902,7 @@ uint8_t *v_tap_thres_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_tap_thres(
-uint8_t v_tap_thres_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_tap_thres(const bmi160_t *bmi160, uint8_t v_tap_thres_u8);
 /***************************************************************/
 /**\name    FUNCTION FOR ORIENT MODE CONFIGURATION*/
 /***************************************************************/
@@ -9075,8 +8926,7 @@ uint8_t v_tap_thres_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_orient_mode(
-uint8_t *v_orient_mode_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_orient_mode(const bmi160_t *bmi160, uint8_t *v_orient_mode_u8);
  /*!
  *    @brief This API write the threshold for orientation interrupt
  *    from the register 0x65 bit 0 and 1
@@ -9097,8 +8947,7 @@ uint8_t *v_orient_mode_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_orient_mode(
-uint8_t v_orient_mode_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_orient_mode(const bmi160_t *bmi160, uint8_t v_orient_mode_u8);
 /***************************************************************/
 /**\name    FUNCTION FOR ORIENT BLOCKING CONFIGURATION*/
 /***************************************************************/
@@ -9127,8 +8976,7 @@ uint8_t v_orient_mode_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_orient_blocking(
-uint8_t *v_orient_blocking_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_orient_blocking(const bmi160_t *bmi160, uint8_t *v_orient_blocking_u8);
 /*!
  *    @brief This API write the orient blocking mode
  *    that is used for the generation of the orientation interrupt.
@@ -9154,8 +9002,7 @@ uint8_t *v_orient_blocking_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_orient_blocking(
-uint8_t v_orient_blocking_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_orient_blocking(const bmi160_t *bmi160, uint8_t v_orient_blocking_u8);
 /***************************************************************/
 /**\name    FUNCTION FOR ORIENT HYSTERESIS CONFIGURATION*/
 /***************************************************************/
@@ -9177,8 +9024,7 @@ uint8_t v_orient_blocking_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_orient_hyst(
-uint8_t *v_orient_hyst_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_orient_hyst(const bmi160_t *bmi160, uint8_t *v_orient_hyst_u8);
 /*!
  *    @brief This API write Orient interrupt
  *    hysteresis, from the register 0x64 bit 4 to 7
@@ -9197,8 +9043,7 @@ uint8_t *v_orient_hyst_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_orient_hyst(
-uint8_t v_orient_hyst_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_orient_hyst(const bmi160_t *bmi160, uint8_t v_orient_hyst_u8);
 /***************************************************************/
 /**\name    FUNCTION FOR ORIENT THETA CONFIGURATION*/
 /***************************************************************/
@@ -9216,8 +9061,7 @@ uint8_t v_orient_hyst_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_orient_theta(
-uint8_t *v_orient_theta_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_orient_theta(const bmi160_t *bmi160, uint8_t *v_orient_theta_u8);
  /*!
  *    @brief This API write Orient
  *    blocking angle (0 to 44.8) from the register 0x66 bit 0 to 5
@@ -9232,8 +9076,7 @@ uint8_t *v_orient_theta_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_orient_theta(
-uint8_t v_orient_theta_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_orient_theta(const bmi160_t *bmi160, uint8_t v_orient_theta_u8);
 /***************************************************************/
 /**\name    FUNCTION FOR ORIENT OUTPUT ENABLE CONFIGURATION*/
 /***************************************************************/
@@ -9254,8 +9097,7 @@ uint8_t v_orient_theta_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_orient_ud_enable(
-uint8_t *v_orient_ud_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_orient_ud_enable(const bmi160_t *bmi160, uint8_t *v_orient_ud_u8);
 /*!
  *    @brief This API write orient change
  *    of up/down bit from the register 0x66 bit 6
@@ -9273,8 +9115,7 @@ uint8_t *v_orient_ud_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_orient_ud_enable(
-uint8_t v_orient_ud_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_orient_ud_enable(const bmi160_t *bmi160, uint8_t v_orient_ud_u8);
 /***************************************************************/
 /**\name    FUNCTION FOR ORIENT AXIS ENABLE CONFIGURATION*/
 /***************************************************************/
@@ -9295,8 +9136,7 @@ uint8_t v_orient_ud_u8);
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_orient_axes_enable(
-uint8_t *v_orient_axes_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_orient_axes_enable(const bmi160_t *bmi160, uint8_t *v_orient_axes_u8);
  /*!
  *    @brief This API write orientation axes changes
  *    from the register 0x66 bit 7
@@ -9314,8 +9154,7 @@ uint8_t *v_orient_axes_u8);
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_orient_axes_enable(
-uint8_t v_orient_axes_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_orient_axes_enable(const bmi160_t *bmi160, uint8_t v_orient_axes_u8);
 /***************************************************************/
 /**\name    FUNCTION FOR FLAT THETA CONFIGURATION*/
 /***************************************************************/
@@ -9333,8 +9172,7 @@ uint8_t v_orient_axes_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_flat_theta(
-uint8_t *v_flat_theta_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_flat_theta(const bmi160_t *bmi160, uint8_t *v_flat_theta_u8);
  /*!
  *    @brief This API write Flat angle (0 to 44.8) for flat interrupt
  *    from the register 0x67 bit 0 to 5
@@ -9349,8 +9187,7 @@ uint8_t *v_flat_theta_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_flat_theta(
-uint8_t v_flat_theta_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_flat_theta(const bmi160_t *bmi160, uint8_t v_flat_theta_u8);
 /***************************************************************/
 /**\name    FUNCTION FOR FLAT HOLD CONFIGURATION*/
 /***************************************************************/
@@ -9373,8 +9210,7 @@ uint8_t v_flat_theta_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_flat_hold(
-uint8_t *v_flat_hold_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_flat_hold(const bmi160_t *bmi160, uint8_t *v_flat_hold_u8);
 /*!
  *    @brief This API write Flat interrupt hold time;
  *    from the register 0x68 bit 4 and 5
@@ -9394,8 +9230,7 @@ uint8_t *v_flat_hold_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_flat_hold(
-uint8_t v_flat_hold_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_flat_hold(const bmi160_t *bmi160, uint8_t v_flat_hold_u8);
 /***************************************************************/
 /**\name    FUNCTION FOR FLAT HYSTERESIS CONFIGURATION*/
 /***************************************************************/
@@ -9413,8 +9248,7 @@ uint8_t v_flat_hold_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_flat_hyst(
-uint8_t *v_flat_hyst_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_intr_flat_hyst(const bmi160_t *bmi160, uint8_t *v_flat_hyst_u8);
 /*!
  *    @brief This API write flat interrupt hysteresis
  *    from the register 0x68 bit 0 to 3
@@ -9429,8 +9263,7 @@ uint8_t *v_flat_hyst_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_flat_hyst(
-uint8_t v_flat_hyst_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_intr_flat_hyst(const bmi160_t *bmi160, uint8_t v_flat_hyst_u8);
 /***************************************************************/
 /**\name    FUNCTION FAST OFFSET COMPENSATION FOR ACCEL */
 /***************************************************************/
@@ -9452,8 +9285,7 @@ uint8_t v_flat_hyst_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_foc_accel_z(
-uint8_t *v_foc_accel_z_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_foc_accel_z(const bmi160_t *bmi160, uint8_t *v_foc_accel_z_u8);
  /*!
  *    @brief This API write accel offset compensation
  *    target value for z-axis from the register 0x69 bit 0 and 1
@@ -9472,8 +9304,7 @@ uint8_t *v_foc_accel_z_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_foc_accel_z(
-uint8_t v_foc_accel_z_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_foc_accel_z(const bmi160_t *bmi160, uint8_t v_foc_accel_z_u8);
 /*!
  *    @brief This API read accel offset compensation
  *    target value for y-axis
@@ -9495,8 +9326,7 @@ uint8_t v_foc_accel_z_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_foc_accel_y(
-uint8_t *v_foc_accel_y_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_foc_accel_y(const bmi160_t *bmi160, uint8_t *v_foc_accel_y_u8);
 /*!
  *    @brief This API write accel offset compensation
  *    target value for y-axis
@@ -9518,8 +9348,7 @@ uint8_t *v_foc_accel_y_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_foc_accel_y(
-uint8_t v_foc_accel_y_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_foc_accel_y(const bmi160_t *bmi160, uint8_t v_foc_accel_y_u8);
 /*!
  *    @brief This API read accel offset compensation
  *    target value for x-axis is
@@ -9541,8 +9370,7 @@ uint8_t v_foc_accel_y_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_foc_accel_x(
-uint8_t *v_foc_accel_x_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_foc_accel_x(const bmi160_t *bmi160, uint8_t *v_foc_accel_x_u8);
 /*!
  *    @brief This API write accel offset compensation
  *    target value for x-axis is
@@ -9564,8 +9392,7 @@ uint8_t *v_foc_accel_x_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_foc_accel_x(
-uint8_t v_foc_accel_x_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_foc_accel_x(const bmi160_t *bmi160, uint8_t v_foc_accel_x_u8);
 /***************************************************************/
 /**\name    FUNCTION FAST OFFSET COMPENSATION FOR GYRO */
 /***************************************************************/
@@ -9589,8 +9416,7 @@ uint8_t v_foc_accel_x_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_foc_gyro_enable(
-uint8_t v_foc_gyro_u8, int16_t *v_gyro_off_x_s16,
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_foc_gyro_enable(const bmi160_t *bmi160, uint8_t v_foc_gyro_u8, int16_t *v_gyro_off_x_s16,
 int16_t *v_gyro_off_y_s16, int16_t *v_gyro_off_z_s16);
 /***************************************************/
 /**\name    FUNCTION FOR NVM*/
@@ -9611,8 +9437,7 @@ int16_t *v_gyro_off_y_s16, int16_t *v_gyro_off_z_s16);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_nvm_prog_enable(
-uint8_t *v_nvm_prog_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_nvm_prog_enable(const bmi160_t *bmi160, uint8_t *v_nvm_prog_u8);
  /*!
  *    @brief This API write NVM program enable
  *    from the register 0x6A bit 1
@@ -9629,8 +9454,7 @@ uint8_t *v_nvm_prog_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_nvm_prog_enable(
-uint8_t v_nvm_prog_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_nvm_prog_enable(const bmi160_t *bmi160, uint8_t v_nvm_prog_u8);
 /***************************************************/
 /**\name    FUNCTION FOR SPI MODE*/
 /***************************************************/
@@ -9652,8 +9476,7 @@ uint8_t v_nvm_prog_u8);
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_spi3(
-uint8_t *v_spi3_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_spi3(const bmi160_t *bmi160, uint8_t *v_spi3_u8);
 /*!
  * @brief This API write to configure SPI
  * Interface Mode for primary and OIS interface
@@ -9672,8 +9495,7 @@ uint8_t *v_spi3_u8);
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_spi3(
-uint8_t v_spi3_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_spi3(const bmi160_t *bmi160, uint8_t v_spi3_u8);
 /***************************************************/
 /**\name    FUNCTION FOR FOC GYRO */
 /***************************************************/
@@ -9695,8 +9517,7 @@ uint8_t v_spi3_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_foc_gyro_enable(
-uint8_t *v_foc_gyro_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_foc_gyro_enable(const bmi160_t *bmi160, uint8_t *v_foc_gyro_u8);
 /***************************************************/
 /**\name    FUNCTION FOR I2C WATCHDOG TIMBER */
 /***************************************************/
@@ -9717,8 +9538,7 @@ uint8_t *v_foc_gyro_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_i2c_wdt_select(
-uint8_t *v_i2c_wdt_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_i2c_wdt_select(const bmi160_t *bmi160, uint8_t *v_i2c_wdt_u8);
 /*!
  *    @brief This API write I2C Watchdog timer
  *    from the register 0x70 bit 1
@@ -9737,7 +9557,7 @@ uint8_t *v_i2c_wdt_u8);
  *
 */
 BMI160_RETURN_FUNCTION_TYPE
-bmi160_set_i2c_wdt_select(uint8_t v_i2c_wdt_u8);
+bmi160_set_i2c_wdt_select(const bmi160_t *bmi160, uint8_t v_i2c_wdt_u8);
 /*!
  *    @brief This API read I2C watchdog enable
  *    from the register 0x70 bit 2
@@ -9754,8 +9574,7 @@ bmi160_set_i2c_wdt_select(uint8_t v_i2c_wdt_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_i2c_wdt_enable(
-uint8_t *v_i2c_wdt_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_i2c_wdt_enable(const bmi160_t *bmi160, uint8_t *v_i2c_wdt_u8);
 /*!
  *    @brief This API write I2C watchdog enable
  *    from the register 0x70 bit 2
@@ -9772,8 +9591,7 @@ uint8_t *v_i2c_wdt_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_i2c_wdt_enable(
-uint8_t v_i2c_wdt_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_i2c_wdt_enable(const bmi160_t *bmi160, uint8_t v_i2c_wdt_u8);
 /***************************************************/
 /**\name    FUNCTION FOR IF MODE*/
 /***************************************************/
@@ -9796,8 +9614,7 @@ uint8_t v_i2c_wdt_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_if_mode(
-uint8_t *v_if_mode_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_if_mode(const bmi160_t *bmi160, uint8_t *v_if_mode_u8);
 /*!
  * @brief This API write I2C interface configuration(if) moe
  * from the register 0x6B bit 4 and 5
@@ -9817,8 +9634,7 @@ uint8_t *v_if_mode_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_if_mode(
-uint8_t v_if_mode_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_if_mode(const bmi160_t *bmi160, uint8_t v_if_mode_u8);
 /***************************************************/
 /**\name    FUNCTION FOR GYRO SLEEP TRIGGER INTERRUPT CONFIGURATION*/
 /***************************************************/
@@ -9846,8 +9662,7 @@ uint8_t v_if_mode_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_sleep_trigger(
-uint8_t *v_gyro_sleep_trigger_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_sleep_trigger(const bmi160_t *bmi160, uint8_t *v_gyro_sleep_trigger_u8);
 /*!
  *    @brief This API write gyro sleep trigger
  *    from the register 0x6C bit 0 to 2
@@ -9872,8 +9687,7 @@ uint8_t *v_gyro_sleep_trigger_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_sleep_trigger(
-uint8_t v_gyro_sleep_trigger_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_sleep_trigger(const bmi160_t *bmi160, uint8_t v_gyro_sleep_trigger_u8);
 /*!
  *    @brief This API read gyro wakeup trigger
  *    from the register 0x6C bit 3 and 4
@@ -9893,8 +9707,7 @@ uint8_t v_gyro_sleep_trigger_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_wakeup_trigger(
-uint8_t *v_gyro_wakeup_trigger_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_wakeup_trigger(const bmi160_t *bmi160, uint8_t *v_gyro_wakeup_trigger_u8);
 /*!
  *    @brief This API write gyro wakeup trigger
  *    from the register 0x6C bit 3 and 4
@@ -9914,8 +9727,7 @@ uint8_t *v_gyro_wakeup_trigger_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_wakeup_trigger(
-uint8_t v_gyro_wakeup_trigger_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_wakeup_trigger(const bmi160_t *bmi160, uint8_t v_gyro_wakeup_trigger_u8);
 /*!
  *    @brief This API read Target state for gyro sleep mode
  *    from the register 0x6C bit 5
@@ -9933,8 +9745,7 @@ uint8_t v_gyro_wakeup_trigger_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_sleep_state(
-uint8_t *v_gyro_sleep_state_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_sleep_state(const bmi160_t *bmi160, uint8_t *v_gyro_sleep_state_u8);
 /*!
  *    @brief This API write Target state for gyro sleep mode
  *    from the register 0x6C bit 5
@@ -9952,8 +9763,7 @@ uint8_t *v_gyro_sleep_state_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_sleep_state(
-uint8_t v_gyro_sleep_state_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_sleep_state(const bmi160_t *bmi160, uint8_t v_gyro_sleep_state_u8);
 /*!
  *    @brief This API read gyro wakeup interrupt
  *    from the register 0x6C bit 6
@@ -9971,8 +9781,7 @@ uint8_t v_gyro_sleep_state_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_wakeup_intr(
-uint8_t *v_gyro_wakeup_intr_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_wakeup_intr(const bmi160_t *bmi160, uint8_t *v_gyro_wakeup_intr_u8);
 /*!
  *    @brief This API write gyro wakeup interrupt
  *    from the register 0x6C bit 6
@@ -9990,8 +9799,7 @@ uint8_t *v_gyro_wakeup_intr_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_wakeup_intr(
-uint8_t v_gyro_wakeup_intr_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_wakeup_intr(const bmi160_t *bmi160, uint8_t v_gyro_wakeup_intr_u8);
 /***************************************************/
 /**\name    FUNCTION FOR ACCEL SELF TEST */
 /***************************************************/
@@ -10014,8 +9822,7 @@ uint8_t v_gyro_wakeup_intr_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_selftest_axis(
-uint8_t *acc_selftest_axis);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_selftest_axis(const bmi160_t *bmi160, uint8_t *acc_selftest_axis);
 /*!
  * @brief This API write accel select axis to be self-test
  *
@@ -10035,8 +9842,7 @@ uint8_t *acc_selftest_axis);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_selftest_axis(
-uint8_t acc_selftest_axis);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_selftest_axis(const bmi160_t *bmi160, uint8_t acc_selftest_axis);
 /*!
  *    @brief This API read accel self test axis sign
  *    from the register 0x6D bit 2
@@ -10054,8 +9860,7 @@ uint8_t acc_selftest_axis);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_selftest_sign(
-uint8_t *acc_selftest_sign);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_selftest_sign(const bmi160_t *bmi160, uint8_t *acc_selftest_sign);
 /*!
  *    @brief This API write accel self test axis sign
  *    from the register 0x6D bit 2
@@ -10073,8 +9878,7 @@ uint8_t *acc_selftest_sign);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_selftest_sign(
-uint8_t acc_selftest_sign);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_selftest_sign(const bmi160_t *bmi160, uint8_t acc_selftest_sign);
 /*!
  *    @brief This API read accel self test amplitude
  *    from the register 0x6D bit 3
@@ -10093,8 +9897,7 @@ uint8_t acc_selftest_sign);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_selftest_amp(
-uint8_t *acc_selftest_amp);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_selftest_amp(const bmi160_t *bmi160, uint8_t *acc_selftest_amp);
 /*!
  *    @brief This API write accel self test amplitude
  *    from the register 0x6D bit 3
@@ -10113,8 +9916,7 @@ uint8_t *acc_selftest_amp);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_selftest_amp(
-uint8_t acc_selftest_amp);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_selftest_amp(const bmi160_t *bmi160, uint8_t acc_selftest_amp);
 /***************************************************/
 /**\name    FUNCTION FOR GYRO SELF TEST */
 /***************************************************/
@@ -10129,8 +9931,7 @@ uint8_t acc_selftest_amp);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_selftest_start(
-uint8_t *v_gyro_selftest_start_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_selftest_start(const bmi160_t *bmi160, uint8_t *v_gyro_selftest_start_u8);
 /*!
  *    @brief This API write gyro self test trigger
  *
@@ -10142,8 +9943,7 @@ uint8_t *v_gyro_selftest_start_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_selftest_start(
-uint8_t v_gyro_selftest_start_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_selftest_start(const bmi160_t *bmi160, uint8_t v_gyro_selftest_start_u8);
 /***************************************************/
 /**\name    FUNCTION FOR SPI/I2C ENABLE */
 /***************************************************/
@@ -10164,8 +9964,7 @@ uint8_t v_gyro_selftest_start_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_spi_enable(
-uint8_t *v_spi_enable_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_spi_enable(const bmi160_t *bmi160, uint8_t *v_spi_enable_u8);
  /*!
  * @brief This API write primary interface selection I2C or SPI
  *    from the register 0x70 bit 0
@@ -10183,8 +9982,7 @@ uint8_t *v_spi_enable_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_spi_enable(
-uint8_t v_spi_enable_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_spi_enable(const bmi160_t *bmi160, uint8_t v_spi_enable_u8);
  /*!
  *    @brief This API read the spare zero
  *    form register 0x70 bit 3
@@ -10201,7 +9999,7 @@ uint8_t v_spi_enable_u8);
  *
 */
 BMI160_RETURN_FUNCTION_TYPE bmi160_get_spare0_trim
-(uint8_t *v_spare0_trim_u8);
+(const bmi160_t *bmi160, uint8_t *v_spare0_trim_u8);
  /*!
  *    @brief This API write the spare zero
  *    form register 0x70 bit 3
@@ -10218,7 +10016,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_get_spare0_trim
  *
 */
 BMI160_RETURN_FUNCTION_TYPE bmi160_set_spare0_trim
-(uint8_t v_spare0_trim_u8);
+(const bmi160_t *bmi160, uint8_t v_spare0_trim_u8);
 /***************************************************/
 /**\name    FUNCTION FOR NVM COUNTER */
 /***************************************************/
@@ -10237,8 +10035,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_spare0_trim
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_nvm_counter(
-uint8_t *v_nvm_counter_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_nvm_counter(const bmi160_t *bmi160, uint8_t *v_nvm_counter_u8);
  /*!
  *    @brief This API write the NVM counter
  *    form register 0x70 bit 4 to 7
@@ -10254,8 +10051,7 @@ uint8_t *v_nvm_counter_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_nvm_counter(
-uint8_t v_nvm_counter_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_nvm_counter(const bmi160_t *bmi160, uint8_t v_nvm_counter_u8);
 /***************************************************/
 /**\name    FUNCTION FOR ACCEL MANUAL OFFSET COMPENSATION */
 /***************************************************/
@@ -10276,8 +10072,7 @@ uint8_t v_nvm_counter_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_offset_compensation_xaxis(
-int8_t *v_accel_off_x_s8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_offset_compensation_xaxis(const bmi160_t *bmi160, int8_t *v_accel_off_x_s8);
 /*!
  *    @brief This API write accel manual offset compensation of x axis
  *    from the register 0x71 bit 0 to 7
@@ -10295,8 +10090,7 @@ int8_t *v_accel_off_x_s8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_offset_compensation_xaxis(
-int8_t v_accel_off_x_s8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_offset_compensation_xaxis(const bmi160_t *bmi160, int8_t v_accel_off_x_s8);
 /*!
  *    @brief This API read accel manual offset compensation of y axis
  *    from the register 0x72 bit 0 to 7
@@ -10314,8 +10108,7 @@ int8_t v_accel_off_x_s8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_offset_compensation_yaxis(
-int8_t *v_accel_off_y_s8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_offset_compensation_yaxis(const bmi160_t *bmi160, int8_t *v_accel_off_y_s8);
 /*!
  *    @brief This API write accel manual offset compensation of y axis
  *    from the register 0x72 bit 0 to 7
@@ -10333,8 +10126,7 @@ int8_t *v_accel_off_y_s8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_offset_compensation_yaxis(
-int8_t v_accel_off_y_s8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_offset_compensation_yaxis(const bmi160_t *bmi160, int8_t v_accel_off_y_s8);
 /*!
  *    @brief This API read accel manual offset compensation of z axis
  *    from the register 0x73 bit 0 to 7
@@ -10352,8 +10144,7 @@ int8_t v_accel_off_y_s8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_offset_compensation_zaxis(
-int8_t *v_accel_off_z_s8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_offset_compensation_zaxis(const bmi160_t *bmi160, int8_t *v_accel_off_z_s8);
 /*!
  *    @brief This API write accel manual offset compensation of z axis
  *    from the register 0x73 bit 0 to 7
@@ -10371,8 +10162,7 @@ int8_t *v_accel_off_z_s8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_offset_compensation_zaxis(
-int8_t v_accel_off_z_s8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_offset_compensation_zaxis(const bmi160_t *bmi160, int8_t v_accel_off_z_s8);
 /***************************************************/
 /**\name    FUNCTION FOR GYRO MANUAL OFFSET COMPENSATION */
 /***************************************************/
@@ -10393,8 +10183,7 @@ int8_t v_accel_off_z_s8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_offset_compensation_xaxis(
-int16_t *v_gyro_off_x_s16);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_offset_compensation_xaxis(const bmi160_t *bmi160, int16_t *v_gyro_off_x_s16);
 /*!
  *    @brief This API write gyro manual offset compensation of x axis
  *    from the register 0x74 bit 0 to 7 and 0x77 bit 0 and 1
@@ -10412,8 +10201,7 @@ int16_t *v_gyro_off_x_s16);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_offset_compensation_xaxis(
-int16_t v_gyro_off_x_s16);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_offset_compensation_xaxis(const bmi160_t *bmi160, int16_t v_gyro_off_x_s16);
 /*!
  *    @brief This API read gyro manual offset compensation of y axis
  *    from the register 0x75 bit 0 to 7 and 0x77 bit 2 and 3
@@ -10431,8 +10219,7 @@ int16_t v_gyro_off_x_s16);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_offset_compensation_yaxis(
-int16_t *v_gyro_off_y_s16);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_offset_compensation_yaxis(const bmi160_t *bmi160, int16_t *v_gyro_off_y_s16);
 /*!
  *    @brief This API write gyro manual offset compensation of y axis
  *    from the register 0x75 bit 0 to 7 and 0x77 bit 2 and 3
@@ -10450,8 +10237,7 @@ int16_t *v_gyro_off_y_s16);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_offset_compensation_yaxis(
-int16_t v_gyro_off_y_s16);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_offset_compensation_yaxis(const bmi160_t *bmi160, int16_t v_gyro_off_y_s16);
 /*!
  *    @brief This API read gyro manual offset compensation of z axis
  *    from the register 0x76 bit 0 to 7 and 0x77 bit 4 and 5
@@ -10469,8 +10255,7 @@ int16_t v_gyro_off_y_s16);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_offset_compensation_zaxis(
-int16_t *v_gyro_off_z_s16);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_offset_compensation_zaxis(const bmi160_t *bmi160, int16_t *v_gyro_off_z_s16);
 /*!
  *    @brief This API write gyro manual offset compensation of z axis
  *    from the register 0x76 bit 0 to 7 and 0x77 bit 4 and 5
@@ -10488,8 +10273,7 @@ int16_t *v_gyro_off_z_s16);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_offset_compensation_zaxis(
-int16_t v_gyro_off_z_s16);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_offset_compensation_zaxis(const bmi160_t *bmi160, int16_t v_gyro_off_z_s16);
 /*!
  *    @brief This API writes accel fast offset compensation
  *    from the register 0x69 bit 0 to 5
@@ -10521,7 +10305,7 @@ int16_t v_gyro_off_z_s16);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_foc_trigger(uint8_t axis,
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_foc_trigger(const bmi160_t *bmi160, uint8_t axis,
 uint8_t foc_acc, int8_t *accel_offset);
 /*!
  *    @brief This API write fast accel offset compensation
@@ -10564,7 +10348,7 @@ uint8_t foc_acc, int8_t *accel_offset);
  *    @retval -1 -> Error
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_accel_foc_trigger_xyz(uint8_t v_foc_accel_x_u8,
+BMI160_RETURN_FUNCTION_TYPE bmi160_accel_foc_trigger_xyz(const bmi160_t *bmi160, uint8_t v_foc_accel_x_u8,
 uint8_t v_foc_accel_y_u8, uint8_t v_foc_accel_z_u8,
 int8_t *acc_off_x, int8_t *acc_off_y, int8_t *acc_off_z);
 /***************************************************/
@@ -10589,8 +10373,7 @@ int8_t *acc_off_x, int8_t *acc_off_y, int8_t *acc_off_z);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_offset_enable(
-uint8_t *acc_off_en);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_accel_offset_enable(const bmi160_t *bmi160, uint8_t *acc_off_en);
 /*!
  *    @brief This API write the accel offset enable bit
  *    from the register 0x77 bit 6
@@ -10610,8 +10393,7 @@ uint8_t *acc_off_en);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_offset_enable(
-uint8_t acc_off_en);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_accel_offset_enable(const bmi160_t *bmi160, uint8_t acc_off_en);
 /*!
  *    @brief This API read the accel offset enable bit
  *    from the register 0x77 bit 7
@@ -10631,8 +10413,7 @@ uint8_t acc_off_en);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_offset_enable(
-uint8_t *v_gyro_off_enable_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_gyro_offset_enable(const bmi160_t *bmi160, uint8_t *v_gyro_off_enable_u8);
 /*!
  *    @brief This API write the accel offset enable bit
  *    from the register 0x77 bit 7
@@ -10652,8 +10433,7 @@ uint8_t *v_gyro_off_enable_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_offset_enable(
-uint8_t v_gyro_off_enable_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_gyro_offset_enable(const bmi160_t *bmi160, uint8_t v_gyro_off_enable_u8);
 /***************************************************/
 /**\name    FUNCTION FOR STEP COUNTER INTERRUPT */
 /***************************************************/
@@ -10673,7 +10453,7 @@ uint8_t v_gyro_off_enable_u8);
  *    @retval -1 -> Error
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_step_count(int16_t *v_step_cnt_s16);
+BMI160_RETURN_FUNCTION_TYPE bmi160_read_step_count(const bmi160_t *bmi160, int16_t *v_step_cnt_s16);
  /*!
  *    @brief This API Reads
  *    step counter configuration
@@ -10689,8 +10469,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_read_step_count(int16_t *v_step_cnt_s16);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_step_config(
-uint16_t *v_step_config_u16);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_step_config(const bmi160_t *bmi160, uint16_t *v_step_config_u16);
  /*!
  *    @brief This API write
  *    step counter configuration
@@ -10707,8 +10486,7 @@ uint16_t *v_step_config_u16);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_step_config(
-uint16_t v_step_config_u16);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_step_config(const bmi160_t *bmi160, uint16_t v_step_config_u16);
  /*!
  *    @brief This API read enable step counter
  *    from the register 0x7B bit 3
@@ -10722,8 +10500,7 @@ uint16_t v_step_config_u16);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_step_counter_enable(
-uint8_t *v_step_counter_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_step_counter_enable(const bmi160_t *bmi160, uint8_t *v_step_counter_u8);
  /*!
  *    @brief This API write enable step counter
  *    from the register 0x7B bit 3
@@ -10737,8 +10514,7 @@ uint8_t *v_step_counter_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_step_counter_enable(
-uint8_t v_step_counter_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_step_counter_enable(const bmi160_t *bmi160, uint8_t v_step_counter_u8);
  /*!
  *    @brief This API set Step counter modes
  *
@@ -10756,7 +10532,7 @@ uint8_t v_step_counter_u8);
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_step_mode(uint8_t v_step_mode_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_step_mode(const bmi160_t *bmi160, uint8_t v_step_mode_u8);
 /*!
  *    @brief This API used to trigger the  signification motion
  *    interrupt
@@ -10774,8 +10550,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_step_mode(uint8_t v_step_mode_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_map_significant_motion_intr(
-uint8_t v_significant_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_map_significant_motion_intr(const bmi160_t *bmi160, uint8_t v_significant_u8);
 /*!
  *    @brief This API used to trigger the step detector
  *    interrupt
@@ -10793,8 +10568,7 @@ uint8_t v_significant_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_map_step_detector_intr(
-uint8_t v_step_detector_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_map_step_detector_intr(const bmi160_t *bmi160, uint8_t v_step_detector_u8);
  /*!
  *    @brief This API used to clear the step counter interrupt
  *    interrupt
@@ -10809,7 +10583,7 @@ uint8_t v_step_detector_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_clear_step_counter(void);
+BMI160_RETURN_FUNCTION_TYPE bmi160_clear_step_counter(const bmi160_t *bmi160);
 /***************************************************/
 /**\name    FUNCTION FOR STEP COMMAND REGISTER WRITE */
 /***************************************************/
@@ -10851,8 +10625,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_clear_step_counter(void);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_command_register(
-uint8_t v_command_reg_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_command_register(const bmi160_t *bmi160, uint8_t v_command_reg_u8);
 /***************************************************/
 /**\name    FUNCTION FOR PAGE ENABLE */
 /***************************************************/
@@ -10871,8 +10644,7 @@ uint8_t v_command_reg_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_target_page(
-uint8_t *v_target_page_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_target_page(const bmi160_t *bmi160, uint8_t *v_target_page_u8);
  /*!
  *    @brief This API write target page from the register 0x7F bit 4 and 5
  *
@@ -10888,8 +10660,7 @@ uint8_t *v_target_page_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_target_page(
-uint8_t v_target_page_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_target_page(const bmi160_t *bmi160, uint8_t v_target_page_u8);
  /*!
  *    @brief This API read page enable from the register 0x7F bit 7
  *
@@ -10909,8 +10680,7 @@ uint8_t v_target_page_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_paging_enable(
-uint8_t *v_page_enable_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_paging_enable(const bmi160_t *bmi160, uint8_t *v_page_enable_u8);
  /*!
  *    @brief This API write page enable from the register 0x7F bit 7
  *
@@ -10930,8 +10700,7 @@ uint8_t *v_page_enable_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_paging_enable(
-uint8_t v_page_enable_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_paging_enable(const bmi160_t *bmi160, uint8_t v_page_enable_u8);
  /*!
  *    @brief This API read
  *    pull up configuration from the register 0X85 bit 4 an 5
@@ -10948,8 +10717,7 @@ uint8_t v_page_enable_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_get_pullup_configuration(
-uint8_t *v_control_pullup_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_get_pullup_configuration(const bmi160_t *bmi160, uint8_t *v_control_pullup_u8);
  /*!
  *    @brief This API write
  *    pull up configuration from the register 0X85 bit 4 an 5
@@ -10966,8 +10734,7 @@ uint8_t *v_control_pullup_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_pullup_configuration(
-uint8_t v_control_pullup_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_pullup_configuration(const bmi160_t *bmi160, uint8_t v_control_pullup_u8);
 /***************************************************/
 /**\name    FUNCTION FOR BMM150 */
 /***************************************************/
@@ -10981,7 +10748,7 @@ uint8_t v_control_pullup_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bmm150_mag_interface_init(uint8_t *v_chip_id_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_bmm150_mag_interface_init(const bmi160_t *bmi160, uint8_t *v_chip_id_u8);
  /*!
  *    @brief This function used for set the mag power control
  *    bit enable
@@ -10993,7 +10760,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_bmm150_mag_interface_init(uint8_t *v_chip_id_
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bmm150_mag_wakeup(void);
+BMI160_RETURN_FUNCTION_TYPE bmi160_bmm150_mag_wakeup(const bmi160_t *bmi160);
  /*!
  *    @brief This function used for read the trim values of magnetometer
  *
@@ -11019,7 +10786,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_bmm150_mag_wakeup(void);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_bmm150_mag_trim(void);
+BMI160_RETURN_FUNCTION_TYPE bmi160_read_bmm150_mag_trim(const bmi160_t *bmi160);
  /*!
  *    @brief This function used for read the compensated value of mag
  *    Before start reading the mag compensated data's
@@ -11043,8 +10810,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_read_bmm150_mag_trim(void);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bmm150_mag_compensate_xyz(
-struct bmi160_mag_xyz_s32_t *mag_comp_xyz);
+BMI160_RETURN_FUNCTION_TYPE bmi160_bmm150_mag_compensate_xyz(const bmi160_t *bmi160, struct bmi160_mag_xyz_s32_t *mag_comp_xyz);
 /*!
  *    @brief This API used to get the compensated BMM150-X data
  *    the out put of X as int32_t
@@ -11071,7 +10837,7 @@ struct bmi160_mag_xyz_s32_t *mag_comp_xyz);
  *    @return results of compensated X data value output as int32_t
  *
  */
-int32_t bmi160_bmm150_mag_compensate_X(int16_t v_mag_data_x_s16, uint16_t v_data_r_u16);
+int32_t bmi160_bmm150_mag_compensate_X(const bmi160_t *bmi160, int16_t v_mag_data_x_s16, uint16_t v_data_r_u16);
 /*!
  *    @brief This API used to get the compensated BMM150-Y data
  *    the out put of Y as int32_t
@@ -11097,7 +10863,7 @@ int32_t bmi160_bmm150_mag_compensate_X(int16_t v_mag_data_x_s16, uint16_t v_data
  *
  *    @return results of compensated Y data value output as int32_t
  */
-int32_t bmi160_bmm150_mag_compensate_Y(int16_t v_mag_data_y_s16, uint16_t v_data_r_u16);
+int32_t bmi160_bmm150_mag_compensate_Y(const bmi160_t *bmi160, int16_t v_mag_data_y_s16, uint16_t v_data_r_u16);
 /*!
  *    @brief This API used to get the compensated BMM150-Z data
  *    the out put of Z as int32_t
@@ -11123,7 +10889,7 @@ int32_t bmi160_bmm150_mag_compensate_Y(int16_t v_mag_data_y_s16, uint16_t v_data
  *
  *    @return results of compensated Z data value output as int32_t
  */
-int32_t bmi160_bmm150_mag_compensate_Z(int16_t v_mag_data_z_s16, uint16_t v_data_r_u16);
+int32_t bmi160_bmm150_mag_compensate_Z(const bmi160_t *bmi160, int16_t v_mag_data_z_s16, uint16_t v_data_r_u16);
 /*!
  *    @brief This API used to set the pre-set modes of bmm150
  *    The pre-set mode setting is depend on data rate and xy and z repetitions
@@ -11158,7 +10924,7 @@ int32_t bmi160_bmm150_mag_compensate_Z(int16_t v_mag_data_z_s16, uint16_t v_data
  *    @retval -1 -> Error
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_bmm150_mag_presetmode(uint8_t mode);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_bmm150_mag_presetmode(const bmi160_t *bmi160, uint8_t mode);
 /*!
  *    @brief This function used for set the magnetometer
  *    power mode.
@@ -11191,7 +10957,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_set_bmm150_mag_presetmode(uint8_t mode);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bmm150_mag_set_power_mode(uint8_t mag_pow_mode);
+BMI160_RETURN_FUNCTION_TYPE bmi160_bmm150_mag_set_power_mode(const bmi160_t *bmi160, uint8_t mag_pow_mode);
  /*!
  *    @brief This function used for set the magnetometer
  *    power mode.
@@ -11216,8 +10982,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_bmm150_mag_set_power_mode(uint8_t mag_pow_mod
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_bmm150_mag_and_secondary_if_power_mode(
-uint8_t v_mag_sec_if_pow_mode_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_bmm150_mag_and_secondary_if_power_mode(const bmi160_t *bmi160, uint8_t v_mag_sec_if_pow_mode_u8);
 /***************************************************/
 /**\name    FUNCTIONS FOR AKM09911 AND AKM09912*/
 /***************************************************/
@@ -11242,8 +11007,7 @@ uint8_t v_mag_sec_if_pow_mode_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bst_akm_mag_interface_init(
-uint8_t v_akm_i2c_address_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_bst_akm_mag_interface_init(const bmi160_t *bmi160, uint8_t v_akm_i2c_address_u8);
  /*!
  *    @brief This function used for read the sensitivity data of
  *    AKM09911 and AKM09912
@@ -11267,7 +11031,7 @@ uint8_t v_akm_i2c_address_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_bst_akm_sensitivity_data(void);
+BMI160_RETURN_FUNCTION_TYPE bmi160_read_bst_akm_sensitivity_data(const bmi160_t *bmi160);
 /*!
  *    @brief This API used to get the compensated X data
  *    of AKM09911 the out put of X as int32_t
@@ -11290,7 +11054,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_read_bst_akm_sensitivity_data(void);
  *    @return results of compensated X data value output as int32_t
  *
  */
-int32_t bmi160_bst_akm09911_compensate_X(int16_t v_bst_akm_x_s16);
+int32_t bmi160_bst_akm09911_compensate_X(const bmi160_t *bmi160, int16_t v_bst_akm_x_s16);
 /*!
  *    @brief This API used to get the compensated Y data
  *    of AKM09911 the out put of Y as int32_t
@@ -11313,7 +11077,7 @@ int32_t bmi160_bst_akm09911_compensate_X(int16_t v_bst_akm_x_s16);
  *    @return results of compensated Y data value output as int32_t
  *
  */
-int32_t bmi160_bst_akm09911_compensate_Y(int16_t v_bst_akm_y_s16);
+int32_t bmi160_bst_akm09911_compensate_Y(const bmi160_t *bmi160, int16_t v_bst_akm_y_s16);
 /*!
  *    @brief This API used to get the compensated Z data
  *    of AKM09911 the out put of Z as int32_t
@@ -11336,7 +11100,7 @@ int32_t bmi160_bst_akm09911_compensate_Y(int16_t v_bst_akm_y_s16);
  *    @return results of compensated Z data value output as int32_t
  *
  */
-int32_t bmi160_bst_akm09911_compensate_Z(int16_t v_bst_akm_z_s16);
+int32_t bmi160_bst_akm09911_compensate_Z(const bmi160_t *bmi160, int16_t v_bst_akm_z_s16);
 /*!
  *    @brief This API used to get the compensated X data
  *    of AKM09912 the out put of X as int32_t
@@ -11359,7 +11123,7 @@ int32_t bmi160_bst_akm09911_compensate_Z(int16_t v_bst_akm_z_s16);
  *    @return results of compensated X data value output as int32_t
  *
  */
-int32_t bmi160_bst_akm09912_compensate_X(int16_t v_bst_akm_x_s16);
+int32_t bmi160_bst_akm09912_compensate_X(const bmi160_t *bmi160, int16_t v_bst_akm_x_s16);
 /*!
  *    @brief This API used to get the compensated Y data
  *    of AKM09912 the out put of Y as int32_t
@@ -11382,7 +11146,7 @@ int32_t bmi160_bst_akm09912_compensate_X(int16_t v_bst_akm_x_s16);
  *    @return results of compensated Y data value output as int32_t
  *
  */
-int32_t bmi160_bst_akm09912_compensate_Y(int16_t v_bst_akm_y_s16);
+int32_t bmi160_bst_akm09912_compensate_Y(const bmi160_t *bmi160, int16_t v_bst_akm_y_s16);
 /*!
  *    @brief This API used to get the compensated Z data
  *    of AKM09912 the out put of Z as int32_t
@@ -11405,7 +11169,7 @@ int32_t bmi160_bst_akm09912_compensate_Y(int16_t v_bst_akm_y_s16);
  *    @return results of compensated Z data value output as int32_t
  *
  */
-int32_t bmi160_bst_akm09912_compensate_Z(int16_t v_bst_akm_z_s16);
+int32_t bmi160_bst_akm09912_compensate_Z(const bmi160_t *bmi160, int16_t v_bst_akm_z_s16);
  /*!
  *    @brief This function used for read the compensated value of
  *    AKM09911
@@ -11429,8 +11193,7 @@ int32_t bmi160_bst_akm09912_compensate_Z(int16_t v_bst_akm_z_s16);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bst_akm09911_compensate_xyz(
-struct bmi160_bst_akm_xyz_t *bst_akm_xyz);
+BMI160_RETURN_FUNCTION_TYPE bmi160_bst_akm09911_compensate_xyz(const bmi160_t *bmi160, struct bmi160_bst_akm_xyz_t *bst_akm_xyz);
  /*!
  *    @brief This function used for read the compensated value of
  *    AKM09912
@@ -11454,8 +11217,7 @@ struct bmi160_bst_akm_xyz_t *bst_akm_xyz);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bst_akm09912_compensate_xyz(
-struct bmi160_bst_akm_xyz_t *bst_akm_xyz);
+BMI160_RETURN_FUNCTION_TYPE bmi160_bst_akm09912_compensate_xyz(const bmi160_t *bmi160, struct bmi160_bst_akm_xyz_t *bst_akm_xyz);
 /*!
  *    @brief This function used for set the AKM09911 and AKM09912
  *    power mode.
@@ -11486,7 +11248,7 @@ struct bmi160_bst_akm_xyz_t *bst_akm_xyz);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bst_akm_set_powermode(uint8_t v_akm_pow_mode_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_bst_akm_set_powermode(const bmi160_t *bmi160, uint8_t v_akm_pow_mode_u8);
  /*!
  *    @brief This function used for set the magnetometer
  *    power mode of AKM09911 and AKM09912
@@ -11510,8 +11272,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_bst_akm_set_powermode(uint8_t v_akm_pow_mode_
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_set_bst_akm_and_secondary_if_powermode(
-uint8_t v_mag_sec_if_pow_mode_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_set_bst_akm_and_secondary_if_powermode(const bmi160_t *bmi160, uint8_t v_mag_sec_if_pow_mode_u8);
 /***************************************************/
 /**\name    FUNCTIONS FOR YAMAH-YAS532 */
 /***************************************************/
@@ -11525,8 +11286,7 @@ uint8_t v_mag_sec_if_pow_mode_u8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yamaha_yas532_mag_interface_init(
-void);
+BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yamaha_yas532_mag_interface_init(void);
 /*!
  *    @brief This function used to set the YAS532 initial values
  *
@@ -11537,7 +11297,7 @@ void);
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yas532_set_initial_values(void);
+BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yas532_set_initial_values(const bmi160_t *bmi160);
 /*!
  *    @brief This function used for YAS532 offset correction
  *
@@ -11548,8 +11308,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yas532_set_initial_values(void);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yas532_magnetic_measure_set_offset(
-void);
+BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yas532_magnetic_measure_set_offset(void);
 /*!
  *    @brief This function used for read the
  *    YAMAHA YAS532 calibration data
@@ -11561,7 +11320,7 @@ void);
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yamaha_yas532_calib_values(void);
+BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yamaha_yas532_calib_values(const bmi160_t *bmi160);
 /*!
  *    @brief This function used for calculate the
  *    YAS532 read the linear data
@@ -11573,8 +11332,7 @@ BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yamaha_yas532_calib_values(void);
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yas532_xy1y2_to_linear(
-uint16_t *v_xy1y2_u16, int32_t *xy1y2_linear);
+BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yas532_xy1y2_to_linear(const bmi160_t *bmi160, uint16_t *v_xy1y2_u16, int32_t *xy1y2_linear);
 /*!
  *    @brief This function used for read the YAS532 sensor data
  *    @param    v_acquisition_command_u8: used to set the data acquisition
@@ -11610,8 +11368,7 @@ uint16_t *v_xy1y2_u16, int32_t *xy1y2_linear);
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yas532_normal_measurement_data(
-uint8_t v_acquisition_command_u8, uint8_t *v_busy_u8,
+BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yas532_normal_measurement_data(const bmi160_t *bmi160, uint8_t v_acquisition_command_u8, uint8_t *v_busy_u8,
 uint16_t *v_temp_u16, uint16_t *v_xy1y2_u16, uint8_t *v_overflow_u8);
 /*!
  *    @brief This function used for YAS532 sensor data
@@ -11646,8 +11403,7 @@ uint16_t *v_temp_u16, uint16_t *v_xy1y2_u16, uint8_t *v_overflow_u8);
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yas532_measurement_xyz_data(
-struct yas532_vector *xyz_data, uint8_t *v_overflow_s8, uint8_t v_temp_correction_u8,
+BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yas532_measurement_xyz_data(const bmi160_t *bmi160, struct yas532_vector *xyz_data, uint8_t *v_overflow_s8, uint8_t v_temp_correction_u8,
 uint8_t v_acquisition_command_u8);
 /*!
  *    @brief This function used for YAS532 write data acquisition
@@ -11680,8 +11436,7 @@ uint8_t v_acquisition_command_u8);
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yas532_acquisition_command_register(
-uint8_t v_command_reg_data_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yas532_acquisition_command_register(const bmi160_t *bmi160, uint8_t v_command_reg_data_u8);
 /*!
  *    @brief This function used write offset of YAS532
  *
@@ -11694,8 +11449,7 @@ uint8_t v_command_reg_data_u8);
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yas532_set_offset(
-const int8_t *p_offset_s8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yas532_set_offset(const int8_t *p_offset_s8);
 /*!
  *    @brief This function used to init the YAMAH-YAS537
  *
@@ -11706,8 +11460,7 @@ const int8_t *p_offset_s8);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yamaha_yas537_mag_interface_init(
-void);
+BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yamaha_yas537_mag_interface_init(void);
 /*!
  *    @brief This function used for read the
  *    YAMAHA YAS537 calibration data
@@ -11722,8 +11475,7 @@ void);
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yamaha_yas537_calib_values(
-uint8_t v_rcoil_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yamaha_yas537_calib_values(const bmi160_t *bmi160, uint8_t v_rcoil_u8);
 /*!
  *    @brief This function used for YAS537 write data acquisition
  *    command register write
@@ -11755,8 +11507,7 @@ uint8_t v_rcoil_u8);
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yas537_acquisition_command_register(
-uint8_t v_command_reg_data_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yas537_acquisition_command_register(const bmi160_t *bmi160, uint8_t v_command_reg_data_u8);
 /*!
  *    @brief This function used for read the
  *    YAMAHA YAS537 xy1y2 data
@@ -11770,7 +11521,7 @@ uint8_t v_command_reg_data_u8);
  *
  */
 /*JET
-static void xy1y2_to_xyz(uint16_t *xy1y2, int32_t *xyz);*/
+static void xy1y2_to_xyz(const bmi160_t *bmi160, uint16_t *xy1y2, int32_t *xyz);*/
 /*!
  *    @brief This function used for read the
  *    YAMAHA YAS537 xy1y2 data
@@ -11788,8 +11539,7 @@ static void xy1y2_to_xyz(uint16_t *xy1y2, int32_t *xyz);*/
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yamaha_yas537_read_xy1y2_data(
-uint8_t *v_coil_stat_u8, uint8_t *v_busy_u8,
+BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yamaha_yas537_read_xy1y2_data(const bmi160_t *bmi160, uint8_t *v_coil_stat_u8, uint8_t *v_busy_u8,
 uint16_t *v_temperature_u16, uint16_t *xy1y2, uint8_t *v_ouflow_u8);
 /*!
  *    @brief This function used for read the
@@ -11804,8 +11554,7 @@ uint16_t *v_temperature_u16, uint16_t *xy1y2, uint8_t *v_ouflow_u8);
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yamaha_yas537_measure_xyz_data(
-uint8_t *v_ouflow_u8, struct yas_vector *vector_xyz);
+BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yamaha_yas537_measure_xyz_data(const bmi160_t *bmi160, uint8_t *v_ouflow_u8, struct yas_vector *vector_xyz);
 /*!
  *    @brief This function used for read the
  *    YAMAHA YAS537 xy1y2 data
@@ -11820,8 +11569,7 @@ uint8_t *v_ouflow_u8, struct yas_vector *vector_xyz);
  *
  */
 /* JET
-static BMI160_RETURN_FUNCTION_TYPE invalid_magnetic_field(
-  uint16_t *v_cur_u16, uint16_t *v_last_u16);*/
+static BMI160_RETURN_FUNCTION_TYPE invalid_magnetic_field(  uint16_t *v_cur_u16, uint16_t *v_last_u16);*/
 /***************************************************/
 /**\name    FUNCTIONS FOR FIFO DATA READ */
 /***************************************************/
@@ -11854,8 +11602,7 @@ static BMI160_RETURN_FUNCTION_TYPE invalid_magnetic_field(
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_fifo_headerless_mode(
-uint8_t v_mag_if_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_read_fifo_headerless_mode(const bmi160_t *bmi160, uint8_t v_mag_if_u8);
 /*!
  *    @brief This function used for reading the
  *    fifo data of  header less mode for using user defined length
@@ -11887,8 +11634,7 @@ uint8_t v_mag_if_u8);
  *
  */
 BMI160_RETURN_FUNCTION_TYPE
-bmi160_read_fifo_headerless_mode_user_defined_length(
-uint16_t v_fifo_user_length_u16,
+bmi160_read_fifo_headerless_mode_user_defined_length(const bmi160_t *bmi160, uint16_t v_fifo_user_length_u16,
 struct bmi160_fifo_data_header_less_t *fifo_data, uint8_t v_mag_if_mag_u8);
 /*!
  *    @brief This function used for reading the
@@ -11919,8 +11665,7 @@ struct bmi160_fifo_data_header_less_t *fifo_data, uint8_t v_mag_if_mag_u8);
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_fifo_header_data(
-uint8_t v_mag_if_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_read_fifo_header_data(const bmi160_t *bmi160, uint8_t v_mag_if_u8);
 /*!
  *    @brief This function used for reading the
  *    fifo data of  header mode for using user defined length
@@ -11950,8 +11695,7 @@ uint8_t v_mag_if_u8);
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_read_fifo_header_data_user_defined_length(
-uint16_t v_fifo_user_length_u16, uint8_t v_mag_if_mag_u8,
+BMI160_RETURN_FUNCTION_TYPE bmi160_read_fifo_header_data_user_defined_length(const bmi160_t *bmi160, uint16_t v_fifo_user_length_u16, uint8_t v_mag_if_mag_u8,
 struct bmi160_fifo_data_header_t *fifo_header_data);
 /*!
  *    @brief This function used for reading
@@ -11961,7 +11705,7 @@ struct bmi160_fifo_data_header_t *fifo_header_data);
  *
  *
 */
-struct bmi160_t *bmi160_get_ptr(void);
+struct bmi160_t *bmi160_get_ptr(const bmi160_t *bmi160);
 /*!
  *    @brief This function used for reading the compensated data of
  *    mag secondary interface xyz data
@@ -11985,8 +11729,7 @@ struct bmi160_t *bmi160_get_ptr(void);
  *
  *
 */
-BMI160_RETURN_FUNCTION_TYPE bmi160_second_if_mag_compensate_xyz(
-struct bmi160_mag_fifo_data_t mag_fifo_data,
+BMI160_RETURN_FUNCTION_TYPE bmi160_second_if_mag_compensate_xyz(const bmi160_t *bmi160, struct bmi160_mag_fifo_data_t mag_fifo_data,
 uint8_t v_mag_second_if_u8);
 /*!
  *    @brief This function used for read the
@@ -12004,8 +11747,7 @@ uint8_t v_mag_second_if_u8);
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yamaha_yas537_fifo_xyz_data(
-uint16_t *a_xy1y2_u16, uint8_t v_over_flow_u8, uint8_t v_rcoil_u8, uint8_t v_busy_u8);
+BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yamaha_yas537_fifo_xyz_data(const bmi160_t *bmi160, uint16_t *a_xy1y2_u16, uint8_t v_over_flow_u8, uint8_t v_rcoil_u8, uint8_t v_busy_u8);
 /*!
  *    @brief This function used for YAS532 sensor data
  *    @param    v_acquisition_command_u8    :    the value of CMDR
@@ -12021,8 +11763,7 @@ uint16_t *a_xy1y2_u16, uint8_t v_over_flow_u8, uint8_t v_rcoil_u8, uint8_t v_bus
  *
  *
  */
-BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yas532_fifo_xyz_data(
-uint16_t *v_xy1y2_u16, uint8_t v_temp_correction_u8,
+BMI160_RETURN_FUNCTION_TYPE bmi160_bst_yas532_fifo_xyz_data(const bmi160_t *bmi160, uint16_t *v_xy1y2_u16, uint8_t v_temp_correction_u8,
 int8_t v_overflow_s8, uint16_t v_temp_u16, uint8_t v_busy_u8);
 
 #endif

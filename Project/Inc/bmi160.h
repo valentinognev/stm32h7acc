@@ -49,7 +49,8 @@ extern "C" {
    * @snippet bmi160.c Interesting
    */
 
-    typedef struct _bmi160_context {
+    typedef struct 
+    {
         // uncompensated accelerometer and gyroscope values
         float accelX;
         float accelY;
@@ -72,8 +73,9 @@ extern "C" {
 
         // is the magnetometer enabled?
         bool magEnabled;
+        bmi160_t bmi160;
 
-    } *bmi160_context;
+    } bmi160_context;
 
     /**
      * bmi160 constructor
@@ -88,8 +90,7 @@ extern "C" {
      * @param enable_mag True, if you want to enable the magnetometer
      * @return an initialized device context on success, NULL on error.
      */
-    bmi160_context bmi160_init(unsigned int bus, int address, int cs_pin,
-                               bool enable_mag);
+    bmi160_context bmi160_init(unsigned int bus, int address, int cs_pin, bool enable_mag);
 
     /**
      * BMI160 Destructor
@@ -198,7 +199,7 @@ extern "C" {
      * @param cnt The number of bytes to read.
      * @return A return of 0 indicates no errors, non-zero indicates an error.
      */
-    int8_t bmi160_bus_read(uint8_t dev_addr, uint8_t reg_addr, uint8_t *reg_data, uint8_t cnt);
+int8_t bmi160_bus_write(const bmi160_t *bmi160, uint8_t reg_addr, uint8_t *reg_data, uint8_t cnt);
 
     /**
      * Perform a bus write.  This function is bus agnostic, and is used

@@ -31,26 +31,24 @@
 // whether we are doing I2C or SPI
 static bool isSPI = true;
 
-// Our bmi160 info structure
-struct bmi160_t s_bmi160;
+// // Our bmi160 info structure
+// struct bmi160_t s_bmi160;
 
 calData calibration;
 
 // For SPI, these are our CS on/off functions, if needed
-static void bmi160_cs_on()
-{
-    // if (gpioContext)        mraa_gpio_write(gpioContext, 0);
-    LL_GPIO_ResetOutputPin(ACCL1_CS_GPIO_Port, ACCL1_CS_Pin);
+static void bmi160_cs_on(const bmi160_t *bmi160)
+{    // if (gpioContext)        mraa_gpio_write(gpioContext, 0);
+    LL_GPIO_ResetOutputPin(bmi160->cs_port, bmi160->cs_pin);
 }
 
-static void bmi160_cs_off()
-{
-    // if (gpioContext)        mraa_gpio_write(gpioContext, 1);
-    LL_GPIO_SetOutputPin(ACCL1_CS_GPIO_Port, ACCL1_CS_Pin);
+static void bmi160_cs_off(const bmi160_t *bmi160)
+{    // if (gpioContext)        mraa_gpio_write(gpioContext, 1);
+    LL_GPIO_SetOutputPin(bmi160->cs_port, bmi160->cs_pin);
 }
 
 // i2c bus read and write functions for use with the bmi driver code
-int8_t bmi160_bus_read(uint8_t dev_addr, uint8_t reg_addr, uint8_t *reg_data, uint8_t cnt)
+int8_t bmi160_bus_read(const bmi160_t *bmi160, uint8_t reg_addr, uint8_t *reg_data, uint8_t cnt)
 {
     reg_addr |= 0x80; // needed for read
 
@@ -59,9 +57,9 @@ int8_t bmi160_bus_read(uint8_t dev_addr, uint8_t reg_addr, uint8_t *reg_data, ui
     memset((char *)sbufout, 0, cnt + 1);
     sbuf[0] = reg_addr;
 
-    bmi160_cs_on();
+    bmi160_cs_on(bmi160);
     SPI_TransmitReceive_DMA(sbuf, sbufout, cnt + 1);  
-    bmi160_cs_off();
+    bmi160_cs_off(bmi160);
 
     // now copy it into user buffer
     int i;
@@ -71,7 +69,7 @@ int8_t bmi160_bus_read(uint8_t dev_addr, uint8_t reg_addr, uint8_t *reg_data, ui
     return 0;
 }
 
-int8_t bmi160_bus_write(uint8_t dev_addr, uint8_t reg_addr, uint8_t *reg_data, uint8_t cnt)
+int8_t bmi160_bus_write(const bmi160_t *bmi160, uint8_t reg_addr, uint8_t *reg_data, uint8_t cnt)
 {
     reg_addr &= 0x7f; // mask off 0x80 for writing
 
@@ -84,9 +82,9 @@ int8_t bmi160_bus_write(uint8_t dev_addr, uint8_t reg_addr, uint8_t *reg_data, u
     for (i=0; i<cnt; i++)
         sbuf[i + 1] = reg_data[i];
 
-    bmi160_cs_on();
+    bmi160_cs_on(bmi160);
     SPI_TransmitReceive_DMA(sbuf, res, cnt + 1);
-    bmi160_cs_off();
+    bmi160_cs_off(bmi160);
 
     return 0;
 }
@@ -98,26 +96,16 @@ void bmi160_delay_ms(uint32_t msek)
 }
 
 
-bmi160_context bmi160_init(unsigned int bus, int address, int cs_pin,
-                           bool enable_mag)
+bool bmi160_init(bmi160_context *dev, int cs_port, int cs_pin, bool enable_mag)
 {
-    bmi160_context dev = (bmi160_context)malloc(sizeof(struct _bmi160_context));
-
-    if (!dev)
-        return NULL;
-
     // zero out context
-    memset((void *)dev, 0, sizeof(struct _bmi160_context));
-
-    // make sure MRAA is initialized
-        // we are doing SPI
-    isSPI = true;
+    memset((void *)&dev, 0, sizeof(bmi160_context));
 
     // Only create cs context if we are actually using a valid pin.
     // A hardware controlled pin should specify cs as -1.
     // init the driver interface functions
     // Init our driver interface pointers
-    if (bmi160_init_bus(&s_bmi160))
+    if (bmi160_init_bus(&(dev->bmi160)))
     {
         // printf("%s: bmi160_bus_init() failed.\n", __FUNCTION__);
         // bmi160_close(dev);
@@ -126,7 +114,7 @@ bmi160_context bmi160_init(unsigned int bus, int address, int cs_pin,
 
     // bmi160_init_bus will read the chip Id and deposit into our
     // interface struct.  So, check it out and make sure it's correct.
-    if (s_bmi160.chip_id != BMI160_CHIP_ID)
+    if (dev->bmi160.chip_id != BMI160_CHIP_ID)
     {
         // printf("%s: Error: expected chip id %02x, but got %02x.\n", __FUNCTION__, BMI160_CHIP_ID, s_bmi160.chip_id);
         // bmi160_close(dev);
@@ -484,7 +472,7 @@ float *bmi160_getMagnetometer()
 }
 #endif
 
-void bmi160_enable_magnetometer(const bmi160_context dev, bool enable)
+void bmi160_enable_magnetometer(bmi160_context *dev, bool enable)
 {
     assert(dev != NULL);
 
@@ -514,14 +502,14 @@ void bmi160_enable_magnetometer(const bmi160_context dev, bool enable)
     }
 }
 
-unsigned int bmi160_get_time(const bmi160_context dev)
+unsigned int bmi160_get_time(const bmi160_context *dev)
 {
     assert(dev != NULL);
 
     return dev->sensorTime;
 }
 
-void bmi160_calibrateAccelGyro(const bmi160_context dev, calData* cal)
+void bmi160_calibrateAccelGyro(const bmi160_context *dev, calData* cal)
 {
 	uint8_t data[12];
 	uint16_t packet_count = 64; // How many sets of full gyro and accelerometer data for averaging;
@@ -532,25 +520,25 @@ void bmi160_calibrateAccelGyro(const bmi160_context dev, calData* cal)
 
 	// reset device
     uint8_t buff = 0xB6;
-	bmi160_bus_write(dev, BMI160_CMD_COMMANDS_ADDR, &buff, 1); // Toggle softreset
+	bmi160_bus_write(&(dev->bmi160), BMI160_CMD_COMMANDS_ADDR, &buff, 1); // Toggle softreset
 	delay(100); // wait for reset
 
     buff = ACCEL_MODE_NORMAL;
-	bmi160_bus_write(dev, BMI160_CMD_COMMANDS_ADDR, &buff, 1);  // Start up accelerometer
+	bmi160_bus_write(&(dev->bmi160), BMI160_CMD_COMMANDS_ADDR, &buff, 1);  // Start up accelerometer
 	delay(200);
     buff = GYRO_MODE_NORMAL;
-	bmi160_bus_write(dev, BMI160_CMD_COMMANDS_ADDR, &buff, 1);  // Start up gyroscope
+	bmi160_bus_write(&(dev->bmi160), BMI160_CMD_COMMANDS_ADDR, &buff, 1);  // Start up gyroscope
 	delay(200);								  //wait until they're done starting up...
 	
     buff = BMI160_ACCEL_RANGE_2G;
-	bmi160_bus_write(dev, BMI160_USER_ACCEL_RANGE_ADDR, &buff, 1);  // Set up Accel range. +-2G
+	bmi160_bus_write(&(dev->bmi160), BMI160_USER_ACCEL_RANGE_ADDR, &buff, 1);  // Set up Accel range. +-2G
     buff = BMI160_GYRO_RANGE_125_DEG_SEC;
-	bmi160_bus_write(dev, BMI160_USER_GYRO_RANGE_ADDR, &buff, 1);  // Set up Gyro range. +-125dps
+	bmi160_bus_write(&(dev->bmi160), BMI160_USER_GYRO_RANGE_ADDR, &buff, 1);  // Set up Gyro range. +-125dps
 
     buff = BMI160_ACCEL_OUTPUT_DATA_RATE_400HZ;
-	bmi160_bus_write(dev, BMI160_USER_ACCEL_CONFIG_ADDR, &buff, 1);//0x2A);  // Set Accel ODR to 400hz, BWP mode to Oversample 1, LPF of ~162hz
+	bmi160_bus_write(&(dev->bmi160), BMI160_USER_ACCEL_CONFIG_ADDR, &buff, 1);//0x2A);  // Set Accel ODR to 400hz, BWP mode to Oversample 1, LPF of ~162hz
     buff = BMI160_GYRO_OUTPUT_DATA_RATE_400HZ;
-	bmi160_bus_write(dev, BMI160_USER_GYRO_CONFIG_ADDR, &buff, 1);//0x2A);  // Set Gyro ODR to 400hz, BWP mode to Oversample 1, LPF of ~136hz
+	bmi160_bus_write(&(dev->bmi160), BMI160_USER_GYRO_CONFIG_ADDR, &buff, 1);//0x2A);  // Set Gyro ODR to 400hz, BWP mode to Oversample 1, LPF of ~136hz
 
     struct bmi160_accel_t accel;
     struct bmi160_gyro_t gyro;
@@ -558,7 +546,7 @@ void bmi160_calibrateAccelGyro(const bmi160_context dev, calData* cal)
 	{
 		int16_t accel_temp[3] = { 0, 0, 0 }, gyro_temp[3] = { 0, 0, 0 };
 
-		//bmi160_bus_read(dev, BMI160_GYR_X_L, 12, &data[0]);    // Read the 12 raw data registers into data array
+		//bmi160_bus_read(&(dev->bmi160), BMI160_GYR_X_L, 12, &data[0]);    // Read the 12 raw data registers into data array
         bmi160_read_accel_xyz(&accel);
         bmi160_read_gyro_xyz(&gyro);
 

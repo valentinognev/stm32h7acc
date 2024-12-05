@@ -39,7 +39,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define NUMOFACCL 4
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -110,7 +110,7 @@ int main(void)
   MX_SPI1_Init();
   MX_USART1_UART_Init();
   MX_TIM5_Init();
-  MX_SDMMC1_SD_Init();
+  //MX_SDMMC1_SD_Init();
   MX_USB_PCD_Init();
   /* USER CODE BEGIN 2 */
 
@@ -122,7 +122,7 @@ int main(void)
   //bma250e_context bma250 = bma250e_init(BMA250E_DEFAULT_SPI_BUS,-1, 10);
   //bmg160_context bmg160 = bmg160_init(BMG160_DEFAULT_SPI_BUS,-1, 10);
   bmi160_context bmi160;
-  bmi160_init(&bmi160, 0, -1, true);
+  bmi160_init(&bmi160, ACCL1_CS_GPIO_Port, ACCL1_CS_Pin, true);
   float ax, ay, az, temperature;
   float gx, gy, gz;
   float mx, my, mz;

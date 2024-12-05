@@ -100,7 +100,7 @@ void bmi160_delay_ms(uint32_t msek)
 uint8_t bmi160_init(bmi160_context *dev, GPIO_TypeDef* cs_port, int cs_pin, bool enable_mag)
 {
     // zero out context
-    memset((void *)&dev, 0, sizeof(bmi160_context));
+    //memset((void *)&dev, 0, sizeof(bmi160_context));
 
     // Only create cs context if we are actually using a valid pin.
     // A hardware controlled pin should specify cs as -1.
@@ -108,6 +108,7 @@ uint8_t bmi160_init(bmi160_context *dev, GPIO_TypeDef* cs_port, int cs_pin, bool
     // Init our driver interface pointers
     dev->bmi160.cs_pin = cs_pin;
     dev->bmi160.cs_port = cs_port;
+    dev->bmi160.spi = hspi1;
     dev->bmi160.mag_manual_enable = enable_mag;
 
     if (bmi160_init_bus(&(dev->bmi160)))

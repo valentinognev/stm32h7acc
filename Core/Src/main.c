@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "icache.h"
 #include "memorymap.h"
 #include "sdmmc.h"
 #include "spi.h"
@@ -39,7 +40,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define NUMOFACCL 4
+#define NUMOFACCL 7
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -112,6 +113,7 @@ int main(void)
   MX_TIM5_Init();
   //MX_SDMMC1_SD_Init();
   MX_USB_PCD_Init();
+  MX_ICACHE_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -121,21 +123,30 @@ int main(void)
  
   //bma250e_context bma250 = bma250e_init(BMA250E_DEFAULT_SPI_BUS,-1, 10);
   //bmg160_context bmg160 = bmg160_init(BMG160_DEFAULT_SPI_BUS,-1, 10);
-  bmi160_context bmi160;
-  bmi160_init(&bmi160, ACCL1_CS_GPIO_Port, ACCL1_CS_Pin, true);
-  float ax, ay, az, temperature;
-  float gx, gy, gz;
-  float mx, my, mz;
+  bmi160_context bmi160[NUMOFACCL];
+  uint8_t test[NUMOFACCL]={0};
+  test[0] = bmi160_init(&bmi160[0], ACCL1_CS_GPIO_Port, ACCL1_CS_Pin, true);
+  test[1] = bmi160_init(&bmi160[1], ACCL2_CS_GPIO_Port, ACCL2_CS_Pin, true);
+  test[2] = bmi160_init(&bmi160[2], ACCL3_CS_GPIO_Port, ACCL3_CS_Pin, true);
+  test[3] = bmi160_init(&bmi160[3], ACCL4_CS_GPIO_Port, ACCL4_CS_Pin, true);
+  test[4] = bmi160_init(&bmi160[4], ACCL5_CS_GPIO_Port, ACCL5_CS_Pin, true);
+  test[5] = bmi160_init(&bmi160[5], ACCL6_CS_GPIO_Port, ACCL6_CS_Pin, true);
+  test[6] = bmi160_init(&bmi160[6], ACCL7_CS_GPIO_Port, ACCL7_CS_Pin, true);
+
+  float ax[NUMOFACCL], ay[NUMOFACCL], az[NUMOFACCL], temperature[NUMOFACCL];
+  float gx[NUMOFACCL], gy[NUMOFACCL], gz[NUMOFACCL];
+  float mx[NUMOFACCL], my[NUMOFACCL], mz[NUMOFACCL];
   while (1)
   {
-    //bma250e_update(bma250, &ax, &ay, &az, &temperature);
-    //bmg160_update(bmg160, &gx, &gy, &gz);
-    bmi160_update(&bmi160);//, &gx, &gy, &gz);
-    gx = bmi160.gyroX;    gy = bmi160.gyroY;    gz = bmi160.gyroZ;
-    ax = bmi160.accelX;   ay = bmi160.accelY;   az = bmi160.accelZ;
-    mx = bmi160.magX;     my = bmi160.magY;     mz = bmi160.magZ;
+    for(int i = 0; i < NUMOFACCL; i++)
+    {
+      bmi160_update(&bmi160[i]);
+      gx[i] = bmi160[i].gyroX;    gy[i] = bmi160[i].gyroY;    gz[i] = bmi160[i].gyroZ;
+      ax[i] = bmi160[i].accelX;   ay[i] = bmi160[i].accelY;   az[i] = bmi160[i].accelZ;
+      mx[i] = bmi160[i].magX;     my[i] = bmi160[i].magY;     mz[i] = bmi160[i].magZ;
+    }
 
-    Madgwick_updateIMU(gx, gy, gz, ax, ay, az);
+    //Madgwick_updateIMU(gx, gy, gz, ax, ay, az);
     HAL_Delay(250);
     /* USER CODE END WHILE */
 

@@ -167,7 +167,7 @@ uint8_t bmi160_init(bmi160_context *dev, GPIO_TypeDef* cs_port, int cs_pin, bool
     bmi160_set_accelerometer_scale(dev, BMI160_ACC_RANGE_2G);
     bmi160_set_gyroscope_scale(dev, BMI160_GYRO_RANGE_125);
 
-    return dev;
+    return 1;
 }
 
 void bmi160_close(bmi160_context* dev)

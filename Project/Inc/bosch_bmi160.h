@@ -5247,7 +5247,7 @@ uint8_t bmi160_get_temp(const bmi160_t *bmi160, int16_t
  *
  *
 */
-uint8_t bmi160_fifo_length(uint32_t *v_fifo_length_u32);
+uint8_t bmi160_fifo_length(const bmi160_t *bmi160, uint32_t *v_fifo_length_u32);
 /*!
  *    @brief This API reads the fifo data of the sensor
  *    from the register 0x24
@@ -6396,7 +6396,7 @@ uint8_t bmi160_get_mag_manual_enable(const bmi160_t *bmi160, uint8_t *v_mag_manu
  *
  *
 */
-uint8_t bmi160_set_mag_manual_enable(const bmi160_t *bmi160, uint8_t v_mag_manual_u8);
+uint8_t bmi160_set_mag_manual_enable(bmi160_t *bmi160, uint8_t v_mag_manual_u8);
 /***************************************************************/
 /**\name    FUNCTIONS FOR MAG READ, WRITE AND WRITE DATA ADDRESS  */
 /***************************************************************/
@@ -7613,7 +7613,7 @@ uint8_t bmi160_get_intr_pmu_trig(const bmi160_t *bmi160, uint8_t v_channel_u8, u
  *
  *
 */
-uint8_t bmi160_set_intr_pmu_trig(const bmi160_t *bmi160, int8_t v_channel_u8, uint8_t v_intr_pmu_trig_u8);
+uint8_t bmi160_set_intr_pmu_trig(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8_t v_intr_pmu_trig_u8);
 /*!
  *    @brief Reads FIFO Full interrupt mapped to interrupt1
  *    and interrupt2 form the register 0x56 bit 5 and 1
@@ -10663,7 +10663,7 @@ uint8_t bmi160_set_pullup_configuration(const bmi160_t *bmi160, uint8_t v_contro
  *
  *
 */
-uint8_t bmi160_bmm150_mag_interface_init(const bmi160_t *bmi160, uint8_t *v_chip_id_u8);
+uint8_t bmi160_bmm150_mag_interface_init(bmi160_t *bmi160, uint8_t *v_chip_id_u8);
  /*!
  *    @brief This function used for set the mag power control
  *    bit enable
@@ -10839,7 +10839,7 @@ int32_t bmi160_bmm150_mag_compensate_Z(const bmi160_t *bmi160, int16_t v_mag_dat
  *    @retval -1 -> Error
  *
  */
-uint8_t bmi160_set_bmm150_mag_presetmode(const bmi160_t *bmi160, uint8_t mode);
+uint8_t bmi160_set_bmm150_mag_presetmode(bmi160_t *bmi160, uint8_t mode);
 /*!
  *    @brief This function used for set the magnetometer
  *    power mode.
@@ -10872,7 +10872,7 @@ uint8_t bmi160_set_bmm150_mag_presetmode(const bmi160_t *bmi160, uint8_t mode);
  *
  *
 */
-uint8_t bmi160_bmm150_mag_set_power_mode(const bmi160_t *bmi160, uint8_t mag_pow_mode);
+uint8_t bmi160_bmm150_mag_set_power_mode(bmi160_t *bmi160, uint8_t mag_pow_mode);
  /*!
  *    @brief This function used for set the magnetometer
  *    power mode.
@@ -10897,7 +10897,7 @@ uint8_t bmi160_bmm150_mag_set_power_mode(const bmi160_t *bmi160, uint8_t mag_pow
  *
  *
 */
-uint8_t bmi160_set_bmm150_mag_and_secondary_if_power_mode(const bmi160_t *bmi160, uint8_t v_mag_sec_if_pow_mode_u8);
+uint8_t bmi160_set_bmm150_mag_and_secondary_if_power_mode(bmi160_t *bmi160, uint8_t v_mag_sec_if_pow_mode_u8);
 /***************************************************/
 /**\name    FUNCTIONS FOR AKM09911 AND AKM09912*/
 /***************************************************/
@@ -10922,7 +10922,7 @@ uint8_t bmi160_set_bmm150_mag_and_secondary_if_power_mode(const bmi160_t *bmi160
  *
  *
 */
-uint8_t bmi160_bst_akm_mag_interface_init(const bmi160_t *bmi160, uint8_t v_akm_i2c_address_u8);
+uint8_t bmi160_bst_akm_mag_interface_init(bmi160_t *bmi160, uint8_t v_akm_i2c_address_u8);
  /*!
  *    @brief This function used for read the sensitivity data of
  *    AKM09911 and AKM09912
@@ -11163,7 +11163,7 @@ uint8_t bmi160_bst_akm09912_compensate_xyz(const bmi160_t *bmi160, struct bmi160
  *
  *
 */
-uint8_t bmi160_bst_akm_set_powermode(const bmi160_t *bmi160, uint8_t v_akm_pow_mode_u8);
+uint8_t bmi160_bst_akm_set_powermode(bmi160_t *bmi160, uint8_t v_akm_pow_mode_u8);
  /*!
  *    @brief This function used for set the magnetometer
  *    power mode of AKM09911 and AKM09912
@@ -11187,7 +11187,7 @@ uint8_t bmi160_bst_akm_set_powermode(const bmi160_t *bmi160, uint8_t v_akm_pow_m
  *
  *
 */
-uint8_t bmi160_set_bst_akm_and_secondary_if_powermode(const bmi160_t *bmi160, uint8_t v_mag_sec_if_pow_mode_u8);
+uint8_t bmi160_set_bst_akm_and_secondary_if_powermode(bmi160_t *bmi160, uint8_t v_mag_sec_if_pow_mode_u8);
 /***************************************************/
 /**\name    FUNCTIONS FOR YAMAH-YAS532 */
 /***************************************************/
@@ -11201,7 +11201,7 @@ uint8_t bmi160_set_bst_akm_and_secondary_if_powermode(const bmi160_t *bmi160, ui
  *
  *
 */
-uint8_t bmi160_bst_yamaha_yas532_mag_interface_init(void);
+uint8_t bmi160_bst_yamaha_yas532_mag_interface_init(bmi160_t *bmi160);
 /*!
  *    @brief This function used to set the YAS532 initial values
  *
@@ -11212,7 +11212,7 @@ uint8_t bmi160_bst_yamaha_yas532_mag_interface_init(void);
  *
  *
  */
-uint8_t bmi160_bst_yas532_set_initial_values(const bmi160_t *bmi160);
+uint8_t bmi160_bst_yas532_set_initial_values(bmi160_t *bmi160);
 /*!
  *    @brief This function used for YAS532 offset correction
  *
@@ -11223,7 +11223,7 @@ uint8_t bmi160_bst_yas532_set_initial_values(const bmi160_t *bmi160);
  *
  *
 */
-uint8_t bmi160_bst_yas532_magnetic_measure_set_offset(void);
+uint8_t bmi160_bst_yas532_magnetic_measure_set_offset(bmi160_t *bmi160);
 /*!
  *    @brief This function used for read the
  *    YAMAHA YAS532 calibration data
@@ -11283,7 +11283,7 @@ uint8_t bmi160_bst_yas532_xy1y2_to_linear(const bmi160_t *bmi160, uint16_t *v_xy
  *
  *
  */
-uint8_t bmi160_bst_yas532_normal_measurement_data(const bmi160_t *bmi160, uint8_t v_acquisition_command_u8, uint8_t *v_busy_u8,
+uint8_t bmi160_bst_yas532_normal_measurement_data(bmi160_t *bmi160, uint8_t v_acquisition_command_u8, uint8_t *v_busy_u8,
 uint16_t *v_temp_u16, uint16_t *v_xy1y2_u16, uint8_t *v_overflow_u8);
 /*!
  *    @brief This function used for YAS532 sensor data
@@ -11318,7 +11318,7 @@ uint16_t *v_temp_u16, uint16_t *v_xy1y2_u16, uint8_t *v_overflow_u8);
  *
  *
  */
-uint8_t bmi160_bst_yas532_measurement_xyz_data(const bmi160_t *bmi160, struct yas532_vector *xyz_data, uint8_t *v_overflow_s8, uint8_t v_temp_correction_u8,
+uint8_t bmi160_bst_yas532_measurement_xyz_data(bmi160_t *bmi160, struct yas532_vector *xyz_data, uint8_t *v_overflow_s8, uint8_t v_temp_correction_u8,
 uint8_t v_acquisition_command_u8);
 /*!
  *    @brief This function used for YAS532 write data acquisition
@@ -11351,7 +11351,7 @@ uint8_t v_acquisition_command_u8);
  *
  *
  */
-uint8_t bmi160_bst_yas532_acquisition_command_register(const bmi160_t *bmi160, uint8_t v_command_reg_data_u8);
+uint8_t bmi160_bst_yas532_acquisition_command_register(bmi160_t *bmi160, uint8_t v_command_reg_data_u8);
 /*!
  *    @brief This function used write offset of YAS532
  *
@@ -11364,7 +11364,7 @@ uint8_t bmi160_bst_yas532_acquisition_command_register(const bmi160_t *bmi160, u
  *
  *
  */
-uint8_t bmi160_bst_yas532_set_offset(const int8_t *p_offset_s8);
+uint8_t bmi160_bst_yas532_set_offset(bmi160_t *bmi160, const int8_t *p_offset_s8);
 /*!
  *    @brief This function used to init the YAMAH-YAS537
  *
@@ -11375,7 +11375,7 @@ uint8_t bmi160_bst_yas532_set_offset(const int8_t *p_offset_s8);
  *
  *
 */
-uint8_t bmi160_bst_yamaha_yas537_mag_interface_init(void);
+uint8_t bmi160_bst_yamaha_yas537_mag_interface_init(bmi160_t *bmi160);
 /*!
  *    @brief This function used for read the
  *    YAMAHA YAS537 calibration data
@@ -11422,7 +11422,7 @@ uint8_t bmi160_bst_yamaha_yas537_calib_values(const bmi160_t *bmi160, uint8_t v_
  *
  *
  */
-uint8_t bmi160_bst_yas537_acquisition_command_register(const bmi160_t *bmi160, uint8_t v_command_reg_data_u8);
+uint8_t bmi160_bst_yas537_acquisition_command_register(bmi160_t *bmi160, uint8_t v_command_reg_data_u8);
 /*!
  *    @brief This function used for read the
  *    YAMAHA YAS537 xy1y2 data
@@ -11454,7 +11454,7 @@ static void xy1y2_to_xyz(const bmi160_t *bmi160, uint16_t *xy1y2, int32_t *xyz);
  *
  *
  */
-uint8_t bmi160_bst_yamaha_yas537_read_xy1y2_data(const bmi160_t *bmi160, uint8_t *v_coil_stat_u8, uint8_t *v_busy_u8,
+uint8_t bmi160_bst_yamaha_yas537_read_xy1y2_data(bmi160_t *bmi160, uint8_t *v_coil_stat_u8, uint8_t *v_busy_u8,
 uint16_t *v_temperature_u16, uint16_t *xy1y2, uint8_t *v_ouflow_u8);
 /*!
  *    @brief This function used for read the
@@ -11469,7 +11469,7 @@ uint16_t *v_temperature_u16, uint16_t *xy1y2, uint8_t *v_ouflow_u8);
  *
  *
  */
-uint8_t bmi160_bst_yamaha_yas537_measure_xyz_data(const bmi160_t *bmi160, uint8_t *v_ouflow_u8, struct yas_vector *vector_xyz);
+uint8_t bmi160_bst_yamaha_yas537_measure_xyz_data(bmi160_t *bmi160, uint8_t *v_ouflow_u8, struct yas_vector *vector_xyz);
 /*!
  *    @brief This function used for read the
  *    YAMAHA YAS537 xy1y2 data
@@ -11517,7 +11517,7 @@ static uint8_t invalid_magnetic_field(  uint16_t *v_cur_u16, uint16_t *v_last_u1
  *
  *
  */
-uint8_t bmi160_read_fifo_headerless_mode(const bmi160_t *bmi160, uint8_t v_mag_if_u8);
+uint8_t bmi160_read_fifo_headerless_mode(bmi160_t *bmi160, uint8_t v_mag_if_u8);
 /*!
  *    @brief This function used for reading the
  *    fifo data of  header less mode for using user defined length
@@ -11549,7 +11549,7 @@ uint8_t bmi160_read_fifo_headerless_mode(const bmi160_t *bmi160, uint8_t v_mag_i
  *
  */
 uint8_t
-bmi160_read_fifo_headerless_mode_user_defined_length(const bmi160_t *bmi160, uint16_t v_fifo_user_length_u16,
+bmi160_read_fifo_headerless_mode_user_defined_length(bmi160_t *bmi160, uint16_t v_fifo_user_length_u16,
 struct bmi160_fifo_data_header_less_t *fifo_data, uint8_t v_mag_if_mag_u8);
 /*!
  *    @brief This function used for reading the
@@ -11580,7 +11580,7 @@ struct bmi160_fifo_data_header_less_t *fifo_data, uint8_t v_mag_if_mag_u8);
  *
  *
  */
-uint8_t bmi160_read_fifo_header_data(const bmi160_t *bmi160, uint8_t v_mag_if_u8);
+uint8_t bmi160_read_fifo_header_data(bmi160_t *bmi160, uint8_t v_mag_if_u8);
 /*!
  *    @brief This function used for reading the
  *    fifo data of  header mode for using user defined length
@@ -11610,7 +11610,7 @@ uint8_t bmi160_read_fifo_header_data(const bmi160_t *bmi160, uint8_t v_mag_if_u8
  *
  *
  */
-uint8_t bmi160_read_fifo_header_data_user_defined_length(const bmi160_t *bmi160, uint16_t v_fifo_user_length_u16, uint8_t v_mag_if_mag_u8,
+uint8_t bmi160_read_fifo_header_data_user_defined_length(bmi160_t *bmi160, uint16_t v_fifo_user_length_u16, uint8_t v_mag_if_mag_u8,
 struct bmi160_fifo_data_header_t *fifo_header_data);
 /*!
  *    @brief This function used for reading
@@ -11644,7 +11644,7 @@ struct bmi160_t *bmi160_get_ptr(const bmi160_t *bmi160);
  *
  *
 */
-uint8_t bmi160_second_if_mag_compensate_xyz(const bmi160_t *bmi160, struct bmi160_mag_fifo_data_t mag_fifo_data,
+uint8_t bmi160_second_if_mag_compensate_xyz(bmi160_t *bmi160, struct bmi160_mag_fifo_data_t mag_fifo_data,
 uint8_t v_mag_second_if_u8);
 /*!
  *    @brief This function used for read the
@@ -11662,7 +11662,7 @@ uint8_t v_mag_second_if_u8);
  *
  *
  */
-uint8_t bmi160_bst_yamaha_yas537_fifo_xyz_data(const bmi160_t *bmi160, uint16_t *a_xy1y2_u16, uint8_t v_over_flow_u8, uint8_t v_rcoil_u8, uint8_t v_busy_u8);
+uint8_t bmi160_bst_yamaha_yas537_fifo_xyz_data(bmi160_t *bmi160, uint16_t *a_xy1y2_u16, uint8_t v_over_flow_u8, uint8_t v_rcoil_u8, uint8_t v_busy_u8);
 /*!
  *    @brief This function used for YAS532 sensor data
  *    @param    v_acquisition_command_u8    :    the value of CMDR

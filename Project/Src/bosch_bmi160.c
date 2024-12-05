@@ -31,12 +31,9 @@
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
 * DISCLAIMED. IN NO EVENT SHALL COPYRIGHT HOLDER
 * OR CONTRIBUTORS BE LIABLE FOR ANY
-* DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-* OR CONSEQUENTIAL DAMAGES(INCLUDING, BUT NOT LIMITED TO,
-* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+* DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, * OR CONSEQUENTIAL DAMAGES(INCLUDING, BUT NOT LIMITED TO, * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
 * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-* HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-* WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+* HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 * ANY WAY OUT OF THE USE OF THIS
 * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE
@@ -63,8 +60,7 @@ struct bst_akm_sensitivity_data_t akm_asa_data;
 uint8_t v_fifo_data_u8[FIFO_FRAME] = {BMI160_INIT_VALUE,};
 /* YAMAHA-YAS532*/
 /* value of coeff*/
-static const int yas532_version_ac_coef[] = {YAS532_VERSION_AC_COEF_X,
-YAS532_VERSION_AC_COEF_Y1, YAS532_VERSION_AC_COEF_Y2};
+static const int yas532_version_ac_coef[] = {YAS532_VERSION_AC_COEF_X, YAS532_VERSION_AC_COEF_Y1, YAS532_VERSION_AC_COEF_Y2};
 /* used for reading the yas532 calibration data*/
 struct yas532_t yas532_data;
 /* used for reading the yas537 calibration data*/
@@ -274,12 +270,8 @@ uint8_t bmi160_get_err_code(const bmi160_t *bmi160, uint8_t *v_err_code_u8)
 //     if (bmi160 == BMI160_NULL) {
 //         return E_BMI160_NULL_PTR;
 //         } else {
-//             com_rslt =
-//             bmi160_bus_read(bmi160,
-//             BMI160_USER_I2C_FAIL_ERR__REG,
-//             &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
-//             *v_i2c_err_code_u8 = BMI160_GET_BITSLICE(v_data_u8,
-//             BMI160_USER_I2C_FAIL_ERR);
+//             com_rslt = //             bmi160_bus_read(bmi160, //             BMI160_USER_I2C_FAIL_ERR__REG, //             &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+//             *v_i2c_err_code_u8 = BMI160_GET_BITSLICE(v_data_u8, //             BMI160_USER_I2C_FAIL_ERR);
 //         }
 //     return com_rslt;
 // }
@@ -362,9 +354,7 @@ uint8_t bmi160_get_mag_dada_rdy_err(const bmi160_t *bmi160, uint8_t *v_mag_data_
  *
  *
 */
-uint8_t bmi160_get_error_status(const bmi160_t *bmi160, uint8_t *v_fatal_er_u8r,
-uint8_t *v_err_code_u8, uint8_t *v_i2c_fail_err_u8,
-uint8_t *v_drop_cmd_err_u8, uint8_t *v_mag_data_rdy_err_u8)
+uint8_t bmi160_get_error_status(const bmi160_t *bmi160, uint8_t *v_fatal_er_u8r, uint8_t *v_err_code_u8, uint8_t *v_i2c_fail_err_u8, uint8_t *v_drop_cmd_err_u8, uint8_t *v_mag_data_rdy_err_u8)
 {
     /* variable used for return the status of communication result*/
     uint8_t com_rslt = E_BMI160_COMM_RES;
@@ -541,7 +531,7 @@ uint8_t bmi160_set_mag_interface_normal(const bmi160_t *bmi160)
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     while (v_try_times_u8) 
     {
-        com_rslt = bmi160_get_mag_power_mode_stat(&v_mag_pum_status_u8);
+        com_rslt = bmi160_get_mag_power_mode_stat(bmi160, &v_mag_pum_status_u8);
         if (v_mag_pum_status_u8 == MAG_INTERFACE_PMU_ENABLE)
             break;
         HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
@@ -583,8 +573,7 @@ uint8_t bmi160_read_mag_x(const bmi160_t *bmi160, int16_t *v_mag_x_s16, uint8_t 
     /* Array contains the mag X lSB and MSB data
         v_data_u8[0] - LSB
         v_data_u8[1] - MSB*/
-    uint8_t v_data_u8[BMI160_MAG_X_DATA_SIZE] = {BMI160_INIT_VALUE,
-    BMI160_INIT_VALUE};
+    uint8_t v_data_u8[BMI160_MAG_X_DATA_SIZE] = {BMI160_INIT_VALUE, BMI160_INIT_VALUE};
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
         return E_BMI160_NULL_PTR;
@@ -594,17 +583,13 @@ uint8_t bmi160_read_mag_x(const bmi160_t *bmi160, int16_t *v_mag_x_s16, uint8_t 
             com_rslt = bmi160_bus_read(bmi160,BMI160_USER_DATA_MAG_X_LSB__REG,v_data_u8, BMI160_MAG_X_DATA_LENGTH);
             /* X axis*/
             v_data_u8[BMI160_MAG_X_LSB_BYTE] = BMI160_GET_BITSLICE(v_data_u8[BMI160_MAG_X_LSB_BYTE],BMI160_USER_DATA_MAG_X_LSB);
-            *v_mag_x_s16 = (int16_t)
-            ((((int32_t)((int8_t)v_data_u8[BMI160_MAG_X_MSB_BYTE]))
-            << BMI160_SHIFT_BIT_POSITION_BY_05_BITS) |
-            (v_data_u8[BMI160_MAG_X_LSB_BYTE]));
+            *v_mag_x_s16 = (int16_t)((((int32_t)((int8_t)v_data_u8[BMI160_MAG_X_MSB_BYTE]))
+            << BMI160_SHIFT_BIT_POSITION_BY_05_BITS) |(v_data_u8[BMI160_MAG_X_LSB_BYTE]));
         break;
         case BST_AKM:
             com_rslt = bmi160_bus_read(bmi160,BMI160_USER_DATA_0_MAG_X_LSB__REG,v_data_u8, BMI160_MAG_X_DATA_LENGTH);
-            *v_mag_x_s16 = (int16_t)
-            ((((int32_t)((int8_t)v_data_u8[BMI160_MAG_X_MSB_BYTE]))
-            << BMI160_SHIFT_BIT_POSITION_BY_08_BITS) |
-            (v_data_u8[BMI160_MAG_X_LSB_BYTE]));
+            *v_mag_x_s16 = (int16_t)((((int32_t)((int8_t)v_data_u8[BMI160_MAG_X_MSB_BYTE]))
+            << BMI160_SHIFT_BIT_POSITION_BY_08_BITS) |(v_data_u8[BMI160_MAG_X_LSB_BYTE]));
         break;
         default:
             com_rslt = E_BMI160_OUT_OF_RANGE;
@@ -640,8 +625,7 @@ uint8_t bmi160_read_mag_y(const bmi160_t *bmi160, int16_t *v_mag_y_s16, uint8_t 
     /* Array contains the mag Y lSB and MSB data
         v_data_u8[0] - LSB
         v_data_u8[1] - MSB*/
-    uint8_t v_data_u8[BMI160_MAG_Y_DATA_SIZE] = {BMI160_INIT_VALUE,
-    BMI160_INIT_VALUE};
+    uint8_t v_data_u8[BMI160_MAG_Y_DATA_SIZE] = {BMI160_INIT_VALUE, BMI160_INIT_VALUE};
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
         return E_BMI160_NULL_PTR;
@@ -651,17 +635,13 @@ uint8_t bmi160_read_mag_y(const bmi160_t *bmi160, int16_t *v_mag_y_s16, uint8_t 
             com_rslt = bmi160_bus_read(bmi160,BMI160_USER_DATA_MAG_Y_LSB__REG,v_data_u8, BMI160_MAG_Y_DATA_LENGTH);
             /*Y-axis lsb value shifting*/
             v_data_u8[BMI160_MAG_Y_LSB_BYTE] = BMI160_GET_BITSLICE(v_data_u8[BMI160_MAG_Y_LSB_BYTE],BMI160_USER_DATA_MAG_Y_LSB);
-            *v_mag_y_s16 = (int16_t)
-            ((((int32_t)((int8_t)v_data_u8[BMI160_MAG_Y_MSB_BYTE]))
-            << BMI160_SHIFT_BIT_POSITION_BY_05_BITS) |
-            (v_data_u8[BMI160_MAG_Y_LSB_BYTE]));
+            *v_mag_y_s16 = (int16_t)((((int32_t)((int8_t)v_data_u8[BMI160_MAG_Y_MSB_BYTE]))
+            << BMI160_SHIFT_BIT_POSITION_BY_05_BITS) |(v_data_u8[BMI160_MAG_Y_LSB_BYTE]));
         break;
         case BST_AKM:
             com_rslt = bmi160_bus_read(bmi160,BMI160_USER_DATA_2_MAG_Y_LSB__REG,v_data_u8, BMI160_MAG_Y_DATA_LENGTH);
-            *v_mag_y_s16 = (int16_t)
-            ((((int32_t)((int8_t)v_data_u8[BMI160_MAG_Y_MSB_BYTE]))
-            << BMI160_SHIFT_BIT_POSITION_BY_08_BITS) |
-            (v_data_u8[BMI160_MAG_Y_LSB_BYTE]));
+            *v_mag_y_s16 = (int16_t)((((int32_t)((int8_t)v_data_u8[BMI160_MAG_Y_MSB_BYTE]))
+            << BMI160_SHIFT_BIT_POSITION_BY_08_BITS) |(v_data_u8[BMI160_MAG_Y_LSB_BYTE]));
         break;
         default:
         com_rslt = E_BMI160_OUT_OF_RANGE;
@@ -698,8 +678,7 @@ uint8_t bmi160_read_mag_z(const bmi160_t *bmi160, int16_t *v_mag_z_s16, uint8_t 
     /* Array contains the mag Z lSB and MSB data
         v_data_u8[0] - LSB
         v_data_u8[1] - MSB*/
-    uint8_t v_data_u8[BMI160_MAG_Z_DATA_SIZE] = {BMI160_INIT_VALUE,
-    BMI160_INIT_VALUE};
+    uint8_t v_data_u8[BMI160_MAG_Z_DATA_SIZE] = {BMI160_INIT_VALUE, BMI160_INIT_VALUE};
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
         return E_BMI160_NULL_PTR;
@@ -709,15 +688,12 @@ uint8_t bmi160_read_mag_z(const bmi160_t *bmi160, int16_t *v_mag_z_s16, uint8_t 
             com_rslt = bmi160_bus_read(bmi160,BMI160_USER_DATA_MAG_Z_LSB__REG,v_data_u8, BMI160_MAG_Z_DATA_LENGTH);
             /*Z-axis lsb value shifting*/
             v_data_u8[BMI160_MAG_Z_LSB_BYTE] = BMI160_GET_BITSLICE(v_data_u8[BMI160_MAG_Z_LSB_BYTE],BMI160_USER_DATA_MAG_Z_LSB);
-            *v_mag_z_s16 = (int16_t)
-            ((((int32_t)((int8_t)v_data_u8[BMI160_MAG_Z_MSB_BYTE]))
-            << BMI160_SHIFT_BIT_POSITION_BY_07_BITS) |
-            (v_data_u8[BMI160_MAG_Z_LSB_BYTE]));
+            *v_mag_z_s16 = (int16_t)((((int32_t)((int8_t)v_data_u8[BMI160_MAG_Z_MSB_BYTE]))
+            << BMI160_SHIFT_BIT_POSITION_BY_07_BITS) |(v_data_u8[BMI160_MAG_Z_LSB_BYTE]));
         break;
         case BST_AKM:
             com_rslt = bmi160_bus_read(bmi160,BMI160_USER_DATA_4_MAG_Z_LSB__REG,v_data_u8, BMI160_MAG_Z_DATA_LENGTH);
-            *v_mag_z_s16 = (int16_t)
-            ((((int32_t)((int8_t)v_data_u8[BMI160_MAG_Z_MSB_BYTE]))
+            *v_mag_z_s16 = (int16_t)((((int32_t)((int8_t)v_data_u8[BMI160_MAG_Z_MSB_BYTE]))
             << BMI160_SHIFT_BIT_POSITION_BY_08_BITS) | (v_data_u8[BMI160_MAG_Z_LSB_BYTE]));
         break;
         default:
@@ -749,8 +725,7 @@ uint8_t bmi160_read_mag_r(const bmi160_t *bmi160, int16_t *v_mag_r_s16)
     /* Array contains the mag R lSB and MSB data
         v_data_u8[0] - LSB
         v_data_u8[1] - MSB*/
-    uint8_t v_data_u8[BMI160_MAG_R_DATA_SIZE] = {BMI160_INIT_VALUE,
-    BMI160_INIT_VALUE};
+    uint8_t v_data_u8[BMI160_MAG_R_DATA_SIZE] = {BMI160_INIT_VALUE, BMI160_INIT_VALUE};
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
         return E_BMI160_NULL_PTR;
@@ -758,10 +733,8 @@ uint8_t bmi160_read_mag_r(const bmi160_t *bmi160, int16_t *v_mag_r_s16)
             com_rslt = bmi160_bus_read(bmi160,BMI160_USER_DATA_6_RHALL_LSB__REG,v_data_u8, BMI160_MAG_R_DATA_LENGTH);
             /*R-axis lsb value shifting*/
             v_data_u8[BMI160_MAG_R_LSB_BYTE] = BMI160_GET_BITSLICE(v_data_u8[BMI160_MAG_R_LSB_BYTE],BMI160_USER_DATA_MAG_R_LSB);
-            *v_mag_r_s16 = (int16_t)
-            ((((int32_t)((int8_t)v_data_u8[BMI160_MAG_R_MSB_BYTE]))
-            << BMI160_SHIFT_BIT_POSITION_BY_06_BITS) |
-            (v_data_u8[BMI160_MAG_R_LSB_BYTE]));
+            *v_mag_r_s16 = (int16_t)((((int32_t)((int8_t)v_data_u8[BMI160_MAG_R_MSB_BYTE]))
+            << BMI160_SHIFT_BIT_POSITION_BY_06_BITS) |(v_data_u8[BMI160_MAG_R_LSB_BYTE]));
         }
     return com_rslt;
 }
@@ -799,9 +772,7 @@ uint8_t bmi160_read_mag_xyz(const bmi160_t *bmi160, struct bmi160_mag_t *mag, ui
         v_data_u8[1] - Z-MSB
         */
     uint8_t v_data_u8[BMI160_MAG_XYZ_DATA_SIZE] = {
-    BMI160_INIT_VALUE, BMI160_INIT_VALUE,
-    BMI160_INIT_VALUE, BMI160_INIT_VALUE,
-    BMI160_INIT_VALUE, BMI160_INIT_VALUE};
+    BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE};
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
         return E_BMI160_NULL_PTR;
@@ -812,49 +783,38 @@ uint8_t bmi160_read_mag_xyz(const bmi160_t *bmi160, struct bmi160_mag_t *mag, ui
             /*X-axis lsb value shifting*/
             v_data_u8[BMI160_DATA_FRAME_MAG_X_LSB_BYTE] = BMI160_GET_BITSLICE(v_data_u8[BMI160_DATA_FRAME_MAG_X_LSB_BYTE],BMI160_USER_DATA_MAG_X_LSB);
             /* Data X */
-            mag->x = (int16_t)
-            ((((int32_t)((int8_t)v_data_u8[
+            mag->x = (int16_t)((((int32_t)((int8_t)v_data_u8[
             BMI160_DATA_FRAME_MAG_X_MSB_BYTE]))
-            << BMI160_SHIFT_BIT_POSITION_BY_05_BITS) |
-            (v_data_u8[BMI160_DATA_FRAME_MAG_X_LSB_BYTE]));
+            << BMI160_SHIFT_BIT_POSITION_BY_05_BITS) |(v_data_u8[BMI160_DATA_FRAME_MAG_X_LSB_BYTE]));
             /* Data Y */
             /*Y-axis lsb value shifting*/
             v_data_u8[BMI160_DATA_FRAME_MAG_Y_LSB_BYTE] = BMI160_GET_BITSLICE(v_data_u8[BMI160_DATA_FRAME_MAG_Y_LSB_BYTE],BMI160_USER_DATA_MAG_Y_LSB);
-            mag->y = (int16_t)
-            ((((int32_t)((int8_t)v_data_u8[
+            mag->y = (int16_t)((((int32_t)((int8_t)v_data_u8[
             BMI160_DATA_FRAME_MAG_Y_MSB_BYTE]))
-            << BMI160_SHIFT_BIT_POSITION_BY_05_BITS) |
-            (v_data_u8[BMI160_DATA_FRAME_MAG_Y_LSB_BYTE]));
+            << BMI160_SHIFT_BIT_POSITION_BY_05_BITS) |(v_data_u8[BMI160_DATA_FRAME_MAG_Y_LSB_BYTE]));
 
             /* Data Z */
             /*Z-axis lsb value shifting*/
             v_data_u8[BMI160_DATA_FRAME_MAG_Z_LSB_BYTE]
             = BMI160_GET_BITSLICE(v_data_u8[BMI160_DATA_FRAME_MAG_Z_LSB_BYTE],BMI160_USER_DATA_MAG_Z_LSB);
-            mag->z = (int16_t)
-            ((((int32_t)((int8_t)v_data_u8[
+            mag->z = (int16_t)((((int32_t)((int8_t)v_data_u8[
             BMI160_DATA_FRAME_MAG_Z_MSB_BYTE]))
-            << BMI160_SHIFT_BIT_POSITION_BY_07_BITS) |
-            (v_data_u8[BMI160_DATA_FRAME_MAG_Z_LSB_BYTE]));
+            << BMI160_SHIFT_BIT_POSITION_BY_07_BITS) |(v_data_u8[BMI160_DATA_FRAME_MAG_Z_LSB_BYTE]));
         break;
         case BST_AKM:
             com_rslt = bmi160_bus_read(bmi160, BMI160_USER_DATA_0_MAG_X_LSB__REG, v_data_u8, BMI160_MAG_XYZ_DATA_LENGTH);
             /* Data X */
-            mag->x = (int16_t)
-            ((((int32_t)((int8_t)v_data_u8[
+            mag->x = (int16_t)((((int32_t)((int8_t)v_data_u8[
             BMI160_DATA_FRAME_MAG_X_MSB_BYTE]))
-            << BMI160_SHIFT_BIT_POSITION_BY_08_BITS) |
-            (v_data_u8[BMI160_DATA_FRAME_MAG_X_LSB_BYTE]));
+            << BMI160_SHIFT_BIT_POSITION_BY_08_BITS) |(v_data_u8[BMI160_DATA_FRAME_MAG_X_LSB_BYTE]));
             /* Data Y */
             mag->y  = ((((int32_t)((int8_t)v_data_u8[
             BMI160_DATA_FRAME_MAG_Y_MSB_BYTE]))
-            << BMI160_SHIFT_BIT_POSITION_BY_08_BITS) |
-            (v_data_u8[BMI160_DATA_FRAME_MAG_Y_LSB_BYTE]));
+            << BMI160_SHIFT_BIT_POSITION_BY_08_BITS) |(v_data_u8[BMI160_DATA_FRAME_MAG_Y_LSB_BYTE]));
             /* Data Z */
-            mag->z = (int16_t)
-            ((((int32_t)((int8_t)v_data_u8[
+            mag->z = (int16_t)((((int32_t)((int8_t)v_data_u8[
             BMI160_DATA_FRAME_MAG_Z_MSB_BYTE]))
-            << BMI160_SHIFT_BIT_POSITION_BY_08_BITS) |
-            (v_data_u8[BMI160_DATA_FRAME_MAG_Z_LSB_BYTE]));
+            << BMI160_SHIFT_BIT_POSITION_BY_08_BITS) |(v_data_u8[BMI160_DATA_FRAME_MAG_Z_LSB_BYTE]));
         break;
         default:
             com_rslt = E_BMI160_OUT_OF_RANGE;
@@ -885,9 +845,7 @@ uint8_t bmi160_read_mag_xyzr(const bmi160_t *bmi160, struct bmi160_mag_xyzr_t *m
     /* variable used for return the status of communication result*/
     uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_data_u8[BMI160_MAG_XYZR_DATA_SIZE] = {
-    BMI160_INIT_VALUE, BMI160_INIT_VALUE,
-    BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE,
-    BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE};
+    BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE};
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
         return E_BMI160_NULL_PTR;
@@ -898,8 +856,7 @@ uint8_t bmi160_read_mag_xyzr(const bmi160_t *bmi160, struct bmi160_mag_xyzr_t *m
             /*X-axis lsb value shifting*/
             v_data_u8[BMI160_DATA_FRAME_MAG_X_LSB_BYTE]
             = BMI160_GET_BITSLICE(v_data_u8[BMI160_DATA_FRAME_MAG_X_LSB_BYTE],BMI160_USER_DATA_MAG_X_LSB);
-            mag->x = (int16_t)
-            ((((int32_t)((int8_t)v_data_u8[
+            mag->x = (int16_t)((((int32_t)((int8_t)v_data_u8[
             BMI160_DATA_FRAME_MAG_X_MSB_BYTE]))
             << BMI160_SHIFT_BIT_POSITION_BY_05_BITS)
             | (v_data_u8[BMI160_DATA_FRAME_MAG_X_LSB_BYTE]));
@@ -907,8 +864,7 @@ uint8_t bmi160_read_mag_xyzr(const bmi160_t *bmi160, struct bmi160_mag_xyzr_t *m
             /*Y-axis lsb value shifting*/
             v_data_u8[BMI160_DATA_FRAME_MAG_Y_LSB_BYTE]
             = BMI160_GET_BITSLICE(v_data_u8[BMI160_DATA_FRAME_MAG_Y_LSB_BYTE],BMI160_USER_DATA_MAG_Y_LSB);
-            mag->y = (int16_t)
-            ((((int32_t)((int8_t)v_data_u8[
+            mag->y = (int16_t)((((int32_t)((int8_t)v_data_u8[
             BMI160_DATA_FRAME_MAG_Y_MSB_BYTE]))
             << BMI160_SHIFT_BIT_POSITION_BY_05_BITS)
             | (v_data_u8[
@@ -918,8 +874,7 @@ uint8_t bmi160_read_mag_xyzr(const bmi160_t *bmi160, struct bmi160_mag_xyzr_t *m
             /*Z-axis lsb value shifting*/
             v_data_u8[BMI160_DATA_FRAME_MAG_Z_LSB_BYTE]
             = BMI160_GET_BITSLICE(v_data_u8[BMI160_DATA_FRAME_MAG_Z_LSB_BYTE],BMI160_USER_DATA_MAG_Z_LSB);
-            mag->z = (int16_t)
-            ((((int32_t)((int8_t)v_data_u8[
+            mag->z = (int16_t)((((int32_t)((int8_t)v_data_u8[
             BMI160_DATA_FRAME_MAG_Z_MSB_BYTE]))
             << BMI160_SHIFT_BIT_POSITION_BY_07_BITS)
             | (v_data_u8[BMI160_DATA_FRAME_MAG_Z_LSB_BYTE]));
@@ -928,8 +883,7 @@ uint8_t bmi160_read_mag_xyzr(const bmi160_t *bmi160, struct bmi160_mag_xyzr_t *m
             /*R-axis lsb value shifting*/
             v_data_u8[BMI160_DATA_FRAME_MAG_R_LSB_BYTE]
             = BMI160_GET_BITSLICE(v_data_u8[BMI160_DATA_FRAME_MAG_R_LSB_BYTE],BMI160_USER_DATA_MAG_R_LSB);
-            mag->r = (int16_t)
-            ((((int32_t)((int8_t)v_data_u8[
+            mag->r = (int16_t)((((int32_t)((int8_t)v_data_u8[
             BMI160_DATA_FRAME_MAG_R_MSB_BYTE]))
             << BMI160_SHIFT_BIT_POSITION_BY_06_BITS)
             | (v_data_u8[BMI160_DATA_FRAME_MAG_R_LSB_BYTE]));
@@ -962,16 +916,14 @@ uint8_t bmi160_read_gyro_x(const bmi160_t *bmi160, int16_t *v_gyro_x_s16)
     /* Array contains the gyro X lSB and MSB data
         v_data_u8[0] - LSB
         v_data_u8[MSB_ONE] - MSB*/
-    uint8_t v_data_u8[BMI160_GYRO_X_DATA_SIZE] = {BMI160_INIT_VALUE,
-    BMI160_INIT_VALUE};
+    uint8_t v_data_u8[BMI160_GYRO_X_DATA_SIZE] = {BMI160_INIT_VALUE, BMI160_INIT_VALUE};
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
         return E_BMI160_NULL_PTR;
         } else {
             com_rslt = bmi160_bus_read(bmi160,BMI160_USER_DATA_8_GYRO_X_LSB__REG,v_data_u8, BMI160_GYRO_DATA_LENGTH);
 
-            *v_gyro_x_s16 = (int16_t)
-            ((((int32_t)((int8_t)v_data_u8[BMI160_GYRO_X_MSB_BYTE]))
+            *v_gyro_x_s16 = (int16_t)((((int32_t)((int8_t)v_data_u8[BMI160_GYRO_X_MSB_BYTE]))
             << BMI160_SHIFT_BIT_POSITION_BY_08_BITS)
             | (v_data_u8[BMI160_GYRO_X_LSB_BYTE]));
         }
@@ -1004,8 +956,7 @@ uint8_t bmi160_read_gyro_y(const bmi160_t *bmi160, int16_t *v_gyro_y_s16)
     /* Array contains the gyro Y lSB and MSB data
         v_data_u8[LSB_ZERO] - LSB
         v_data_u8[MSB_ONE] - MSB*/
-    uint8_t v_data_u8[BMI160_GYRO_Y_DATA_SIZE] = {BMI160_INIT_VALUE,
-    BMI160_INIT_VALUE};
+    uint8_t v_data_u8[BMI160_GYRO_Y_DATA_SIZE] = {BMI160_INIT_VALUE, BMI160_INIT_VALUE};
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
         return E_BMI160_NULL_PTR;
@@ -1013,8 +964,7 @@ uint8_t bmi160_read_gyro_y(const bmi160_t *bmi160, int16_t *v_gyro_y_s16)
             /* read gyro y data*/
             com_rslt = bmi160_bus_read(bmi160,BMI160_USER_DATA_10_GYRO_Y_LSB__REG,v_data_u8, BMI160_GYRO_DATA_LENGTH);
 
-            *v_gyro_y_s16 = (int16_t)
-            ((((int32_t)((int8_t)v_data_u8[BMI160_GYRO_Y_MSB_BYTE]))
+            *v_gyro_y_s16 = (int16_t)((((int32_t)((int8_t)v_data_u8[BMI160_GYRO_Y_MSB_BYTE]))
             << BMI160_SHIFT_BIT_POSITION_BY_08_BITS)
             | (v_data_u8[BMI160_GYRO_Y_LSB_BYTE]));
         }
@@ -1047,8 +997,7 @@ uint8_t bmi160_read_gyro_z(const bmi160_t *bmi160, int16_t *v_gyro_z_s16)
     /* Array contains the gyro Z lSB and MSB data
         v_data_u8[LSB_ZERO] - LSB
         v_data_u8[MSB_ONE] - MSB*/
-    uint8_t v_data_u8[BMI160_GYRO_Z_DATA_SIZE] = {BMI160_INIT_VALUE,
-    BMI160_INIT_VALUE};
+    uint8_t v_data_u8[BMI160_GYRO_Z_DATA_SIZE] = {BMI160_INIT_VALUE, BMI160_INIT_VALUE};
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
         return E_BMI160_NULL_PTR;
@@ -1056,8 +1005,7 @@ uint8_t bmi160_read_gyro_z(const bmi160_t *bmi160, int16_t *v_gyro_z_s16)
             /* read gyro z data */
             com_rslt = bmi160_bus_read(bmi160,BMI160_USER_DATA_12_GYRO_Z_LSB__REG,v_data_u8, BMI160_GYRO_DATA_LENGTH);
 
-            *v_gyro_z_s16 = (int16_t)
-            ((((int32_t)((int8_t)v_data_u8[BMI160_GYRO_Z_MSB_BYTE]))
+            *v_gyro_z_s16 = (int16_t)((((int32_t)((int8_t)v_data_u8[BMI160_GYRO_Z_MSB_BYTE]))
             << BMI160_SHIFT_BIT_POSITION_BY_08_BITS)
             | (v_data_u8[BMI160_GYRO_Z_LSB_BYTE]));
         }
@@ -1096,9 +1044,7 @@ uint8_t bmi160_read_gyro_xyz(const bmi160_t *bmi160, struct bmi160_gyro_t *gyro)
         v_data_u8[1] - Z-MSB
         */
     uint8_t v_data_u8[BMI160_GYRO_XYZ_DATA_SIZE] = {
-    BMI160_INIT_VALUE, BMI160_INIT_VALUE,
-    BMI160_INIT_VALUE, BMI160_INIT_VALUE,
-    BMI160_INIT_VALUE, BMI160_INIT_VALUE};
+    BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE};
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) 
     {
@@ -1145,16 +1091,14 @@ uint8_t bmi160_read_accel_x(const bmi160_t *bmi160, int16_t *v_accel_x_s16)
     /* Array contains the accel X lSB and MSB data
         v_data_u8[0] - LSB
         v_data_u8[1] - MSB*/
-    uint8_t v_data_u8[BMI160_ACCEL_X_DATA_SIZE] = {BMI160_INIT_VALUE,
-    BMI160_INIT_VALUE};
+    uint8_t v_data_u8[BMI160_ACCEL_X_DATA_SIZE] = {BMI160_INIT_VALUE, BMI160_INIT_VALUE};
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
         return E_BMI160_NULL_PTR;
         } else {
             com_rslt = bmi160_bus_read(bmi160,BMI160_USER_DATA_14_ACCEL_X_LSB__REG,v_data_u8, BMI160_ACCEL_DATA_LENGTH);
 
-            *v_accel_x_s16 = (int16_t)
-            ((((int32_t)((int8_t)v_data_u8[BMI160_ACCEL_X_MSB_BYTE]))
+            *v_accel_x_s16 = (int16_t)((((int32_t)((int8_t)v_data_u8[BMI160_ACCEL_X_MSB_BYTE]))
             << BMI160_SHIFT_BIT_POSITION_BY_08_BITS)
             | (v_data_u8[BMI160_ACCEL_X_LSB_BYTE]));
         }
@@ -1188,16 +1132,14 @@ uint8_t bmi160_read_accel_y(const bmi160_t *bmi160, int16_t *v_accel_y_s16)
     /* Array contains the accel Y lSB and MSB data
         v_data_u8[0] - LSB
         v_data_u8[1] - MSB*/
-    uint8_t v_data_u8[BMI160_ACCEL_Y_DATA_SIZE] = {BMI160_INIT_VALUE,
-    BMI160_INIT_VALUE};
+    uint8_t v_data_u8[BMI160_ACCEL_Y_DATA_SIZE] = {BMI160_INIT_VALUE, BMI160_INIT_VALUE};
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
         return E_BMI160_NULL_PTR;
         } else {
             com_rslt = bmi160_bus_read(bmi160,BMI160_USER_DATA_16_ACCEL_Y_LSB__REG,v_data_u8, BMI160_ACCEL_DATA_LENGTH);
 
-            *v_accel_y_s16 = (int16_t)
-            ((((int32_t)((int8_t)v_data_u8[BMI160_ACCEL_Y_MSB_BYTE]))
+            *v_accel_y_s16 = (int16_t)((((int32_t)((int8_t)v_data_u8[BMI160_ACCEL_Y_MSB_BYTE]))
             << BMI160_SHIFT_BIT_POSITION_BY_08_BITS)
             | (v_data_u8[BMI160_ACCEL_Y_LSB_BYTE]));
         }
@@ -1239,8 +1181,7 @@ uint8_t bmi160_read_accel_z(const bmi160_t *bmi160, int16_t *v_accel_z_s16)
         } else {
             com_rslt = bmi160_bus_read(bmi160,BMI160_USER_DATA_18_ACCEL_Z_LSB__REG,a_data_u8r, BMI160_ACCEL_DATA_LENGTH);
 
-            *v_accel_z_s16 = (int16_t)
-            ((((int32_t)((int8_t)a_data_u8r[BMI160_ACCEL_Z_MSB_BYTE]))
+            *v_accel_z_s16 = (int16_t)((((int32_t)((int8_t)a_data_u8r[BMI160_ACCEL_Z_MSB_BYTE]))
             << BMI160_SHIFT_BIT_POSITION_BY_08_BITS)
             | (a_data_u8r[BMI160_ACCEL_Z_LSB_BYTE]));
         }
@@ -1280,9 +1221,7 @@ uint8_t bmi160_read_accel_xyz(const bmi160_t *bmi160, struct bmi160_accel_t *acc
     a_data_u8r[1] - Z-MSB
     */
     uint8_t a_data_u8r[BMI160_ACCEL_XYZ_DATA_SIZE] = {
-    BMI160_INIT_VALUE, BMI160_INIT_VALUE,
-    BMI160_INIT_VALUE, BMI160_INIT_VALUE,
-    BMI160_INIT_VALUE, BMI160_INIT_VALUE};
+    BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE};
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) 
     {
@@ -1325,8 +1264,7 @@ uint8_t bmi160_get_sensor_time(const bmi160_t *bmi160, uint32_t *v_sensor_time_u
     a_data_u8r[1] - sensor time
     a_data_u8r[0] - sensor time
     */
-    uint8_t a_data_u8r[BMI160_SENSOR_TIME_DATA_SIZE] = {BMI160_INIT_VALUE,
-    BMI160_INIT_VALUE, BMI160_INIT_VALUE};
+    uint8_t a_data_u8r[BMI160_SENSOR_TIME_DATA_SIZE] = {BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE};
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) 
     {
@@ -1874,7 +1812,7 @@ uint8_t bmi160_get_stat0_single_tap_intr(const bmi160_t *bmi160, uint8_t
  *    @note BLOCKING
  *    @note bmi160_set_intr_orient_blocking()
  *    @note MODE
- *    @note bmi160_set_intr_orient_mode()
+ *    @note bmi160_set_intr_orient_mode(bmi160, )
  *
  *    @return results of bus communication function
  *    @retval 0 -> Success
@@ -2031,7 +1969,7 @@ uint8_t bmi160_get_stat1_high_g_intr(const bmi160_t *bmi160, uint8_t
  *    @note HYSTERESIS
  *    @note bmi160_set_intr_low_g_hyst()
  *    @note MODE
- *    @note bmi160_set_intr_low_g_mode()
+ *    @note bmi160_set_intr_low_g_mode(bmi160, )
  *
  *    @return results of bus communication function
  *    @retval 0 -> Success
@@ -2787,8 +2725,7 @@ uint8_t bmi160_get_temp(const bmi160_t *bmi160, int16_t *v_temp_s16)
     /* Array contains the temperature lSB and MSB data
     v_data_u8[0] - LSB
     v_data_u8[1] - MSB*/
-    uint8_t v_data_u8[BMI160_TEMP_DATA_SIZE] = {BMI160_INIT_VALUE,
-    BMI160_INIT_VALUE};
+    uint8_t v_data_u8[BMI160_TEMP_DATA_SIZE] = {BMI160_INIT_VALUE, BMI160_INIT_VALUE};
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
         return E_BMI160_NULL_PTR;
@@ -2824,8 +2761,7 @@ uint8_t bmi160_fifo_length(const bmi160_t *bmi160, uint32_t *v_fifo_length_u32)
     /* Array contains the fifo length data
     v_data_u8[0] - fifo length
     v_data_u8[1] - fifo length*/
-    uint8_t a_data_u8r[BMI160_FIFO_DATA_SIZE] = {BMI160_INIT_VALUE,
-    BMI160_INIT_VALUE};
+    uint8_t a_data_u8r[BMI160_FIFO_DATA_SIZE] = {BMI160_INIT_VALUE, BMI160_INIT_VALUE};
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
         return E_BMI160_NULL_PTR;
@@ -3451,16 +3387,12 @@ uint8_t bmi160_set_accel_range(const bmi160_t *bmi160, uint8_t v_range_u8)
     if (bmi160 == BMI160_NULL) {
         return E_BMI160_NULL_PTR;
         } else {
-        if ((v_range_u8 == BMI160_ACCEL_RANGE0) ||
-            (v_range_u8 == BMI160_ACCEL_RANGE1) ||
-            (v_range_u8 == BMI160_ACCEL_RANGE3) ||
-            (v_range_u8 == BMI160_ACCEL_RANGE4)) {
+        if ((v_range_u8 == BMI160_ACCEL_RANGE0) ||(v_range_u8 == BMI160_ACCEL_RANGE1) ||(v_range_u8 == BMI160_ACCEL_RANGE3) ||(v_range_u8 == BMI160_ACCEL_RANGE4)) {
             com_rslt = bmi160_bus_read(bmi160,BMI160_USER_ACCEL_RANGE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8  = BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_ACCEL_RANGE, v_range_u8);
                 /* write the accel range*/
-                com_rslt +=
-                bmi160_bus_write(bmi160, BMI160_USER_ACCEL_RANGE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write(bmi160, BMI160_USER_ACCEL_RANGE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
         } else {
         com_rslt = E_BMI160_OUT_OF_RANGE;
@@ -3703,8 +3635,7 @@ uint8_t bmi160_get_gyro_range(const bmi160_t *bmi160, uint8_t *v_range_u8)
         return E_BMI160_NULL_PTR;
         } else {
             /* read the gyro range */
-            com_rslt = bmi160_bus_read
-            (bmi160,BMI160_USER_GYRO_RANGE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt = bmi160_bus_read(bmi160,BMI160_USER_GYRO_RANGE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             *v_range_u8 = BMI160_GET_BITSLICE(v_data_u8,BMI160_USER_GYRO_RANGE);
         }
     return com_rslt;
@@ -3739,8 +3670,7 @@ uint8_t bmi160_set_gyro_range(const bmi160_t *bmi160, uint8_t v_range_u8)
         } else {
         if (v_range_u8 <= BMI160_MAX_GYRO_RANGE) {
             /* write the gyro range value */
-            com_rslt = bmi160_bus_read
-            (bmi160,BMI160_USER_GYRO_RANGE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt = bmi160_bus_read(bmi160,BMI160_USER_GYRO_RANGE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 = BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_GYRO_RANGE, v_range_u8);
                 com_rslt += bmi160_bus_write(bmi160, BMI160_USER_GYRO_RANGE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -3927,8 +3857,7 @@ uint8_t bmi160_set_fifo_down_gyro(const bmi160_t *bmi160, uint8_t v_fifo_down_gy
             com_rslt = bmi160_bus_read(bmi160,BMI160_USER_FIFO_DOWN_GYRO__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 = BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_FIFO_DOWN_GYRO, v_fifo_down_gyro_u8);
-                com_rslt +=
-                bmi160_bus_write(bmi160, BMI160_USER_FIFO_DOWN_GYRO__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write(bmi160, BMI160_USER_FIFO_DOWN_GYRO__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
         }
     return com_rslt;
@@ -3999,8 +3928,7 @@ uint8_t bmi160_set_gyro_fifo_filter_data(const bmi160_t *bmi160, uint8_t v_gyro_
             com_rslt = bmi160_bus_read(bmi160,BMI160_USER_FIFO_FILTER_GYRO__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 = BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_FIFO_FILTER_GYRO, v_gyro_fifo_filter_data_u8);
-                com_rslt +=
-                bmi160_bus_write(bmi160, BMI160_USER_FIFO_FILTER_GYRO__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write(bmi160, BMI160_USER_FIFO_FILTER_GYRO__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
         } else {
         com_rslt = E_BMI160_OUT_OF_RANGE;
@@ -4070,8 +3998,7 @@ uint8_t bmi160_set_fifo_down_accel(const bmi160_t *bmi160, uint8_t v_fifo_down_u
             com_rslt = bmi160_bus_read(bmi160,BMI160_USER_FIFO_DOWN_ACCEL__REG, &v_data_u8,BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 = BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_FIFO_DOWN_ACCEL, v_fifo_down_u8);
-                com_rslt +=
-                bmi160_bus_write(bmi160, BMI160_USER_FIFO_DOWN_ACCEL__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write(bmi160, BMI160_USER_FIFO_DOWN_ACCEL__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
         }
     return com_rslt;
@@ -4143,8 +4070,7 @@ uint8_t bmi160_set_accel_fifo_filter_data(const bmi160_t *bmi160, uint8_t v_acce
             if (com_rslt == SUCCESS_BMI160) {
                 /* write accel fifo filter data */
                 v_data_u8 = BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_FIFO_FILTER_ACCEL, v_accel_fifo_filter_u8);
-                com_rslt +=
-                bmi160_bus_write(bmi160, BMI160_USER_FIFO_FILTER_ACCEL__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write(bmi160, BMI160_USER_FIFO_FILTER_ACCEL__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
         } else {
         com_rslt = E_BMI160_OUT_OF_RANGE;
@@ -4231,7 +4157,7 @@ uint8_t bmi160_set_fifo_wm(const bmi160_t *bmi160, uint8_t v_fifo_wm_u8)
  *
  *
  */
-uint8_t bmi160_get_fifo_time_enable(bmi160,const bmi160_t *bmi160, uint8_t *v_fifo_time_enable_u8)
+uint8_t bmi160_get_fifo_time_enable(const bmi160_t *bmi160, uint8_t *v_fifo_time_enable_u8)
 {
     /* variable used for return the status of communication result*/
     uint8_t com_rslt = E_BMI160_COMM_RES;
@@ -4265,7 +4191,7 @@ uint8_t bmi160_get_fifo_time_enable(bmi160,const bmi160_t *bmi160, uint8_t *v_fi
  *
  *
  */
-uint8_t bmi160_set_fifo_time_enable(bmi160,const bmi160_t *bmi160, uint8_t v_fifo_time_enable_u8)
+uint8_t bmi160_set_fifo_time_enable(const bmi160_t *bmi160, uint8_t v_fifo_time_enable_u8)
 {
     /* variable used for return the status of communication result*/
     uint8_t com_rslt = E_BMI160_COMM_RES;
@@ -4279,8 +4205,7 @@ uint8_t bmi160_set_fifo_time_enable(bmi160,const bmi160_t *bmi160, uint8_t v_fif
             com_rslt = bmi160_bus_read(bmi160,BMI160_USER_FIFO_TIME_ENABLE__REG, &v_data_u8,BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 = BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_FIFO_TIME_ENABLE, v_fifo_time_enable_u8);
-                com_rslt +=
-                bmi160_bus_write(bmi160, BMI160_USER_FIFO_TIME_ENABLE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write(bmi160, BMI160_USER_FIFO_TIME_ENABLE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
         } else {
         com_rslt = E_BMI160_OUT_OF_RANGE;
@@ -4307,7 +4232,7 @@ uint8_t bmi160_set_fifo_time_enable(bmi160,const bmi160_t *bmi160, uint8_t v_fif
  *
  *
 */
-uint8_t bmi160_get_fifo_tag_intr2_enable(bmi160,const bmi160_t *bmi160, uint8_t *v_fifo_tag_intr2_u8)
+uint8_t bmi160_get_fifo_tag_intr2_enable(const bmi160_t *bmi160, uint8_t *v_fifo_tag_intr2_u8)
 {
     /* variable used for return the status of communication result*/
     uint8_t com_rslt = E_BMI160_COMM_RES;
@@ -4341,7 +4266,7 @@ uint8_t bmi160_get_fifo_tag_intr2_enable(bmi160,const bmi160_t *bmi160, uint8_t 
  *
  *
 */
-uint8_t bmi160_set_fifo_tag_intr2_enable(bmi160,const bmi160_t *bmi160, uint8_t v_fifo_tag_intr2_u8)
+uint8_t bmi160_set_fifo_tag_intr2_enable(const bmi160_t *bmi160, uint8_t v_fifo_tag_intr2_u8)
 {
     /* variable used for return the status of communication result*/
     uint8_t com_rslt = E_BMI160_COMM_RES;
@@ -4353,12 +4278,10 @@ uint8_t bmi160_set_fifo_tag_intr2_enable(bmi160,const bmi160_t *bmi160, uint8_t 
         if (v_fifo_tag_intr2_u8 <= BMI160_MAX_VALUE_FIFO_INTR) {
             /* write the fifo tag interrupt2*/
             com_rslt = bmi160_set_input_enable(bmi160,1,v_fifo_tag_intr2_u8);
-            com_rslt +=
-            bmi160_bus_read(bmi160,BMI160_USER_FIFO_TAG_INTR2_ENABLE__REG, &v_data_u8,BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt += bmi160_bus_read(bmi160,BMI160_USER_FIFO_TAG_INTR2_ENABLE__REG, &v_data_u8,BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 = BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_FIFO_TAG_INTR2_ENABLE, v_fifo_tag_intr2_u8);
-                com_rslt +=
-                bmi160_bus_write(bmi160, BMI160_USER_FIFO_TAG_INTR2_ENABLE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write(bmi160, BMI160_USER_FIFO_TAG_INTR2_ENABLE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
         } else {
         com_rslt = E_BMI160_OUT_OF_RANGE;
@@ -4382,7 +4305,7 @@ uint8_t bmi160_set_fifo_tag_intr2_enable(bmi160,const bmi160_t *bmi160, uint8_t 
  *
  *
 */
-uint8_t bmi160_get_fifo_tag_intr1_enable(bmi160,const bmi160_t *bmi160, uint8_t *v_fifo_tag_intr1_u8)
+uint8_t bmi160_get_fifo_tag_intr1_enable(const bmi160_t *bmi160, uint8_t *v_fifo_tag_intr1_u8)
 {
     /* variable used for return the status of communication result*/
     uint8_t com_rslt = E_BMI160_COMM_RES;
@@ -4425,12 +4348,10 @@ uint8_t bmi160_set_fifo_tag_intr1_enable(const bmi160_t *bmi160, uint8_t v_fifo_
         if (v_fifo_tag_intr1_u8 <= BMI160_MAX_VALUE_FIFO_INTR) {
             /* write the fifo tag interrupt*/
             com_rslt = bmi160_set_input_enable(bmi160,BMI160_INIT_VALUE,v_fifo_tag_intr1_u8);
-            com_rslt +=
-            bmi160_bus_read(bmi160,BMI160_USER_FIFO_TAG_INTR1_ENABLE__REG, &v_data_u8,BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt += bmi160_bus_read(bmi160,BMI160_USER_FIFO_TAG_INTR1_ENABLE__REG, &v_data_u8,BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 = BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_FIFO_TAG_INTR1_ENABLE, v_fifo_tag_intr1_u8);
-                com_rslt +=
-                bmi160_bus_write(bmi160, BMI160_USER_FIFO_TAG_INTR1_ENABLE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write(bmi160, BMI160_USER_FIFO_TAG_INTR1_ENABLE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
         } else {
         com_rslt = E_BMI160_OUT_OF_RANGE;
@@ -4499,8 +4420,7 @@ uint8_t bmi160_set_fifo_header_enable(const bmi160_t *bmi160, uint8_t v_fifo_hea
             com_rslt = bmi160_bus_read(bmi160,BMI160_USER_FIFO_HEADER_ENABLE__REG, &v_data_u8,BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 = BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_FIFO_HEADER_ENABLE, v_fifo_header_u8);
-                com_rslt +=
-                bmi160_bus_write(bmi160, BMI160_USER_FIFO_HEADER_ENABLE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write(bmi160, BMI160_USER_FIFO_HEADER_ENABLE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
         } else {
         com_rslt = E_BMI160_OUT_OF_RANGE;
@@ -4568,10 +4488,9 @@ uint8_t bmi160_set_fifo_mag_enable(const bmi160_t *bmi160, uint8_t v_fifo_mag_u8
                 /* write the fifo mag enable*/
                 com_rslt =     bmi160_bus_read(bmi160, BMI160_USER_FIFO_MAG_ENABLE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
                 if (com_rslt == SUCCESS_BMI160) {
-                    v_data_u8 =         BMI160_SET_BITSLICE(v_data_u8,     BMI160_USER_FIFO_MAG_ENABLE,     v_fifo_mag_u8);
-                    com_rslt +=
-                    bmi160_bus_write
-                    (bmi160,     BMI160_USER_FIFO_MAG_ENABLE__REG,     &v_data_u8,     BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                    v_data_u8 =         BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_FIFO_MAG_ENABLE, v_fifo_mag_u8);
+                    com_rslt +=     bmi160_bus_write
+                    (bmi160, BMI160_USER_FIFO_MAG_ENABLE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
                 }
             } else {
             com_rslt = E_BMI160_OUT_OF_RANGE;
@@ -4644,8 +4563,7 @@ uint8_t bmi160_set_fifo_accel_enable(const bmi160_t *bmi160, uint8_t v_fifo_acce
             com_rslt = bmi160_bus_read(bmi160,BMI160_USER_FIFO_ACCEL_ENABLE__REG, &v_data_u8,BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 = BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_FIFO_ACCEL_ENABLE, v_fifo_accel_u8);
-                com_rslt +=
-                bmi160_bus_write(bmi160, BMI160_USER_FIFO_ACCEL_ENABLE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write(bmi160, BMI160_USER_FIFO_ACCEL_ENABLE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
         } else {
         com_rslt = E_BMI160_OUT_OF_RANGE;
@@ -4718,8 +4636,7 @@ uint8_t bmi160_set_fifo_gyro_enable(const bmi160_t *bmi160, uint8_t v_fifo_gyro_
             com_rslt = bmi160_bus_read(bmi160,BMI160_USER_FIFO_GYRO_ENABLE__REG, &v_data_u8,BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 = BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_FIFO_GYRO_ENABLE, v_fifo_gyro_u8);
-                com_rslt +=
-                bmi160_bus_write(bmi160, BMI160_USER_FIFO_GYRO_ENABLE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write(bmi160, BMI160_USER_FIFO_GYRO_ENABLE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
         } else {
         com_rslt = E_BMI160_OUT_OF_RANGE;
@@ -4857,16 +4774,14 @@ uint8_t bmi160_set_mag_burst(const bmi160_t *bmi160, uint8_t v_mag_burst_u8)
             com_rslt = bmi160_bus_read(bmi160,BMI160_USER_MAG_BURST__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 =     BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_MAG_BURST, v_mag_burst_u8);
-                com_rslt +=
-                bmi160_bus_write(bmi160, BMI160_USER_MAG_BURST__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write(bmi160, BMI160_USER_MAG_BURST__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
         }
     return com_rslt;
 }
 /*!
  *    @brief This API is used to read
- *    trigger-readout offset in units of 2.5 ms. If set to zero,
- *    the offset is maximum, i.e. after readout a trigger
+ *    trigger-readout offset in units of 2.5 ms. If set to zero, *    the offset is maximum, i.e. after readout a trigger
  *    is issued immediately. from the register 0x4C bit 2 to 5
  *
  *
@@ -4898,8 +4813,7 @@ uint8_t bmi160_get_mag_offset(const bmi160_t *bmi160, uint8_t *v_mag_offset_u8)
 }
 /*!
  *    @brief This API is used to set
- *    trigger-readout offset in units of 2.5 ms. If set to zero,
- *    the offset is maximum, i.e. after readout a trigger
+ *    trigger-readout offset in units of 2.5 ms. If set to zero, *    the offset is maximum, i.e. after readout a trigger
  *    is issued immediately. from the register 0x4C bit 2 to 5
  *
  *
@@ -4927,8 +4841,7 @@ if (bmi160 == BMI160_NULL) {
         com_rslt = bmi160_bus_read(bmi160, BMI160_USER_MAG_OFFSET__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         if (com_rslt == SUCCESS_BMI160) {
             v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,BMI160_USER_MAG_OFFSET, v_mag_offset_u8);
-            com_rslt +=
-            bmi160_bus_write(bmi160,BMI160_USER_MAG_OFFSET__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt += bmi160_bus_write(bmi160,BMI160_USER_MAG_OFFSET__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         }
     }
 return com_rslt;
@@ -4998,7 +4911,7 @@ uint8_t bmi160_get_mag_manual_enable(const bmi160_t *bmi160, uint8_t *v_mag_manu
  *
  *
 */
-uint8_t bmi160_set_mag_manual_enable(const bmi160_t *bmi160, uint8_t v_mag_manual_u8)
+uint8_t bmi160_set_mag_manual_enable(bmi160_t *bmi160, uint8_t v_mag_manual_u8)
 {
     /* variable used for return the status of communication result*/
     uint8_t com_rslt = BMI160_INIT_VALUE;
@@ -5354,8 +5267,7 @@ if (bmi160 == BMI160_NULL) {
         com_rslt = bmi160_bus_read (bmi160, BMI160_USER_INTR_ENABLE_0_ANY_MOTION_X_ENABLE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         if (com_rslt == SUCCESS_BMI160) {
             v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,BMI160_USER_INTR_ENABLE_0_ANY_MOTION_X_ENABLE,v_intr_enable_zero_u8);
-            com_rslt +=
-            bmi160_bus_write (bmi160,BMI160_USER_INTR_ENABLE_0_ANY_MOTION_X_ENABLE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt += bmi160_bus_write (bmi160,BMI160_USER_INTR_ENABLE_0_ANY_MOTION_X_ENABLE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         }
         break;
     case BMI160_ANY_MOTION_Y_ENABLE:
@@ -5363,8 +5275,7 @@ if (bmi160 == BMI160_NULL) {
         com_rslt = bmi160_bus_read (bmi160, BMI160_USER_INTR_ENABLE_0_ANY_MOTION_Y_ENABLE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         if (com_rslt == SUCCESS_BMI160) {
             v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,BMI160_USER_INTR_ENABLE_0_ANY_MOTION_Y_ENABLE,v_intr_enable_zero_u8);
-            com_rslt +=
-            bmi160_bus_write (bmi160,BMI160_USER_INTR_ENABLE_0_ANY_MOTION_Y_ENABLE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt += bmi160_bus_write (bmi160,BMI160_USER_INTR_ENABLE_0_ANY_MOTION_Y_ENABLE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         }
         break;
     case BMI160_ANY_MOTION_Z_ENABLE:
@@ -5372,8 +5283,7 @@ if (bmi160 == BMI160_NULL) {
         com_rslt = bmi160_bus_read (bmi160, BMI160_USER_INTR_ENABLE_0_ANY_MOTION_Z_ENABLE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         if (com_rslt == SUCCESS_BMI160) {
             v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,BMI160_USER_INTR_ENABLE_0_ANY_MOTION_Z_ENABLE,v_intr_enable_zero_u8);
-            com_rslt +=
-            bmi160_bus_write (bmi160,BMI160_USER_INTR_ENABLE_0_ANY_MOTION_Z_ENABLE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt += bmi160_bus_write (bmi160,BMI160_USER_INTR_ENABLE_0_ANY_MOTION_Z_ENABLE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         }
         break;
     case BMI160_DOUBLE_TAP_ENABLE:
@@ -5381,8 +5291,7 @@ if (bmi160 == BMI160_NULL) {
         com_rslt = bmi160_bus_read (bmi160, BMI160_USER_INTR_ENABLE_0_DOUBLE_TAP_ENABLE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         if (com_rslt == SUCCESS_BMI160) {
             v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,BMI160_USER_INTR_ENABLE_0_DOUBLE_TAP_ENABLE,v_intr_enable_zero_u8);
-            com_rslt +=
-            bmi160_bus_write (bmi160,BMI160_USER_INTR_ENABLE_0_DOUBLE_TAP_ENABLE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt += bmi160_bus_write (bmi160,BMI160_USER_INTR_ENABLE_0_DOUBLE_TAP_ENABLE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         }
         break;
     case BMI160_SINGLE_TAP_ENABLE:
@@ -5390,8 +5299,7 @@ if (bmi160 == BMI160_NULL) {
         com_rslt = bmi160_bus_read (bmi160, BMI160_USER_INTR_ENABLE_0_SINGLE_TAP_ENABLE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         if (com_rslt == SUCCESS_BMI160) {
             v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,BMI160_USER_INTR_ENABLE_0_SINGLE_TAP_ENABLE,v_intr_enable_zero_u8);
-            com_rslt +=
-            bmi160_bus_write (bmi160,BMI160_USER_INTR_ENABLE_0_SINGLE_TAP_ENABLE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt += bmi160_bus_write (bmi160,BMI160_USER_INTR_ENABLE_0_SINGLE_TAP_ENABLE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         }
         break;
     case BMI160_ORIENT_ENABLE:
@@ -5399,8 +5307,7 @@ if (bmi160 == BMI160_NULL) {
         com_rslt = bmi160_bus_read (bmi160, BMI160_USER_INTR_ENABLE_0_ORIENT_ENABLE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         if (com_rslt == SUCCESS_BMI160) {
             v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,BMI160_USER_INTR_ENABLE_0_ORIENT_ENABLE,v_intr_enable_zero_u8);
-            com_rslt +=
-            bmi160_bus_write (bmi160,BMI160_USER_INTR_ENABLE_0_ORIENT_ENABLE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt += bmi160_bus_write (bmi160,BMI160_USER_INTR_ENABLE_0_ORIENT_ENABLE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         }
         break;
     case BMI160_FLAT_ENABLE:
@@ -5408,8 +5315,7 @@ if (bmi160 == BMI160_NULL) {
         com_rslt = bmi160_bus_read (bmi160, BMI160_USER_INTR_ENABLE_0_FLAT_ENABLE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         if (com_rslt == SUCCESS_BMI160) {
             v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,BMI160_USER_INTR_ENABLE_0_FLAT_ENABLE,v_intr_enable_zero_u8);
-            com_rslt +=
-            bmi160_bus_write (bmi160,BMI160_USER_INTR_ENABLE_0_FLAT_ENABLE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt += bmi160_bus_write (bmi160,BMI160_USER_INTR_ENABLE_0_FLAT_ENABLE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         }
         break;
     default:
@@ -5554,8 +5460,7 @@ uint8_t bmi160_set_intr_enable_1(const bmi160_t *bmi160, uint8_t v_enable_u8, ui
             com_rslt = bmi160_bus_read (bmi160,BMI160_USER_INTR_ENABLE_1_HIGH_G_X_ENABLE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 = BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_INTR_ENABLE_1_HIGH_G_X_ENABLE, v_intr_enable_1_u8);
-                com_rslt +=
-                bmi160_bus_write (bmi160, BMI160_USER_INTR_ENABLE_1_HIGH_G_X_ENABLE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write (bmi160, BMI160_USER_INTR_ENABLE_1_HIGH_G_X_ENABLE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
         break;
         case BMI160_HIGH_G_Y_ENABLE:
@@ -5563,8 +5468,7 @@ uint8_t bmi160_set_intr_enable_1(const bmi160_t *bmi160, uint8_t v_enable_u8, ui
             com_rslt = bmi160_bus_read (bmi160,BMI160_USER_INTR_ENABLE_1_HIGH_G_Y_ENABLE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 = BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_INTR_ENABLE_1_HIGH_G_Y_ENABLE, v_intr_enable_1_u8);
-                com_rslt +=
-                bmi160_bus_write (bmi160, BMI160_USER_INTR_ENABLE_1_HIGH_G_Y_ENABLE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write (bmi160, BMI160_USER_INTR_ENABLE_1_HIGH_G_Y_ENABLE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
         break;
         case BMI160_HIGH_G_Z_ENABLE:
@@ -5572,8 +5476,7 @@ uint8_t bmi160_set_intr_enable_1(const bmi160_t *bmi160, uint8_t v_enable_u8, ui
             com_rslt = bmi160_bus_read (bmi160,BMI160_USER_INTR_ENABLE_1_HIGH_G_Z_ENABLE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 = BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_INTR_ENABLE_1_HIGH_G_Z_ENABLE, v_intr_enable_1_u8);
-                com_rslt +=
-                bmi160_bus_write (bmi160, BMI160_USER_INTR_ENABLE_1_HIGH_G_Z_ENABLE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write (bmi160, BMI160_USER_INTR_ENABLE_1_HIGH_G_Z_ENABLE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
         break;
         case BMI160_LOW_G_ENABLE:
@@ -5581,8 +5484,7 @@ uint8_t bmi160_set_intr_enable_1(const bmi160_t *bmi160, uint8_t v_enable_u8, ui
             com_rslt = bmi160_bus_read (bmi160,BMI160_USER_INTR_ENABLE_1_LOW_G_ENABLE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 = BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_INTR_ENABLE_1_LOW_G_ENABLE, v_intr_enable_1_u8);
-                com_rslt +=
-                bmi160_bus_write (bmi160, BMI160_USER_INTR_ENABLE_1_LOW_G_ENABLE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write (bmi160, BMI160_USER_INTR_ENABLE_1_LOW_G_ENABLE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
         break;
         case BMI160_DATA_RDY_ENABLE:
@@ -5590,8 +5492,7 @@ uint8_t bmi160_set_intr_enable_1(const bmi160_t *bmi160, uint8_t v_enable_u8, ui
             com_rslt = bmi160_bus_read (bmi160,BMI160_USER_INTR_ENABLE_1_DATA_RDY_ENABLE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 = BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_INTR_ENABLE_1_DATA_RDY_ENABLE, v_intr_enable_1_u8);
-                com_rslt +=
-                bmi160_bus_write (bmi160, BMI160_USER_INTR_ENABLE_1_DATA_RDY_ENABLE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write (bmi160, BMI160_USER_INTR_ENABLE_1_DATA_RDY_ENABLE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
         break;
         case BMI160_FIFO_FULL_ENABLE:
@@ -5599,8 +5500,7 @@ uint8_t bmi160_set_intr_enable_1(const bmi160_t *bmi160, uint8_t v_enable_u8, ui
             com_rslt = bmi160_bus_read (bmi160,BMI160_USER_INTR_ENABLE_1_FIFO_FULL_ENABLE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 = BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_INTR_ENABLE_1_FIFO_FULL_ENABLE, v_intr_enable_1_u8);
-                com_rslt +=
-                bmi160_bus_write (bmi160, BMI160_USER_INTR_ENABLE_1_FIFO_FULL_ENABLE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write (bmi160, BMI160_USER_INTR_ENABLE_1_FIFO_FULL_ENABLE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
         break;
         case BMI160_FIFO_WM_ENABLE:
@@ -5608,8 +5508,7 @@ uint8_t bmi160_set_intr_enable_1(const bmi160_t *bmi160, uint8_t v_enable_u8, ui
             com_rslt = bmi160_bus_read (bmi160, BMI160_USER_INTR_ENABLE_1_FIFO_WM_ENABLE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 = BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_INTR_ENABLE_1_FIFO_WM_ENABLE, v_intr_enable_1_u8);
-                com_rslt +=
-                bmi160_bus_write (bmi160, BMI160_USER_INTR_ENABLE_1_FIFO_WM_ENABLE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write (bmi160, BMI160_USER_INTR_ENABLE_1_FIFO_WM_ENABLE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
         break;
         default:
@@ -5722,8 +5621,7 @@ if (bmi160 == BMI160_NULL) {
         com_rslt = bmi160_bus_read (bmi160, BMI160_USER_INTR_ENABLE_2_NOMOTION_X_ENABLE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         if (com_rslt == SUCCESS_BMI160) {
             v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,BMI160_USER_INTR_ENABLE_2_NOMOTION_X_ENABLE,v_intr_enable_2_u8);
-            com_rslt +=
-            bmi160_bus_write (bmi160,BMI160_USER_INTR_ENABLE_2_NOMOTION_X_ENABLE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt += bmi160_bus_write (bmi160,BMI160_USER_INTR_ENABLE_2_NOMOTION_X_ENABLE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         }
         break;
     case BMI160_NOMOTION_Y_ENABLE:
@@ -5731,8 +5629,7 @@ if (bmi160 == BMI160_NULL) {
         com_rslt = bmi160_bus_read (bmi160, BMI160_USER_INTR_ENABLE_2_NOMOTION_Y_ENABLE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         if (com_rslt == SUCCESS_BMI160) {
             v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,BMI160_USER_INTR_ENABLE_2_NOMOTION_Y_ENABLE,v_intr_enable_2_u8);
-            com_rslt +=
-            bmi160_bus_write (bmi160,BMI160_USER_INTR_ENABLE_2_NOMOTION_Y_ENABLE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt += bmi160_bus_write (bmi160,BMI160_USER_INTR_ENABLE_2_NOMOTION_Y_ENABLE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         }
         break;
     case BMI160_NOMOTION_Z_ENABLE:
@@ -5740,8 +5637,7 @@ if (bmi160 == BMI160_NULL) {
         com_rslt = bmi160_bus_read (bmi160, BMI160_USER_INTR_ENABLE_2_NOMOTION_Z_ENABLE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         if (com_rslt == SUCCESS_BMI160) {
             v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,BMI160_USER_INTR_ENABLE_2_NOMOTION_Z_ENABLE,v_intr_enable_2_u8);
-            com_rslt +=
-            bmi160_bus_write (bmi160,BMI160_USER_INTR_ENABLE_2_NOMOTION_Z_ENABLE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt += bmi160_bus_write (bmi160,BMI160_USER_INTR_ENABLE_2_NOMOTION_Z_ENABLE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         }
         break;
     default:
@@ -5814,8 +5710,7 @@ uint8_t bmi160_set_step_detector_enable(const bmi160_t *bmi160, uint8_t v_step_i
         com_rslt = bmi160_bus_read (bmi160, BMI160_USER_INTR_ENABLE_2_STEP_DETECTOR_ENABLE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         if (com_rslt == SUCCESS_BMI160) {
             v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,BMI160_USER_INTR_ENABLE_2_STEP_DETECTOR_ENABLE,v_step_intr_u8);
-            com_rslt +=
-            bmi160_bus_write (bmi160,BMI160_USER_INTR_ENABLE_2_STEP_DETECTOR_ENABLE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt += bmi160_bus_write (bmi160,BMI160_USER_INTR_ENABLE_2_STEP_DETECTOR_ENABLE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         }
     }
     return com_rslt;
@@ -5910,8 +5805,7 @@ uint8_t bmi160_set_intr_edge_ctrl(const bmi160_t *bmi160, uint8_t v_channel_u8, 
             com_rslt = bmi160_bus_read (bmi160, BMI160_USER_INTR1_EDGE_CTRL__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 = BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_INTR1_EDGE_CTRL, v_intr_edge_ctrl_u8);
-                com_rslt +=
-                bmi160_bus_write (bmi160, BMI160_USER_INTR1_EDGE_CTRL__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write (bmi160, BMI160_USER_INTR1_EDGE_CTRL__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
             break;
         case BMI160_INTR2_EDGE_CTRL:
@@ -5919,8 +5813,7 @@ uint8_t bmi160_set_intr_edge_ctrl(const bmi160_t *bmi160, uint8_t v_channel_u8, 
             com_rslt = bmi160_bus_read (bmi160, BMI160_USER_INTR2_EDGE_CTRL__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 = BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_INTR2_EDGE_CTRL, v_intr_edge_ctrl_u8);
-                com_rslt +=
-                bmi160_bus_write (bmi160, BMI160_USER_INTR2_EDGE_CTRL__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write (bmi160, BMI160_USER_INTR2_EDGE_CTRL__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
             break;
         default:
@@ -6020,8 +5913,7 @@ uint8_t bmi160_set_intr_level(const bmi160_t *bmi160, uint8_t v_channel_u8, uint
             com_rslt = bmi160_bus_read (bmi160, BMI160_USER_INTR1_LEVEL__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 = BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_INTR1_LEVEL, v_intr_level_u8);
-                com_rslt +=
-                bmi160_bus_write (bmi160, BMI160_USER_INTR1_LEVEL__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write (bmi160, BMI160_USER_INTR1_LEVEL__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
             break;
         case BMI160_INTR2_LEVEL:
@@ -6029,8 +5921,7 @@ uint8_t bmi160_set_intr_level(const bmi160_t *bmi160, uint8_t v_channel_u8, uint
             com_rslt = bmi160_bus_read (bmi160, BMI160_USER_INTR2_LEVEL__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 = BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_INTR2_LEVEL, v_intr_level_u8);
-                com_rslt +=
-                bmi160_bus_write (bmi160, BMI160_USER_INTR2_LEVEL__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write (bmi160, BMI160_USER_INTR2_LEVEL__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
             break;
         default:
@@ -6136,8 +6027,7 @@ uint8_t bmi160_set_intr_output_type(const bmi160_t *bmi160, uint8_t v_channel_u8
             com_rslt = bmi160_bus_read (bmi160, BMI160_USER_INTR1_OUTPUT_TYPE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 = BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_INTR1_OUTPUT_TYPE, v_intr_output_type_u8);
-                com_rslt +=
-                bmi160_bus_write (bmi160, BMI160_USER_INTR1_OUTPUT_TYPE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write (bmi160, BMI160_USER_INTR1_OUTPUT_TYPE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
             break;
         case BMI160_INTR2_OUTPUT_TYPE:
@@ -6145,8 +6035,7 @@ uint8_t bmi160_set_intr_output_type(const bmi160_t *bmi160, uint8_t v_channel_u8
             com_rslt = bmi160_bus_read (bmi160, BMI160_USER_INTR2_OUTPUT_TYPE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 = BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_INTR2_OUTPUT_TYPE, v_intr_output_type_u8);
-                com_rslt +=
-                bmi160_bus_write (bmi160, BMI160_USER_INTR2_OUTPUT_TYPE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write (bmi160, BMI160_USER_INTR2_OUTPUT_TYPE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
             break;
         default:
@@ -6252,8 +6141,7 @@ uint8_t bmi160_set_output_enable(const bmi160_t *bmi160, uint8_t v_channel_u8, u
             com_rslt = bmi160_bus_read (bmi160, BMI160_USER_INTR1_OUTPUT_ENABLE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 = BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_INTR1_OUTPUT_ENABLE, v_output_enable_u8);
-                com_rslt +=
-                bmi160_bus_write (bmi160, BMI160_USER_INTR1_OUTPUT_ENABLE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write (bmi160, BMI160_USER_INTR1_OUTPUT_ENABLE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
         break;
         case BMI160_INTR2_OUTPUT_ENABLE:
@@ -6261,8 +6149,7 @@ uint8_t bmi160_set_output_enable(const bmi160_t *bmi160, uint8_t v_channel_u8, u
             com_rslt = bmi160_bus_read (bmi160, BMI160_USER_INTR2_OUTPUT_EN__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 = BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_INTR2_OUTPUT_EN, v_output_enable_u8);
-                com_rslt +=
-                bmi160_bus_write (bmi160, BMI160_USER_INTR2_OUTPUT_EN__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write (bmi160, BMI160_USER_INTR2_OUTPUT_EN__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
         break;
         default:
@@ -6275,8 +6162,7 @@ uint8_t bmi160_set_output_enable(const bmi160_t *bmi160, uint8_t v_channel_u8, u
 /*!
 *    @brief This API is used to get the latch duration
 *    from the register 0x54 bit 0 to 3
-*    @brief This latch selection is not applicable for data ready,
-*    orientation and flat interrupts.
+*    @brief This latch selection is not applicable for data ready, *    orientation and flat interrupts.
 *
 *
 *
@@ -6326,8 +6212,7 @@ uint8_t bmi160_get_latch_intr(const bmi160_t *bmi160, uint8_t *v_latch_intr_u8)
 /*!
 *    @brief This API is used to set the latch duration
 *    from the register 0x54 bit 0 to 3
-*    @brief This latch selection is not applicable for data ready,
-*    orientation and flat interrupts.
+*    @brief This latch selection is not applicable for data ready, *    orientation and flat interrupts.
 *
 *
 *
@@ -6373,8 +6258,7 @@ uint8_t bmi160_set_latch_intr(const bmi160_t *bmi160, uint8_t v_latch_intr_u8)
             com_rslt = bmi160_bus_read (bmi160, BMI160_USER_INTR_LATCH__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 = BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_INTR_LATCH, v_latch_intr_u8);
-                com_rslt +=
-                bmi160_bus_write (bmi160, BMI160_USER_INTR_LATCH__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write (bmi160, BMI160_USER_INTR_LATCH__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
         } else {
         com_rslt = E_BMI160_OUT_OF_RANGE;
@@ -7283,16 +7167,14 @@ if (bmi160 == BMI160_NULL) {
         com_rslt = bmi160_bus_read (bmi160, BMI160_USER_INTR_MAP_0_INTR1_ORIENT__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         if (com_rslt == SUCCESS_BMI160) {
             v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,BMI160_USER_INTR_MAP_0_INTR1_ORIENT, v_intr_orient_u8);
-            com_rslt +=
-            bmi160_bus_write (bmi160, BMI160_USER_INTR_MAP_0_INTR1_ORIENT__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt += bmi160_bus_write (bmi160, BMI160_USER_INTR_MAP_0_INTR1_ORIENT__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         }
         break;
     case BMI160_INTR2_MAP_ORIENT:
         com_rslt = bmi160_bus_read (bmi160, BMI160_USER_INTR_MAP_2_INTR2_ORIENT__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         if (com_rslt == SUCCESS_BMI160) {
             v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,BMI160_USER_INTR_MAP_2_INTR2_ORIENT, v_intr_orient_u8);
-            com_rslt +=
-            bmi160_bus_write (bmi160, BMI160_USER_INTR_MAP_2_INTR2_ORIENT__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt += bmi160_bus_write (bmi160, BMI160_USER_INTR_MAP_2_INTR2_ORIENT__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         }
         break;
     default:
@@ -7397,16 +7279,14 @@ uint8_t bmi160_set_intr_flat(const bmi160_t *bmi160, uint8_t v_channel_u8, uint8
             com_rslt = bmi160_bus_read (bmi160, BMI160_USER_INTR_MAP_0_INTR1_FLAT__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 =     BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_INTR_MAP_0_INTR1_FLAT, v_intr_flat_u8);
-                com_rslt +=
-                bmi160_bus_write (bmi160, BMI160_USER_INTR_MAP_0_INTR1_FLAT__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write (bmi160, BMI160_USER_INTR_MAP_0_INTR1_FLAT__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
             break;
         case BMI160_INTR2_MAP_FLAT:
             com_rslt = bmi160_bus_read (bmi160, BMI160_USER_INTR_MAP_2_INTR2_FLAT__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 = BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_INTR_MAP_2_INTR2_FLAT, v_intr_flat_u8);
-                com_rslt +=
-                bmi160_bus_write (bmi160, BMI160_USER_INTR_MAP_2_INTR2_FLAT__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write (bmi160, BMI160_USER_INTR_MAP_2_INTR2_FLAT__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
             break;
         default:
@@ -7509,16 +7389,14 @@ if (bmi160 == BMI160_NULL) {
         com_rslt = bmi160_bus_read (bmi160, BMI160_USER_INTR_MAP_1_INTR1_PMU_TRIG__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         if (com_rslt == SUCCESS_BMI160) {
             v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,BMI160_USER_INTR_MAP_1_INTR1_PMU_TRIG,v_intr_pmu_trig_u8);
-            com_rslt +=
-            bmi160_bus_write (bmi160, BMI160_USER_INTR_MAP_1_INTR1_PMU_TRIG__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt += bmi160_bus_write (bmi160, BMI160_USER_INTR_MAP_1_INTR1_PMU_TRIG__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         }
     break;
     case BMI160_INTR2_MAP_PMUTRIG:
         com_rslt = bmi160_bus_read (bmi160, BMI160_USER_INTR_MAP_1_INTR2_PMU_TRIG__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         if (com_rslt == SUCCESS_BMI160) {
             v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,BMI160_USER_INTR_MAP_1_INTR2_PMU_TRIG,v_intr_pmu_trig_u8);
-            com_rslt +=
-            bmi160_bus_write (bmi160, BMI160_USER_INTR_MAP_1_INTR2_PMU_TRIG__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt += bmi160_bus_write (bmi160, BMI160_USER_INTR_MAP_1_INTR2_PMU_TRIG__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         }
     break;
     default:
@@ -7623,16 +7501,14 @@ uint8_t bmi160_set_intr_fifo_full(const bmi160_t *bmi160, uint8_t v_channel_u8, 
             com_rslt = bmi160_bus_read (bmi160, BMI160_USER_INTR_MAP_1_INTR1_FIFO_FULL__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 =     BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_INTR_MAP_1_INTR1_FIFO_FULL, v_intr_fifo_full_u8);
-                com_rslt +=
-                bmi160_bus_write (bmi160, BMI160_USER_INTR_MAP_1_INTR1_FIFO_FULL__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write (bmi160, BMI160_USER_INTR_MAP_1_INTR1_FIFO_FULL__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
         break;
         case BMI160_INTR2_MAP_FIFO_FULL:
             com_rslt = bmi160_bus_read (bmi160, BMI160_USER_INTR_MAP_1_INTR2_FIFO_FULL__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 =     BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_INTR_MAP_1_INTR2_FIFO_FULL, v_intr_fifo_full_u8);
-                com_rslt +=
-                bmi160_bus_write (bmi160, BMI160_USER_INTR_MAP_1_INTR2_FIFO_FULL__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write (bmi160, BMI160_USER_INTR_MAP_1_INTR2_FIFO_FULL__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
         break;
         default:
@@ -7739,16 +7615,14 @@ uint8_t v_data_u8 = BMI160_INIT_VALUE;
             com_rslt = bmi160_bus_read (bmi160, BMI160_USER_INTR_MAP_1_INTR1_FIFO_WM__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 = BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_INTR_MAP_1_INTR1_FIFO_WM, v_intr_fifo_wm_u8);
-                com_rslt +=
-                bmi160_bus_write (bmi160, BMI160_USER_INTR_MAP_1_INTR1_FIFO_WM__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write (bmi160, BMI160_USER_INTR_MAP_1_INTR1_FIFO_WM__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
             break;
         case BMI160_INTR2_MAP_FIFO_WM:
             com_rslt = bmi160_bus_read (bmi160, BMI160_USER_INTR_MAP_1_INTR2_FIFO_WM__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 = BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_INTR_MAP_1_INTR2_FIFO_WM, v_intr_fifo_wm_u8);
-                com_rslt +=
-                bmi160_bus_write (bmi160, BMI160_USER_INTR_MAP_1_INTR2_FIFO_WM__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write (bmi160, BMI160_USER_INTR_MAP_1_INTR2_FIFO_WM__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
             break;
         default:
@@ -7853,16 +7727,14 @@ if (bmi160 == BMI160_NULL) {
         com_rslt = bmi160_bus_read (bmi160, BMI160_USER_INTR_MAP_1_INTR1_DATA_RDY__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         if (com_rslt == SUCCESS_BMI160) {
             v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,BMI160_USER_INTR_MAP_1_INTR1_DATA_RDY,v_intr_data_rdy_u8);
-            com_rslt +=
-            bmi160_bus_write (bmi160, BMI160_USER_INTR_MAP_1_INTR1_DATA_RDY__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt += bmi160_bus_write (bmi160, BMI160_USER_INTR_MAP_1_INTR1_DATA_RDY__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         }
     break;
     case BMI160_INTR2_MAP_DATA_RDY:
         com_rslt = bmi160_bus_read (bmi160, BMI160_USER_INTR_MAP_1_INTR2_DATA_RDY__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         if (com_rslt == SUCCESS_BMI160) {
             v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,BMI160_USER_INTR_MAP_1_INTR2_DATA_RDY,v_intr_data_rdy_u8);
-            com_rslt +=
-            bmi160_bus_write (bmi160, BMI160_USER_INTR_MAP_1_INTR2_DATA_RDY__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt += bmi160_bus_write (bmi160, BMI160_USER_INTR_MAP_1_INTR2_DATA_RDY__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         }
     break;
     default:
@@ -7936,8 +7808,7 @@ uint8_t bmi160_set_intr_tap_source(const bmi160_t *bmi160, uint8_t v_tap_source_
         } else {
         if (v_tap_source_u8 <= BMI160_MAX_VALUE_SOURCE_INTR) {
             /* write the tap source interrupt */
-            com_rslt = bmi160_bus_read
-            (bmi160,BMI160_USER_INTR_DATA_0_INTR_TAP_SOURCE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt = bmi160_bus_read(bmi160,BMI160_USER_INTR_DATA_0_INTR_TAP_SOURCE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 = BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_INTR_DATA_0_INTR_TAP_SOURCE, v_tap_source_u8);
                 com_rslt += bmi160_bus_write(bmi160, BMI160_USER_INTR_DATA_0_INTR_TAP_SOURCE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -8013,8 +7884,7 @@ if (bmi160 == BMI160_NULL) {
         com_rslt = bmi160_bus_read (bmi160, BMI160_USER_INTR_DATA_0_INTR_LOW_HIGH_SOURCE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         if (com_rslt == SUCCESS_BMI160) {
             v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,BMI160_USER_INTR_DATA_0_INTR_LOW_HIGH_SOURCE,v_low_high_source_u8);
-            com_rslt += bmi160_bus_write
-            (bmi160,BMI160_USER_INTR_DATA_0_INTR_LOW_HIGH_SOURCE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt += bmi160_bus_write(bmi160,BMI160_USER_INTR_DATA_0_INTR_LOW_HIGH_SOURCE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         }
     } else {
     com_rslt = E_BMI160_OUT_OF_RANGE;
@@ -8288,8 +8158,7 @@ uint8_t bmi160_set_intr_low_g_hyst(const bmi160_t *bmi160, uint8_t v_low_hyst_u8
         return E_BMI160_NULL_PTR;
         } else {
             /* write low_g hysteresis*/
-            com_rslt = bmi160_bus_read
-            (bmi160,BMI160_USER_INTR_LOWHIGH_2_INTR_LOW_G_HYST__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt = bmi160_bus_read(bmi160,BMI160_USER_INTR_LOWHIGH_2_INTR_LOW_G_HYST__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 = BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_INTR_LOWHIGH_2_INTR_LOW_G_HYST, v_low_hyst_u8);
                 com_rslt += bmi160_bus_write(bmi160, BMI160_USER_INTR_LOWHIGH_2_INTR_LOW_G_HYST__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -8399,8 +8268,7 @@ uint8_t bmi160_get_intr_high_g_hyst(const bmi160_t *bmi160, uint8_t *v_high_g_hy
         return E_BMI160_NULL_PTR;
         } else {
             /* read high_g hysteresis*/
-            com_rslt = bmi160_bus_read
-            (bmi160,BMI160_USER_INTR_LOWHIGH_2_INTR_HIGH_G_HYST__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt = bmi160_bus_read(bmi160,BMI160_USER_INTR_LOWHIGH_2_INTR_HIGH_G_HYST__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             *v_high_g_hyst_u8 = BMI160_GET_BITSLICE(v_data_u8,BMI160_USER_INTR_LOWHIGH_2_INTR_HIGH_G_HYST);
         }
     return com_rslt;
@@ -8504,8 +8372,7 @@ uint8_t bmi160_set_intr_high_g_durn(const bmi160_t *bmi160, uint8_t v_high_g_dur
         return E_BMI160_NULL_PTR;
         } else {
             /* write high_g duration*/
-            com_rslt = bmi160_bus_write
-            (bmi160,BMI160_USER_INTR_LOWHIGH_3_INTR_HIGH_G_DURN__REG,&v_high_g_durn_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt = bmi160_bus_write(bmi160,BMI160_USER_INTR_LOWHIGH_3_INTR_HIGH_G_DURN__REG,&v_high_g_durn_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         }
     return com_rslt;
 }
@@ -8653,8 +8520,7 @@ uint8_t bmi160_set_intr_any_motion_durn(const bmi160_t *bmi160, uint8_t v_any_mo
         com_rslt = bmi160_bus_read (bmi160, BMI160_USER_INTR_MOTION_0_INTR_ANY_MOTION_DURN__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         if (com_rslt == SUCCESS_BMI160) {
             v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,BMI160_USER_INTR_MOTION_0_INTR_ANY_MOTION_DURN,v_any_motion_durn_u8);
-            com_rslt += bmi160_bus_write
-            (bmi160,BMI160_USER_INTR_MOTION_0_INTR_ANY_MOTION_DURN__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt += bmi160_bus_write(bmi160,BMI160_USER_INTR_MOTION_0_INTR_ANY_MOTION_DURN__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         }
     }
     return com_rslt;
@@ -8726,10 +8592,7 @@ if (bmi160 == BMI160_NULL) {
     return E_BMI160_NULL_PTR;
     } else {
     /* write slow no motion duration*/
-    com_rslt = bmi160_bus_read
-    (bmi160,
-    BMI160_USER_INTR_MOTION_0_INTR_SLOW_NO_MOTION_DURN__REG,
-    &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+    com_rslt = bmi160_bus_read(bmi160, BMI160_USER_INTR_MOTION_0_INTR_SLOW_NO_MOTION_DURN__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
     if (com_rslt == SUCCESS_BMI160) {
         v_data_u8 = BMI160_SET_BITSLICE (v_data_u8, BMI160_USER_INTR_MOTION_0_INTR_SLOW_NO_MOTION_DURN, v_slow_no_motion_u8);
         com_rslt += bmi160_bus_write (bmi160, BMI160_USER_INTR_MOTION_0_INTR_SLOW_NO_MOTION_DURN__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -8778,8 +8641,7 @@ uint8_t bmi160_get_intr_any_motion_thres(const bmi160_t *bmi160, uint8_t *v_any_
         return E_BMI160_NULL_PTR;
         } else {
             /* read any motion threshold*/
-            com_rslt = bmi160_bus_read
-            (bmi160,BMI160_USER_INTR_MOTION_1_INTR_ANY_MOTION_THRES__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt = bmi160_bus_read(bmi160,BMI160_USER_INTR_MOTION_1_INTR_ANY_MOTION_THRES__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             *v_any_motion_thres_u8 = BMI160_GET_BITSLICE(v_data_u8,BMI160_USER_INTR_MOTION_1_INTR_ANY_MOTION_THRES);
         }
     return com_rslt;
@@ -8985,10 +8847,7 @@ if (bmi160 == BMI160_NULL) {
 } else {
 if (v_intr_slow_no_motion_select_u8 <= BMI160_MAX_VALUE_NO_MOTION) {
     /* write slow no motion select*/
-    com_rslt = bmi160_bus_read
-    (bmi160,
-    BMI160_USER_INTR_MOTION_3_INTR_SLOW_NO_MOTION_SELECT__REG,
-    &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+    com_rslt = bmi160_bus_read(bmi160, BMI160_USER_INTR_MOTION_3_INTR_SLOW_NO_MOTION_SELECT__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
     if (com_rslt == SUCCESS_BMI160) {
         v_data_u8 = BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_INTR_MOTION_3_INTR_SLOW_NO_MOTION_SELECT, v_intr_slow_no_motion_select_u8);
         com_rslt += bmi160_bus_write (bmi160, BMI160_USER_INTR_MOTION_3_INTR_SLOW_NO_MOTION_SELECT__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -9065,14 +8924,12 @@ uint8_t v_data_u8 = BMI160_INIT_VALUE;
 if (bmi160 == BMI160_NULL) {
     return E_BMI160_NULL_PTR;
     } else {
-    if (v_intr_significant_motion_select_u8 <=
-    BMI160_MAX_VALUE_SIGNIFICANT_MOTION) {
+    if (v_intr_significant_motion_select_u8 <= BMI160_MAX_VALUE_SIGNIFICANT_MOTION) {
         /* write the significant or any motion interrupt*/
         com_rslt = bmi160_bus_read (bmi160, BMI160_USER_INTR_SIGNIFICATION_MOTION_SELECT__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         if (com_rslt == SUCCESS_BMI160) {
             v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,BMI160_USER_INTR_SIGNIFICATION_MOTION_SELECT,v_intr_significant_motion_select_u8);
-            com_rslt += bmi160_bus_write
-            (bmi160,BMI160_USER_INTR_SIGNIFICATION_MOTION_SELECT__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt += bmi160_bus_write(bmi160,BMI160_USER_INTR_SIGNIFICATION_MOTION_SELECT__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         }
     } else {
     com_rslt = E_BMI160_OUT_OF_RANGE;
@@ -9149,8 +9006,7 @@ uint8_t bmi160_set_intr_significant_motion_skip(const bmi160_t *bmi160, uint8_t 
         } else {
         if (v_int_sig_mot_skip_u8 <= BMI160_MAX_UNDER_SIG_MOTION) {
             /* write significant skip time*/
-            com_rslt = bmi160_bus_read
-            (bmi160,BMI160_USER_INTR_SIGNIFICANT_MOTION_SKIP__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt = bmi160_bus_read(bmi160,BMI160_USER_INTR_SIGNIFICANT_MOTION_SKIP__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 = BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_INTR_SIGNIFICANT_MOTION_SKIP, v_int_sig_mot_skip_u8);
                 com_rslt += bmi160_bus_write(bmi160, BMI160_USER_INTR_SIGNIFICANT_MOTION_SKIP__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -9234,8 +9090,7 @@ uint8_t bmi160_set_intr_significant_motion_proof(const bmi160_t *bmi160, uint8_t
         if (v_significant_motion_proof_u8
         <= BMI160_MAX_UNDER_SIG_MOTION) {
             /* write significant proof time */
-            com_rslt = bmi160_bus_read
-            (bmi160,BMI160_USER_INTR_SIGNIFICANT_MOTION_PROOF__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt = bmi160_bus_read(bmi160,BMI160_USER_INTR_SIGNIFICANT_MOTION_PROOF__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 = BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_INTR_SIGNIFICANT_MOTION_PROOF, v_significant_motion_proof_u8);
                 com_rslt += bmi160_bus_write(bmi160, BMI160_USER_INTR_SIGNIFICANT_MOTION_PROOF__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -9281,8 +9136,7 @@ uint8_t bmi160_get_intr_tap_durn(const bmi160_t *bmi160, uint8_t *v_tap_durn_u8)
         return E_BMI160_NULL_PTR;
         } else {
             /* read tap duration*/
-            com_rslt = bmi160_bus_read
-            (bmi160,BMI160_USER_INTR_TAP_0_INTR_TAP_DURN__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt = bmi160_bus_read(bmi160,BMI160_USER_INTR_TAP_0_INTR_TAP_DURN__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             *v_tap_durn_u8 = BMI160_GET_BITSLICE(v_data_u8,BMI160_USER_INTR_TAP_0_INTR_TAP_DURN);
         }
     return com_rslt;
@@ -9423,8 +9277,7 @@ uint8_t bmi160_set_intr_tap_shock(const bmi160_t *bmi160, uint8_t v_tap_shock_u8
         } else {
         if (v_tap_shock_u8 <= BMI160_MAX_VALUE_TAP_SHOCK) {
             /* write tap shock duration*/
-            com_rslt = bmi160_bus_read
-            (bmi160,BMI160_USER_INTR_TAP_0_INTR_TAP_SHOCK__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt = bmi160_bus_read(bmi160,BMI160_USER_INTR_TAP_0_INTR_TAP_SHOCK__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 = BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_INTR_TAP_0_INTR_TAP_SHOCK, v_tap_shock_u8);
                 com_rslt += bmi160_bus_write(bmi160, BMI160_USER_INTR_TAP_0_INTR_TAP_SHOCK__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -9497,8 +9350,7 @@ uint8_t bmi160_set_intr_tap_quiet(const bmi160_t *bmi160, uint8_t v_tap_quiet_u8
         } else {
         if (v_tap_quiet_u8 <= BMI160_MAX_VALUE_TAP_QUIET) {
             /* write tap quiet duration*/
-            com_rslt = bmi160_bus_read
-            (bmi160,BMI160_USER_INTR_TAP_0_INTR_TAP_QUIET__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt = bmi160_bus_read(bmi160,BMI160_USER_INTR_TAP_0_INTR_TAP_QUIET__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 = BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_INTR_TAP_0_INTR_TAP_QUIET, v_tap_quiet_u8);
                 com_rslt += bmi160_bus_write(bmi160, BMI160_USER_INTR_TAP_0_INTR_TAP_QUIET__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -9542,8 +9394,7 @@ uint8_t bmi160_get_intr_tap_thres(const bmi160_t *bmi160, uint8_t *v_tap_thres_u
         } else {
             /* read tap threshold*/
             com_rslt = bmi160_bus_read(bmi160,BMI160_USER_INTR_TAP_1_INTR_TAP_THRES__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
-            *v_tap_thres_u8 = BMI160_GET_BITSLICE
-            (v_data_u8,BMI160_USER_INTR_TAP_1_INTR_TAP_THRES);
+            *v_tap_thres_u8 = BMI160_GET_BITSLICE(v_data_u8,BMI160_USER_INTR_TAP_1_INTR_TAP_THRES);
         }
     return com_rslt;
 }
@@ -9579,8 +9430,7 @@ uint8_t bmi160_set_intr_tap_thres(const bmi160_t *bmi160, uint8_t v_tap_thres_u8
         return E_BMI160_NULL_PTR;
         } else {
             /* write tap threshold*/
-            com_rslt = bmi160_bus_read
-            (bmi160,BMI160_USER_INTR_TAP_1_INTR_TAP_THRES__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt = bmi160_bus_read(bmi160,BMI160_USER_INTR_TAP_1_INTR_TAP_THRES__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 = BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_INTR_TAP_1_INTR_TAP_THRES, v_tap_thres_u8);
                 com_rslt += bmi160_bus_write(bmi160, BMI160_USER_INTR_TAP_1_INTR_TAP_THRES__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -9617,10 +9467,8 @@ uint8_t bmi160_get_intr_orient_mode(const bmi160_t *bmi160, uint8_t *v_orient_mo
         return E_BMI160_NULL_PTR;
         } else {
             /* read orientation threshold*/
-            com_rslt = bmi160_bus_read
-            (bmi160,BMI160_USER_INTR_ORIENT_0_INTR_ORIENT_MODE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
-            *v_orient_mode_u8 = BMI160_GET_BITSLICE
-            (v_data_u8,BMI160_USER_INTR_ORIENT_0_INTR_ORIENT_MODE);
+            com_rslt = bmi160_bus_read(bmi160,BMI160_USER_INTR_ORIENT_0_INTR_ORIENT_MODE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            *v_orient_mode_u8 = BMI160_GET_BITSLICE(v_data_u8,BMI160_USER_INTR_ORIENT_0_INTR_ORIENT_MODE);
         }
     return com_rslt;
 }
@@ -9655,8 +9503,7 @@ uint8_t bmi160_set_intr_orient_mode(const bmi160_t *bmi160, uint8_t v_orient_mod
         } else {
         if (v_orient_mode_u8 <= BMI160_MAX_ORIENT_MODE) {
             /* write orientation threshold*/
-            com_rslt = bmi160_bus_read
-            (bmi160,BMI160_USER_INTR_ORIENT_0_INTR_ORIENT_MODE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt = bmi160_bus_read(bmi160,BMI160_USER_INTR_ORIENT_0_INTR_ORIENT_MODE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 = BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_INTR_ORIENT_0_INTR_ORIENT_MODE, v_orient_mode_u8);
                 com_rslt += bmi160_bus_write(bmi160, BMI160_USER_INTR_ORIENT_0_INTR_ORIENT_MODE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -9702,10 +9549,8 @@ uint8_t bmi160_get_intr_orient_blocking(const bmi160_t *bmi160, uint8_t *v_orien
         return E_BMI160_NULL_PTR;
         } else {
             /* read orient blocking mode*/
-            com_rslt = bmi160_bus_read
-            (bmi160,BMI160_USER_INTR_ORIENT_0_INTR_ORIENT_BLOCKING__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
-            *v_orient_blocking_u8 = BMI160_GET_BITSLICE
-            (v_data_u8,BMI160_USER_INTR_ORIENT_0_INTR_ORIENT_BLOCKING);
+            com_rslt = bmi160_bus_read(bmi160,BMI160_USER_INTR_ORIENT_0_INTR_ORIENT_BLOCKING__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            *v_orient_blocking_u8 = BMI160_GET_BITSLICE(v_data_u8,BMI160_USER_INTR_ORIENT_0_INTR_ORIENT_BLOCKING);
         }
     return com_rslt;
 }
@@ -9748,8 +9593,7 @@ if (bmi160 == BMI160_NULL) {
         com_rslt = bmi160_bus_read (bmi160, BMI160_USER_INTR_ORIENT_0_INTR_ORIENT_BLOCKING__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         if (com_rslt == SUCCESS_BMI160) {
             v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,BMI160_USER_INTR_ORIENT_0_INTR_ORIENT_BLOCKING,v_orient_blocking_u8);
-            com_rslt += bmi160_bus_write
-            (bmi160,BMI160_USER_INTR_ORIENT_0_INTR_ORIENT_BLOCKING__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt += bmi160_bus_write(bmi160,BMI160_USER_INTR_ORIENT_0_INTR_ORIENT_BLOCKING__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         }
     } else {
     com_rslt = E_BMI160_OUT_OF_RANGE;
@@ -9765,8 +9609,7 @@ return com_rslt;
  *
  *  @param v_orient_hyst_u8 : The value of orient hysteresis
  *
- *    @note 1 LSB corresponds to 62.5 mg,
- *    irrespective of the selected accel range
+ *    @note 1 LSB corresponds to 62.5 mg, *    irrespective of the selected accel range
  *
  *
  *    @return results of bus communication function
@@ -9785,10 +9628,8 @@ uint8_t bmi160_get_intr_orient_hyst(const bmi160_t *bmi160, uint8_t *v_orient_hy
         return E_BMI160_NULL_PTR;
         } else {
             /* read orient hysteresis*/
-            com_rslt = bmi160_bus_read
-            (bmi160,BMI160_USER_INTR_ORIENT_0_INTR_ORIENT_HYST__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
-            *v_orient_hyst_u8 = BMI160_GET_BITSLICE
-            (v_data_u8,BMI160_USER_INTR_ORIENT_0_INTR_ORIENT_HYST);
+            com_rslt = bmi160_bus_read(bmi160,BMI160_USER_INTR_ORIENT_0_INTR_ORIENT_HYST__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            *v_orient_hyst_u8 = BMI160_GET_BITSLICE(v_data_u8,BMI160_USER_INTR_ORIENT_0_INTR_ORIENT_HYST);
         }
     return com_rslt;
 }
@@ -9800,8 +9641,7 @@ uint8_t bmi160_get_intr_orient_hyst(const bmi160_t *bmi160, uint8_t *v_orient_hy
  *
  *  @param v_orient_hyst_u8 : The value of orient hysteresis
  *
- *    @note 1 LSB corresponds to 62.5 mg,
- *    irrespective of the selected accel range
+ *    @note 1 LSB corresponds to 62.5 mg, *    irrespective of the selected accel range
  *
  *
  *    @return results of bus communication function
@@ -9820,8 +9660,7 @@ uint8_t bmi160_set_intr_orient_hyst(const bmi160_t *bmi160, uint8_t v_orient_hys
         return E_BMI160_NULL_PTR;
         } else {
             /* write orient hysteresis*/
-            com_rslt = bmi160_bus_read
-            (bmi160,BMI160_USER_INTR_ORIENT_0_INTR_ORIENT_HYST__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt = bmi160_bus_read(bmi160,BMI160_USER_INTR_ORIENT_0_INTR_ORIENT_HYST__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 = BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_INTR_ORIENT_0_INTR_ORIENT_HYST, v_orient_hyst_u8);
                 com_rslt += bmi160_bus_write(bmi160, BMI160_USER_INTR_ORIENT_0_INTR_ORIENT_HYST__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -9853,10 +9692,8 @@ uint8_t bmi160_get_intr_orient_theta(const bmi160_t *bmi160, uint8_t *v_orient_t
         return E_BMI160_NULL_PTR;
         } else {
             /* read Orient blocking angle*/
-            com_rslt = bmi160_bus_read
-            (bmi160,BMI160_USER_INTR_ORIENT_1_INTR_ORIENT_THETA__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
-            *v_orient_theta_u8 = BMI160_GET_BITSLICE
-            (v_data_u8,BMI160_USER_INTR_ORIENT_1_INTR_ORIENT_THETA);
+            com_rslt = bmi160_bus_read(bmi160,BMI160_USER_INTR_ORIENT_1_INTR_ORIENT_THETA__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            *v_orient_theta_u8 = BMI160_GET_BITSLICE(v_data_u8,BMI160_USER_INTR_ORIENT_1_INTR_ORIENT_THETA);
         }
     return com_rslt;
 }
@@ -9888,8 +9725,7 @@ if (bmi160 == BMI160_NULL) {
         com_rslt = bmi160_bus_read (bmi160, BMI160_USER_INTR_ORIENT_1_INTR_ORIENT_THETA__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         if (com_rslt == SUCCESS_BMI160) {
             v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,BMI160_USER_INTR_ORIENT_1_INTR_ORIENT_THETA,v_orient_theta_u8);
-            com_rslt += bmi160_bus_write
-            (bmi160,BMI160_USER_INTR_ORIENT_1_INTR_ORIENT_THETA__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt += bmi160_bus_write(bmi160,BMI160_USER_INTR_ORIENT_1_INTR_ORIENT_THETA__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         }
     } else {
     com_rslt = E_BMI160_OUT_OF_RANGE;
@@ -9924,10 +9760,8 @@ uint8_t bmi160_get_intr_orient_ud_enable(const bmi160_t *bmi160, uint8_t *v_orie
         return E_BMI160_NULL_PTR;
         } else {
             /* read orient up/down enable*/
-            com_rslt = bmi160_bus_read
-            (bmi160,BMI160_USER_INTR_ORIENT_1_INTR_ORIENT_UD_ENABLE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
-            *v_orient_ud_u8 = BMI160_GET_BITSLICE
-            (v_data_u8,BMI160_USER_INTR_ORIENT_1_INTR_ORIENT_UD_ENABLE);
+            com_rslt = bmi160_bus_read(bmi160,BMI160_USER_INTR_ORIENT_1_INTR_ORIENT_UD_ENABLE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            *v_orient_ud_u8 = BMI160_GET_BITSLICE(v_data_u8,BMI160_USER_INTR_ORIENT_1_INTR_ORIENT_UD_ENABLE);
         }
     return com_rslt;
 }
@@ -9962,8 +9796,7 @@ if (bmi160 == BMI160_NULL) {
         com_rslt = bmi160_bus_read (bmi160, BMI160_USER_INTR_ORIENT_1_INTR_ORIENT_UD_ENABLE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         if (com_rslt == SUCCESS_BMI160) {
             v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,BMI160_USER_INTR_ORIENT_1_INTR_ORIENT_UD_ENABLE,v_orient_ud_u8);
-            com_rslt += bmi160_bus_write
-            (bmi160,BMI160_USER_INTR_ORIENT_1_INTR_ORIENT_UD_ENABLE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt += bmi160_bus_write(bmi160,BMI160_USER_INTR_ORIENT_1_INTR_ORIENT_UD_ENABLE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         }
     } else {
     com_rslt = E_BMI160_OUT_OF_RANGE;
@@ -9998,10 +9831,8 @@ uint8_t bmi160_get_intr_orient_axes_enable(const bmi160_t *bmi160, uint8_t *v_or
         return E_BMI160_NULL_PTR;
         } else {
             /* read orientation axes changes  */
-            com_rslt = bmi160_bus_read
-            (bmi160,BMI160_USER_INTR_ORIENT_1_INTR_ORIENT_AXES_EX__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
-            *v_orient_axes_u8 = BMI160_GET_BITSLICE
-            (v_data_u8,BMI160_USER_INTR_ORIENT_1_INTR_ORIENT_AXES_EX);
+            com_rslt = bmi160_bus_read(bmi160,BMI160_USER_INTR_ORIENT_1_INTR_ORIENT_AXES_EX__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            *v_orient_axes_u8 = BMI160_GET_BITSLICE(v_data_u8,BMI160_USER_INTR_ORIENT_1_INTR_ORIENT_AXES_EX);
         }
     return com_rslt;
 }
@@ -10036,8 +9867,7 @@ if (bmi160 == BMI160_NULL) {
         com_rslt = bmi160_bus_read (bmi160, BMI160_USER_INTR_ORIENT_1_INTR_ORIENT_AXES_EX__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         if (com_rslt == SUCCESS_BMI160) {
             v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,BMI160_USER_INTR_ORIENT_1_INTR_ORIENT_AXES_EX,v_orient_axes_u8);
-            com_rslt += bmi160_bus_write
-            (bmi160,BMI160_USER_INTR_ORIENT_1_INTR_ORIENT_AXES_EX__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt += bmi160_bus_write(bmi160,BMI160_USER_INTR_ORIENT_1_INTR_ORIENT_AXES_EX__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         }
     } else {
     com_rslt = E_BMI160_OUT_OF_RANGE;
@@ -10069,8 +9899,7 @@ uint8_t bmi160_get_intr_flat_theta(const bmi160_t *bmi160, uint8_t *v_flat_theta
         return E_BMI160_NULL_PTR;
         } else {
             /* read Flat angle*/
-            com_rslt = bmi160_bus_read
-            (bmi160,BMI160_USER_INTR_FLAT_0_INTR_FLAT_THETA__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt = bmi160_bus_read(bmi160,BMI160_USER_INTR_FLAT_0_INTR_FLAT_THETA__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             *v_flat_theta_u8 = BMI160_GET_BITSLICE(v_data_u8,BMI160_USER_INTR_FLAT_0_INTR_FLAT_THETA);
         }
     return com_rslt;
@@ -10100,8 +9929,7 @@ uint8_t bmi160_set_intr_flat_theta(const bmi160_t *bmi160, uint8_t v_flat_theta_
         } else {
         if (v_flat_theta_u8 <= BMI160_MAX_FLAT_THETA) {
             /* write Flat angle */
-            com_rslt = bmi160_bus_read
-            (bmi160,BMI160_USER_INTR_FLAT_0_INTR_FLAT_THETA__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt = bmi160_bus_read(bmi160,BMI160_USER_INTR_FLAT_0_INTR_FLAT_THETA__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 = BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_INTR_FLAT_0_INTR_FLAT_THETA, v_flat_theta_u8);
                 com_rslt += bmi160_bus_write(bmi160, BMI160_USER_INTR_FLAT_0_INTR_FLAT_THETA__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -10241,8 +10069,7 @@ uint8_t bmi160_set_intr_flat_hyst(const bmi160_t *bmi160, uint8_t v_flat_hyst_u8
         } else {
         if (v_flat_hyst_u8 <= BMI160_MAX_FLAT_HYST) {
             /* read the flat hysteresis*/
-            com_rslt = bmi160_bus_read
-            (bmi160,BMI160_USER_INTR_FLAT_1_INTR_FLAT_HYST__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt = bmi160_bus_read(bmi160,BMI160_USER_INTR_FLAT_1_INTR_FLAT_HYST__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 = BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_INTR_FLAT_1_INTR_FLAT_HYST, v_flat_hyst_u8);
                 com_rslt += bmi160_bus_write(bmi160, BMI160_USER_INTR_FLAT_1_INTR_FLAT_HYST__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -10314,8 +10141,7 @@ uint8_t bmi160_set_foc_accel_z(const bmi160_t *bmi160, uint8_t v_foc_accel_z_u8)
         return E_BMI160_NULL_PTR;
         } else {
             /* write the accel offset compensation for z axis*/
-            com_rslt = bmi160_bus_read
-            (bmi160,BMI160_USER_FOC_ACCEL_Z__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt = bmi160_bus_read(bmi160,BMI160_USER_FOC_ACCEL_Z__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 = BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_FOC_ACCEL_Z, v_foc_accel_z_u8);
                 com_rslt += bmi160_bus_write(bmi160, BMI160_USER_FOC_ACCEL_Z__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -10354,8 +10180,7 @@ uint8_t bmi160_get_foc_accel_y(const bmi160_t *bmi160, uint8_t *v_foc_accel_y_u8
         return E_BMI160_NULL_PTR;
         } else {
             /* read the accel offset compensation for y axis*/
-            com_rslt = bmi160_bus_read
-            (bmi160,BMI160_USER_FOC_ACCEL_Y__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt = bmi160_bus_read(bmi160,BMI160_USER_FOC_ACCEL_Y__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             *v_foc_accel_y_u8 = BMI160_GET_BITSLICE(v_data_u8,BMI160_USER_FOC_ACCEL_Y);
         }
     return com_rslt;
@@ -10392,8 +10217,7 @@ uint8_t bmi160_set_foc_accel_y(const bmi160_t *bmi160, uint8_t v_foc_accel_y_u8)
         } else {
         if (v_foc_accel_y_u8 <= BMI160_MAX_ACCEL_FOC) {
             /* write the accel offset compensation for y axis*/
-            com_rslt = bmi160_bus_read
-            (bmi160,BMI160_USER_FOC_ACCEL_Y__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt = bmi160_bus_read(bmi160,BMI160_USER_FOC_ACCEL_Y__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 = BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_FOC_ACCEL_Y, v_foc_accel_y_u8);
                 com_rslt += bmi160_bus_write(bmi160, BMI160_USER_FOC_ACCEL_Y__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -10514,8 +10338,7 @@ uint8_t bmi160_set_foc_accel_x(const bmi160_t *bmi160, uint8_t v_foc_accel_x_u8)
  *
  *
 */
-uint8_t bmi160_set_accel_foc_trigger(const bmi160_t *bmi160, uint8_t v_axis_u8,
-uint8_t v_foc_accel_u8, int8_t *v_accel_offset_s8)
+uint8_t bmi160_set_accel_foc_trigger(const bmi160_t *bmi160, uint8_t v_axis_u8, uint8_t v_foc_accel_u8, int8_t *v_accel_offset_s8)
 {
 /* variable used for return the status of communication result*/
 uint8_t com_rslt = E_BMI160_COMM_RES;
@@ -10537,21 +10360,17 @@ if (bmi160 == BMI160_NULL) {
             com_rslt = bmi160_bus_read(bmi160,BMI160_USER_FOC_ACCEL_X__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 =     BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_FOC_ACCEL_X, v_foc_accel_u8);
-                com_rslt +=
-                bmi160_bus_write(bmi160, BMI160_USER_FOC_ACCEL_X__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write(bmi160, BMI160_USER_FOC_ACCEL_X__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
 
             /* trigger the
             FOC need to write
             0x03 in the register 0x7e*/
-            com_rslt +=
-            bmi160_set_command_register(bmi160, 
+            com_rslt += bmi160_set_command_register(bmi160, 
             START_FOC_ACCEL_GYRO);
 
-            com_rslt +=
-            bmi160_get_foc_rdy(bmi160, &focstatus);
-            if ((com_rslt != SUCCESS_BMI160) ||
-            (focstatus != BMI160_FOC_STAT_HIGH)) {
+            com_rslt += bmi160_get_foc_rdy(bmi160, &focstatus);
+            if ((com_rslt != SUCCESS_BMI160) ||(focstatus != BMI160_FOC_STAT_HIGH)) {
                 while ((com_rslt != SUCCESS_BMI160) ||(focstatus != BMI160_FOC_STAT_HIGH
                 && v_timeout_u8 <
                 BMI160_MAXIMUM_TIMEOUT)) {
@@ -10561,8 +10380,7 @@ if (bmi160 == BMI160_NULL) {
                 }
             }
             if ((com_rslt == SUCCESS_BMI160) &&(focstatus == BMI160_FOC_STAT_HIGH)) {
-                com_rslt +=
-                bmi160_get_accel_offset_compensation_xaxis(&v_foc_accel_offset_x_s8);
+                com_rslt += bmi160_get_accel_offset_compensation_xaxis(bmi160, &v_foc_accel_offset_x_s8);
                 *v_accel_offset_s8 =     v_foc_accel_offset_x_s8;
             }
         break;
@@ -10570,21 +10388,17 @@ if (bmi160 == BMI160_NULL) {
             com_rslt = bmi160_bus_read(bmi160,BMI160_USER_FOC_ACCEL_Y__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 =     BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_FOC_ACCEL_Y, v_foc_accel_u8);
-                com_rslt +=
-                bmi160_bus_write(bmi160, BMI160_USER_FOC_ACCEL_Y__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write(bmi160, BMI160_USER_FOC_ACCEL_Y__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
 
             /* trigger the FOC
             need to write 0x03
             in the register 0x7e*/
-            com_rslt +=
-            bmi160_set_command_register(bmi160, 
+            com_rslt += bmi160_set_command_register(bmi160, 
             START_FOC_ACCEL_GYRO);
 
-            com_rslt +=
-            bmi160_get_foc_rdy(bmi160, &focstatus);
-            if ((com_rslt != SUCCESS_BMI160) ||
-            (focstatus != BMI160_FOC_STAT_HIGH)) {
+            com_rslt += bmi160_get_foc_rdy(bmi160, &focstatus);
+            if ((com_rslt != SUCCESS_BMI160) ||(focstatus != BMI160_FOC_STAT_HIGH)) {
                 while ((com_rslt != SUCCESS_BMI160) ||(focstatus != BMI160_FOC_STAT_HIGH
                 && v_timeout_u8 <
                 BMI160_MAXIMUM_TIMEOUT)) {
@@ -10593,10 +10407,8 @@ if (bmi160 == BMI160_NULL) {
                     v_timeout_u8++;
                 }
             }
-            if ((com_rslt == SUCCESS_BMI160) &&
-            (focstatus == BMI160_FOC_STAT_HIGH)) {
-                com_rslt +=
-                bmi160_get_accel_offset_compensation_yaxis(&v_foc_accel_offset_y_s8);
+            if ((com_rslt == SUCCESS_BMI160) &&(focstatus == BMI160_FOC_STAT_HIGH)) {
+                com_rslt += bmi160_get_accel_offset_compensation_yaxis(bmi160, &v_foc_accel_offset_y_s8);
                 *v_accel_offset_s8 =     v_foc_accel_offset_y_s8;
             }
         break;
@@ -10604,20 +10416,16 @@ if (bmi160 == BMI160_NULL) {
             com_rslt = bmi160_bus_read(bmi160,BMI160_USER_FOC_ACCEL_Z__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 =     BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_FOC_ACCEL_Z, v_foc_accel_u8);
-                com_rslt +=
-                bmi160_bus_write(bmi160, BMI160_USER_FOC_ACCEL_Z__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write(bmi160, BMI160_USER_FOC_ACCEL_Z__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
 
             /* trigger the FOC need to write
             0x03 in the register 0x7e*/
-            com_rslt +=
-            bmi160_set_command_register(bmi160, 
+            com_rslt += bmi160_set_command_register(bmi160, 
             START_FOC_ACCEL_GYRO);
 
-            com_rslt +=
-            bmi160_get_foc_rdy(bmi160, &focstatus);
-            if ((com_rslt != SUCCESS_BMI160) ||
-            (focstatus != BMI160_FOC_STAT_HIGH)) {
+            com_rslt += bmi160_get_foc_rdy(bmi160, &focstatus);
+            if ((com_rslt != SUCCESS_BMI160) ||(focstatus != BMI160_FOC_STAT_HIGH)) {
                 while ((com_rslt != SUCCESS_BMI160) ||(focstatus != BMI160_FOC_STAT_HIGH
                 && v_timeout_u8 <
                 BMI160_MAXIMUM_TIMEOUT)) {
@@ -10626,10 +10434,8 @@ if (bmi160 == BMI160_NULL) {
                     v_timeout_u8++;
                 }
             }
-            if ((com_rslt == SUCCESS_BMI160) &&
-            (focstatus == BMI160_FOC_STAT_HIGH)) {
-                com_rslt +=
-                bmi160_get_accel_offset_compensation_zaxis(&v_foc_accel_offset_z_s8);
+            if ((com_rslt == SUCCESS_BMI160) &&(focstatus == BMI160_FOC_STAT_HIGH)) {
+                com_rslt += bmi160_get_accel_offset_compensation_zaxis(bmi160, &v_foc_accel_offset_z_s8);
                 *v_accel_offset_s8 =     v_foc_accel_offset_z_s8;
             }
         break;
@@ -10683,9 +10489,7 @@ return com_rslt;
  *    @retval -1 -> Error
  *
 */
-uint8_t bmi160_accel_foc_trigger_xyz(const bmi160_t *bmi160, uint8_t v_foc_accel_x_u8,
-uint8_t v_foc_accel_y_u8, uint8_t v_foc_accel_z_u8, int8_t *v_accel_off_x_s8,
-int8_t *v_accel_off_y_s8, int8_t *v_accel_off_z_s8)
+uint8_t bmi160_accel_foc_trigger_xyz(const bmi160_t *bmi160, uint8_t v_foc_accel_x_u8, uint8_t v_foc_accel_y_u8, uint8_t v_foc_accel_z_u8, int8_t *v_accel_off_x_s8, int8_t *v_accel_off_y_s8, int8_t *v_accel_off_z_s8)
 {
 /* variable used for return the status of communication result*/
 uint8_t com_rslt = E_BMI160_COMM_RES;
@@ -10708,26 +10512,21 @@ if (bmi160 == BMI160_NULL) {
             com_rslt = bmi160_bus_read(bmi160,BMI160_USER_FOC_ACCEL_X__REG,&focx, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 focx = BMI160_SET_BITSLICE(focx, BMI160_USER_FOC_ACCEL_X, v_foc_accel_x_u8);
-                com_rslt +=
-                bmi160_bus_write(bmi160, BMI160_USER_FOC_ACCEL_X__REG, &focx, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write(bmi160, BMI160_USER_FOC_ACCEL_X__REG, &focx, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
 
             /* foc y axis*/
-            com_rslt +=
-            bmi160_bus_read(bmi160,BMI160_USER_FOC_ACCEL_Y__REG,&focy, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt += bmi160_bus_read(bmi160,BMI160_USER_FOC_ACCEL_Y__REG,&focy, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 focy = BMI160_SET_BITSLICE(focy, BMI160_USER_FOC_ACCEL_Y, v_foc_accel_y_u8);
-                com_rslt +=
-                bmi160_bus_write(bmi160, BMI160_USER_FOC_ACCEL_Y__REG, &focy, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write(bmi160, BMI160_USER_FOC_ACCEL_Y__REG, &focy, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
 
             /* foc z axis*/
-            com_rslt +=
-            bmi160_bus_read(bmi160,BMI160_USER_FOC_ACCEL_Z__REG,&focz, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt += bmi160_bus_read(bmi160,BMI160_USER_FOC_ACCEL_Z__REG,&focz, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 focz = BMI160_SET_BITSLICE(focz, BMI160_USER_FOC_ACCEL_Z, v_foc_accel_z_u8);
-                com_rslt +=
-                bmi160_bus_write(bmi160, BMI160_USER_FOC_ACCEL_Z__REG, &focz, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write(bmi160, BMI160_USER_FOC_ACCEL_Z__REG, &focz, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
 
             /* trigger the FOC need to
@@ -10736,8 +10535,7 @@ if (bmi160 == BMI160_NULL) {
             START_FOC_ACCEL_GYRO);
 
             com_rslt += bmi160_get_foc_rdy(bmi160, &focstatus);
-            if ((com_rslt != SUCCESS_BMI160) ||
-            (focstatus != BMI160_FOC_STAT_HIGH)) {
+            if ((com_rslt != SUCCESS_BMI160) ||(focstatus != BMI160_FOC_STAT_HIGH)) {
                 while ((com_rslt != SUCCESS_BMI160) ||(focstatus != BMI160_FOC_STAT_HIGH
                 && v_timeout_u8 <
                 BMI160_MAXIMUM_TIMEOUT)) {
@@ -10746,16 +10544,12 @@ if (bmi160 == BMI160_NULL) {
                     v_timeout_u8++;
                 }
             }
-            if ((com_rslt == SUCCESS_BMI160) &&
-            (focstatus == BMI160_GEN_READ_WRITE_DATA_LENGTH)) {
-                com_rslt +=
-                bmi160_get_accel_offset_compensation_xaxis(&v_foc_accel_offset_x_s8);
+            if ((com_rslt == SUCCESS_BMI160) &&(focstatus == BMI160_GEN_READ_WRITE_DATA_LENGTH)) {
+                com_rslt += bmi160_get_accel_offset_compensation_xaxis(bmi160, &v_foc_accel_offset_x_s8);
                 *v_accel_off_x_s8 =     v_foc_accel_offset_x_s8;
-                com_rslt +=
-                bmi160_get_accel_offset_compensation_yaxis(&v_foc_accel_offset_y_s8);
+                com_rslt += bmi160_get_accel_offset_compensation_yaxis(bmi160, &v_foc_accel_offset_y_s8);
                 *v_accel_off_y_s8 =     v_foc_accel_offset_y_s8;
-                com_rslt +=
-                bmi160_get_accel_offset_compensation_zaxis(&v_foc_accel_offset_z_s8);
+                com_rslt += bmi160_get_accel_offset_compensation_zaxis(bmi160, &v_foc_accel_offset_z_s8);
                 *v_accel_off_z_s8 =     v_foc_accel_offset_z_s8;
             }
         } else {
@@ -10817,8 +10611,7 @@ uint8_t bmi160_get_foc_gyro_enable(const bmi160_t *bmi160, uint8_t *v_foc_gyro_u
  *
  *
 */
-uint8_t bmi160_set_foc_gyro_enable(const bmi160_t *bmi160, uint8_t v_foc_gyro_u8, int16_t *v_gyro_off_x_s16,
-int16_t *v_gyro_off_y_s16, int16_t *v_gyro_off_z_s16)
+uint8_t bmi160_set_foc_gyro_enable(const bmi160_t *bmi160, uint8_t v_foc_gyro_u8, int16_t *v_gyro_off_x_s16, int16_t *v_gyro_off_y_s16, int16_t *v_gyro_off_z_s16)
 {
 /* variable used for return the status of communication result*/
 uint8_t com_rslt = E_BMI160_COMM_RES;
@@ -10835,42 +10628,34 @@ if (bmi160 == BMI160_NULL) {
     } else {
         v_status_s8 = bmi160_set_gyro_offset_enable(bmi160,GYRO_OFFSET_ENABLE);
         if (v_status_s8 == SUCCESS_BMI160) {
-            com_rslt = bmi160_bus_read
-            (bmi160,BMI160_USER_FOC_GYRO_ENABLE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt = bmi160_bus_read(bmi160,BMI160_USER_FOC_GYRO_ENABLE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 =     BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_FOC_GYRO_ENABLE, v_foc_gyro_u8);
-                com_rslt +=
-                bmi160_bus_write(bmi160, BMI160_USER_FOC_GYRO_ENABLE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write(bmi160, BMI160_USER_FOC_GYRO_ENABLE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
 
             /* trigger the FOC need to write 0x03
             in the register 0x7e*/
-            com_rslt += bmi160_set_command_register
-            (START_FOC_ACCEL_GYRO);
+            com_rslt += bmi160_set_command_register(bmi160, START_FOC_ACCEL_GYRO);
 
-            com_rslt += bmi160_get_foc_rdy(bmi160, bmi160, &focstatus);
-            if ((com_rslt != SUCCESS_BMI160) ||
-            (focstatus != BMI160_FOC_STAT_HIGH)) {
+            com_rslt += bmi160_get_foc_rdy(bmi160, &focstatus);
+            if ((com_rslt != SUCCESS_BMI160) ||(focstatus != BMI160_FOC_STAT_HIGH)) {
                 while ((com_rslt != SUCCESS_BMI160) ||(focstatus != BMI160_FOC_STAT_HIGH
                 && v_timeout_u8 <
                 BMI160_MAXIMUM_TIMEOUT)) {
                     HAL_Delay(BMI160_DELAY_SETTLING_TIME);
-                    com_rslt = bmi160_get_foc_rdy(bmi160, bmi160, &focstatus);
+                    com_rslt = bmi160_get_foc_rdy(bmi160, &focstatus);
                     v_timeout_u8++;
                 }
             }
-            if ((com_rslt == SUCCESS_BMI160) &&
-            (focstatus == BMI160_FOC_STAT_HIGH)) {
-                com_rslt +=
-                bmi160_get_gyro_offset_compensation_xaxis(&offsetx);
+            if ((com_rslt == SUCCESS_BMI160) &&(focstatus == BMI160_FOC_STAT_HIGH)) {
+                com_rslt += bmi160_get_gyro_offset_compensation_xaxis(bmi160, &offsetx);
                 *v_gyro_off_x_s16 = offsetx;
 
-                com_rslt +=
-                bmi160_get_gyro_offset_compensation_yaxis(&offsety);
+                com_rslt += bmi160_get_gyro_offset_compensation_yaxis(bmi160, &offsety);
                 *v_gyro_off_y_s16 = offsety;
 
-                com_rslt +=
-                bmi160_get_gyro_offset_compensation_zaxis(&offsetz);
+                com_rslt += bmi160_get_gyro_offset_compensation_zaxis(bmi160, &offsetz);
                 *v_gyro_off_z_s16 = offsetz;
             }
         } else {
@@ -11681,8 +11466,7 @@ uint8_t bmi160_set_accel_selftest_sign(const bmi160_t *bmi160, uint8_t v_accel_s
     if (bmi160 == BMI160_NULL) {
         return E_BMI160_NULL_PTR;
         } else {
-        if (v_accel_selftest_sign_u8 <=
-        BMI160_MAX_VALUE_SELFTEST_SIGN) {
+        if (v_accel_selftest_sign_u8 <= BMI160_MAX_VALUE_SELFTEST_SIGN) {
             /* write accel self test axis sign*/
             com_rslt = bmi160_bus_read(bmi160,BMI160_USER_ACCEL_SELFTEST_SIGN__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
@@ -11755,8 +11539,7 @@ uint8_t bmi160_set_accel_selftest_amp(const bmi160_t *bmi160, uint8_t v_accel_se
     if (bmi160 == BMI160_NULL) {
         return E_BMI160_NULL_PTR;
         } else {
-        if (v_accel_selftest_amp_u8 <=
-        BMI160_MAX_VALUE_SELFTEST_AMP) {
+        if (v_accel_selftest_amp_u8 <= BMI160_MAX_VALUE_SELFTEST_AMP) {
             /* write  self test amplitude*/
             com_rslt = bmi160_bus_read(bmi160,BMI160_USER_SELFTEST_AMP__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
@@ -11815,8 +11598,7 @@ uint8_t bmi160_set_gyro_selftest_start(const bmi160_t *bmi160, uint8_t v_gyro_se
     if (bmi160 == BMI160_NULL) {
         return E_BMI160_NULL_PTR;
         } else {
-        if (v_gyro_selftest_start_u8 <=
-        BMI160_MAX_VALUE_SELFTEST_START) {
+        if (v_gyro_selftest_start_u8 <= BMI160_MAX_VALUE_SELFTEST_START) {
             /* write gyro self test start */
             com_rslt = bmi160_bus_read(bmi160,BMI160_USER_GYRO_SELFTEST_START__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
@@ -12088,8 +11870,7 @@ if (bmi160 == BMI160_NULL) {
             com_rslt = bmi160_bus_read(bmi160,BMI160_USER_OFFSET_0_ACCEL_OFF_X__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 =     BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_OFFSET_0_ACCEL_OFF_X, v_accel_off_x_s8);
-                com_rslt +=
-                bmi160_bus_write(bmi160, BMI160_USER_OFFSET_0_ACCEL_OFF_X__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write(bmi160, BMI160_USER_OFFSET_0_ACCEL_OFF_X__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
         } else {
         com_rslt =  ERROR_BMI160;
@@ -12163,8 +11944,7 @@ if (bmi160 == BMI160_NULL) {
             com_rslt = bmi160_bus_read(bmi160,BMI160_USER_OFFSET_1_ACCEL_OFF_Y__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 =     BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_OFFSET_1_ACCEL_OFF_Y, v_accel_off_y_s8);
-                com_rslt +=
-                bmi160_bus_write(bmi160, BMI160_USER_OFFSET_1_ACCEL_OFF_Y__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write(bmi160, BMI160_USER_OFFSET_1_ACCEL_OFF_Y__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
         } else {
         com_rslt = ERROR_BMI160;
@@ -12238,9 +12018,8 @@ uint8_t bmi160_set_accel_offset_compensation_zaxis(const bmi160_t *bmi160, int8_
                 compensation of z axis*/
                 com_rslt =     bmi160_bus_read(bmi160, BMI160_USER_OFFSET_2_ACCEL_OFF_Z__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
                 if (com_rslt == SUCCESS_BMI160) {
-                    v_data_u8 =         BMI160_SET_BITSLICE(v_data_u8,     BMI160_USER_OFFSET_2_ACCEL_OFF_Z,     v_accel_off_z_s8);
-                    com_rslt +=
-                    bmi160_bus_write(bmi160,     BMI160_USER_OFFSET_2_ACCEL_OFF_Z__REG,     &v_data_u8,     BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                    v_data_u8 =         BMI160_SET_BITSLICE(v_data_u8, BMI160_USER_OFFSET_2_ACCEL_OFF_Z, v_accel_off_z_s8);
+                    com_rslt +=     bmi160_bus_write(bmi160, BMI160_USER_OFFSET_2_ACCEL_OFF_Z__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
                 }
             } else {
             com_rslt = ERROR_BMI160;
@@ -12328,8 +12107,7 @@ if (bmi160 == BMI160_NULL) {
                 BMI160_GYRO_MANUAL_OFFSET_0_7));
                 v_data2_u8r = BMI160_SET_BITSLICE(v_data2_u8r, BMI160_USER_OFFSET_3_GYRO_OFF_X, v_data1_u8r);
                 /* write 0x74 bit 0 to 7*/
-                com_rslt +=
-                bmi160_bus_write(bmi160, BMI160_USER_OFFSET_3_GYRO_OFF_X__REG, &v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write(bmi160, BMI160_USER_OFFSET_3_GYRO_OFF_X__REG, &v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
 
             com_rslt += bmi160_bus_read(bmi160,BMI160_USER_OFFSET_6_GYRO_OFF_X__REG,&v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
@@ -12340,8 +12118,7 @@ if (bmi160 == BMI160_NULL) {
                 >> BMI160_SHIFT_BIT_POSITION_BY_08_BITS);
                 v_data2_u8r = BMI160_SET_BITSLICE(v_data2_u8r, BMI160_USER_OFFSET_6_GYRO_OFF_X, v_data1_u8r);
                 /* write 0x77 bit 0 and 1*/
-                com_rslt +=
-                bmi160_bus_write(bmi160, BMI160_USER_OFFSET_6_GYRO_OFF_X__REG, &v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write(bmi160, BMI160_USER_OFFSET_6_GYRO_OFF_X__REG, &v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
         } else {
         return ERROR_BMI160;
@@ -12380,8 +12157,7 @@ uint8_t bmi160_get_gyro_offset_compensation_yaxis(const bmi160_t *bmi160, int16_
             /* read gyro offset y*/
             com_rslt = bmi160_bus_read(bmi160,BMI160_USER_OFFSET_4_GYRO_OFF_Y__REG,&v_data1_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             v_data1_u8r = BMI160_GET_BITSLICE(v_data1_u8r,BMI160_USER_OFFSET_4_GYRO_OFF_Y);
-            com_rslt += bmi160_bus_read
-            (bmi160,BMI160_USER_OFFSET_6_GYRO_OFF_Y__REG,&v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt += bmi160_bus_read(bmi160,BMI160_USER_OFFSET_6_GYRO_OFF_Y__REG,&v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             v_data2_u8r = BMI160_GET_BITSLICE(v_data2_u8r,BMI160_USER_OFFSET_6_GYRO_OFF_Y);
             v_data3_u8r = v_data2_u8r
             << BMI160_SHIFT_BIT_POSITION_BY_14_BITS;
@@ -12425,19 +12201,16 @@ if (bmi160 == BMI160_NULL) {
         v_status_s8 = bmi160_set_gyro_offset_enable(bmi160,GYRO_OFFSET_ENABLE);
         /* write gyro offset y*/
         if (v_status_s8 == SUCCESS_BMI160) {
-            com_rslt = bmi160_bus_read
-            (bmi160,BMI160_USER_OFFSET_4_GYRO_OFF_Y__REG,&v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt = bmi160_bus_read(bmi160,BMI160_USER_OFFSET_4_GYRO_OFF_Y__REG,&v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data1_u8r =     ((int8_t) (v_gyro_off_y_s16 &
                 BMI160_GYRO_MANUAL_OFFSET_0_7));
                 v_data2_u8r = BMI160_SET_BITSLICE(v_data2_u8r, BMI160_USER_OFFSET_4_GYRO_OFF_Y, v_data1_u8r);
                 /* write 0x75 bit 0 to 7*/
-                com_rslt +=
-                bmi160_bus_write(bmi160, BMI160_USER_OFFSET_4_GYRO_OFF_Y__REG, &v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write(bmi160, BMI160_USER_OFFSET_4_GYRO_OFF_Y__REG, &v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
 
-            com_rslt += bmi160_bus_read
-            (bmi160,BMI160_USER_OFFSET_6_GYRO_OFF_Y__REG,&v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt += bmi160_bus_read(bmi160,BMI160_USER_OFFSET_6_GYRO_OFF_Y__REG,&v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data3_u8r =     (uint16_t) (v_gyro_off_y_s16 &
                 BMI160_GYRO_MANUAL_OFFSET_8_9);
@@ -12445,8 +12218,7 @@ if (bmi160 == BMI160_NULL) {
                 >> BMI160_SHIFT_BIT_POSITION_BY_08_BITS);
                 v_data2_u8r = BMI160_SET_BITSLICE(v_data2_u8r, BMI160_USER_OFFSET_6_GYRO_OFF_Y, v_data1_u8r);
                 /* write 0x77 bit 2 and 3*/
-                com_rslt +=
-                bmi160_bus_write(bmi160, BMI160_USER_OFFSET_6_GYRO_OFF_Y__REG, &v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write(bmi160, BMI160_USER_OFFSET_6_GYRO_OFF_Y__REG, &v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
         } else {
         return ERROR_BMI160;
@@ -12483,13 +12255,9 @@ uint8_t bmi160_get_gyro_offset_compensation_zaxis(const bmi160_t *bmi160, int16_
         return E_BMI160_NULL_PTR;
         } else {
             /* read gyro manual offset z axis*/
-            com_rslt = bmi160_bus_read
-            (bmi160,BMI160_USER_OFFSET_5_GYRO_OFF_Z__REG,&v_data1_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
-            v_data1_u8r = BMI160_GET_BITSLICE
-            (v_data1_u8r,BMI160_USER_OFFSET_5_GYRO_OFF_Z);
-            com_rslt +=
-            bmi160_bus_read
-            (bmi160,BMI160_USER_OFFSET_6_GYRO_OFF_Z__REG,&v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt = bmi160_bus_read(bmi160,BMI160_USER_OFFSET_5_GYRO_OFF_Z__REG,&v_data1_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            v_data1_u8r = BMI160_GET_BITSLICE(v_data1_u8r,BMI160_USER_OFFSET_5_GYRO_OFF_Z);
+            com_rslt += bmi160_bus_read(bmi160,BMI160_USER_OFFSET_6_GYRO_OFF_Z__REG,&v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             v_data2_u8r = BMI160_GET_BITSLICE(v_data2_u8r,BMI160_USER_OFFSET_6_GYRO_OFF_Z);
             v_data3_u8r = v_data2_u8r
             << BMI160_SHIFT_BIT_POSITION_BY_14_BITS;
@@ -12533,19 +12301,16 @@ if (bmi160 == BMI160_NULL) {
         v_status_s8 = bmi160_set_gyro_offset_enable(bmi160,GYRO_OFFSET_ENABLE);
         /* write gyro manual offset z axis*/
         if (v_status_s8 == SUCCESS_BMI160) {
-            com_rslt = bmi160_bus_read
-            (bmi160,BMI160_USER_OFFSET_5_GYRO_OFF_Z__REG,&v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt = bmi160_bus_read(bmi160,BMI160_USER_OFFSET_5_GYRO_OFF_Z__REG,&v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data1_u8r =     ((uint8_t) (v_gyro_off_z_s16 &
                 BMI160_GYRO_MANUAL_OFFSET_0_7));
                 v_data2_u8r = BMI160_SET_BITSLICE(v_data2_u8r, BMI160_USER_OFFSET_5_GYRO_OFF_Z, v_data1_u8r);
                 /* write 0x76 bit 0 to 7*/
-                com_rslt +=
-                bmi160_bus_write(bmi160, BMI160_USER_OFFSET_5_GYRO_OFF_Z__REG, &v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write(bmi160, BMI160_USER_OFFSET_5_GYRO_OFF_Z__REG, &v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
 
-            com_rslt += bmi160_bus_read
-            (bmi160,BMI160_USER_OFFSET_6_GYRO_OFF_Z__REG,&v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt += bmi160_bus_read(bmi160,BMI160_USER_OFFSET_6_GYRO_OFF_Z__REG,&v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data3_u8r =     (uint16_t) (v_gyro_off_z_s16 &
                 BMI160_GYRO_MANUAL_OFFSET_8_9);
@@ -12553,8 +12318,7 @@ if (bmi160 == BMI160_NULL) {
                 >> BMI160_SHIFT_BIT_POSITION_BY_08_BITS);
                 v_data2_u8r = BMI160_SET_BITSLICE(v_data2_u8r, BMI160_USER_OFFSET_6_GYRO_OFF_Z, v_data1_u8r);
                 /* write 0x77 bit 4 and 5*/
-                com_rslt +=
-                bmi160_bus_write(bmi160, BMI160_USER_OFFSET_6_GYRO_OFF_Z__REG, &v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write(bmi160, BMI160_USER_OFFSET_6_GYRO_OFF_Z__REG, &v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
         } else {
         return ERROR_BMI160;
@@ -12591,8 +12355,7 @@ uint8_t bmi160_get_accel_offset_enable(const bmi160_t *bmi160, uint8_t *v_accel_
         return E_BMI160_NULL_PTR;
         } else {
             /* read accel offset enable */
-            com_rslt = bmi160_bus_read
-            (bmi160,BMI160_USER_OFFSET_6_ACCEL_OFF_ENABLE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt = bmi160_bus_read(bmi160,BMI160_USER_OFFSET_6_ACCEL_OFF_ENABLE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             *v_accel_off_enable_u8 = BMI160_GET_BITSLICE(v_data_u8,BMI160_USER_OFFSET_6_ACCEL_OFF_ENABLE);
         }
     return com_rslt;
@@ -12729,8 +12492,7 @@ uint8_t bmi160_read_step_count(const bmi160_t *bmi160, int16_t *v_step_cnt_s16)
     /* array having the step counter LSB and MSB data
     v_data_u8[0] - LSB
     v_data_u8[1] - MSB*/
-    uint8_t a_data_u8r[BMI160_STEP_COUNT_DATA_SIZE] = {BMI160_INIT_VALUE,
-    BMI160_INIT_VALUE};
+    uint8_t a_data_u8r[BMI160_STEP_COUNT_DATA_SIZE] = {BMI160_INIT_VALUE, BMI160_INIT_VALUE};
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
         return E_BMI160_NULL_PTR;
@@ -12738,8 +12500,7 @@ uint8_t bmi160_read_step_count(const bmi160_t *bmi160, int16_t *v_step_cnt_s16)
             /* read step counter */
             com_rslt = bmi160_bus_read(bmi160,BMI160_USER_STEP_COUNT_LSB__REG,a_data_u8r, BMI160_STEP_COUNTER_LENGTH);
 
-            *v_step_cnt_s16 = (int16_t)
-            ((((int32_t)((int8_t)a_data_u8r[BMI160_STEP_COUNT_MSB_BYTE]))
+            *v_step_cnt_s16 = (int16_t)((((int32_t)((int8_t)a_data_u8r[BMI160_STEP_COUNT_MSB_BYTE]))
             << BMI160_SHIFT_BIT_POSITION_BY_08_BITS)
             | (a_data_u8r[BMI160_STEP_COUNT_LSB_BYTE]));
         }
@@ -12768,29 +12529,16 @@ uint8_t bmi160_get_step_config(const bmi160_t *bmi160, uint16_t *v_step_config_u
     uint8_t v_data2_u8r = BMI160_INIT_VALUE;
     uint16_t v_data3_u8r = BMI160_INIT_VALUE;
     /* Read the 0 to 7 bit*/
-    com_rslt =
-    bmi160_bus_read(bmi160,
-    BMI160_USER_STEP_CONFIG_ZERO__REG,
-    &v_data1_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+    com_rslt = bmi160_bus_read(bmi160, BMI160_USER_STEP_CONFIG_ZERO__REG, &v_data1_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
     /* Read the 8 to 10 bit*/
-    com_rslt +=
-    bmi160_bus_read(bmi160,
-    BMI160_USER_STEP_CONFIG_ONE_CNF1__REG,
-    &v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
-    v_data2_u8r = BMI160_GET_BITSLICE(v_data2_u8r,
-    BMI160_USER_STEP_CONFIG_ONE_CNF1);
-    v_data3_u8r = ((uint16_t)((((uint32_t)
-    ((uint8_t)v_data2_u8r))
+    com_rslt += bmi160_bus_read(bmi160, BMI160_USER_STEP_CONFIG_ONE_CNF1__REG, &v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+    v_data2_u8r = BMI160_GET_BITSLICE(v_data2_u8r, BMI160_USER_STEP_CONFIG_ONE_CNF1);
+    v_data3_u8r = ((uint16_t)((((uint32_t)((uint8_t)v_data2_u8r))
     << BMI160_SHIFT_BIT_POSITION_BY_08_BITS) | (v_data1_u8r)));
     /* Read the 11 to 14 bit*/
-    com_rslt +=
-    bmi160_bus_read(bmi160,
-    BMI160_USER_STEP_CONFIG_ONE_CNF2__REG,
-    &v_data1_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
-    v_data1_u8r = BMI160_GET_BITSLICE(v_data1_u8r,
-    BMI160_USER_STEP_CONFIG_ONE_CNF2);
-    *v_step_config_u16 = ((uint16_t)((((uint32_t)
-    ((uint8_t)v_data1_u8r))
+    com_rslt += bmi160_bus_read(bmi160, BMI160_USER_STEP_CONFIG_ONE_CNF2__REG, &v_data1_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+    v_data1_u8r = BMI160_GET_BITSLICE(v_data1_u8r, BMI160_USER_STEP_CONFIG_ONE_CNF2);
+    *v_step_config_u16 = ((uint16_t)((((uint32_t)((uint8_t)v_data1_u8r))
     << BMI160_SHIFT_BIT_POSITION_BY_08_BITS) | (v_data3_u8r)));
 
     return com_rslt;
@@ -12822,15 +12570,9 @@ uint8_t bmi160_set_step_config(const bmi160_t *bmi160, uint16_t v_step_config_u1
     /* write the 0 to 7 bit*/
     v_data1_u8r = (uint8_t)(v_step_config_u16 &
     BMI160_STEP_CONFIG_0_7);
-    bmi160_bus_write
-    (bmi160,
-    BMI160_USER_STEP_CONFIG_ZERO__REG,
-    &v_data1_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+    bmi160_bus_write(bmi160, BMI160_USER_STEP_CONFIG_ZERO__REG, &v_data1_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
     /* write the 8 to 10 bit*/
-    com_rslt = bmi160_bus_read
-    (bmi160,
-    BMI160_USER_STEP_CONFIG_ONE_CNF1__REG,
-    &v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+    com_rslt = bmi160_bus_read(bmi160, BMI160_USER_STEP_CONFIG_ONE_CNF1__REG, &v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
     if (com_rslt == SUCCESS_BMI160) {
         v_data3_u16 = (uint16_t) (v_step_config_u16 &
         BMI160_STEP_CONFIG_8_10);
@@ -12840,10 +12582,7 @@ uint8_t bmi160_set_step_config(const bmi160_t *bmi160, uint16_t v_step_config_u1
         bmi160_bus_write(bmi160, BMI160_USER_STEP_CONFIG_ONE_CNF1__REG, &v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
     }
     /* write the 11 to 14 bit*/
-    com_rslt += bmi160_bus_read
-    (bmi160,
-    BMI160_USER_STEP_CONFIG_ONE_CNF2__REG,
-    &v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+    com_rslt += bmi160_bus_read(bmi160, BMI160_USER_STEP_CONFIG_ONE_CNF2__REG, &v_data2_u8r, BMI160_GEN_READ_WRITE_DATA_LENGTH);
     if (com_rslt == SUCCESS_BMI160) {
         v_data3_u16 = (uint16_t) (v_step_config_u16 &
         BMI160_STEP_CONFIG_11_14);
@@ -12910,9 +12649,7 @@ if (bmi160 == BMI160_NULL) {
         com_rslt = bmi160_bus_read(bmi160, BMI160_USER_STEP_CONFIG_1_STEP_COUNT_ENABLE__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         if (com_rslt == SUCCESS_BMI160) {
             v_data_u8 = BMI160_SET_BITSLICE(v_data_u8,BMI160_USER_STEP_CONFIG_1_STEP_COUNT_ENABLE,v_step_counter_u8);
-            com_rslt +=
-            bmi160_bus_write
-            (bmi160,BMI160_USER_STEP_CONFIG_1_STEP_COUNT_ENABLE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt += bmi160_bus_write(bmi160,BMI160_USER_STEP_CONFIG_1_STEP_COUNT_ENABLE__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
         }
     } else {
     com_rslt = E_BMI160_OUT_OF_RANGE;
@@ -13165,7 +12902,7 @@ uint8_t bmi160_set_command_register(const bmi160_t *bmi160,uint8_t v_command_reg
     } 
     else 
     {   /* write command register */
-        com_rslt = bmi160_bus_write(bmi160, BMI160_CMD_COMMANDS__REG,  &v_command_reg_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+        com_rslt = bmi160_bus_write(bmi160, BMI160_CMD_COMMANDS__REG, &v_command_reg_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
     }
     return com_rslt;
 }
@@ -13311,12 +13048,10 @@ uint8_t bmi160_set_paging_enable(const bmi160_t *bmi160, uint8_t v_page_enable_u
         } else {
         if (v_page_enable_u8 <= BMI160_MAX_VALUE_PAGE) {
             /* write the page enable */
-            com_rslt = bmi160_bus_read
-            (bmi160,BMI160_CMD_PAGING_EN__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+            com_rslt = bmi160_bus_read(bmi160,BMI160_CMD_PAGING_EN__REG,&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             if (com_rslt == SUCCESS_BMI160) {
                 v_data_u8 =     BMI160_SET_BITSLICE(v_data_u8, BMI160_CMD_PAGING_EN, v_page_enable_u8);
-                com_rslt +=
-                bmi160_bus_write(bmi160, BMI160_CMD_PAGING_EN__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+                com_rslt += bmi160_bus_write(bmi160, BMI160_CMD_PAGING_EN__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
             }
         } else {
         com_rslt = E_BMI160_OUT_OF_RANGE;
@@ -13417,8 +13152,7 @@ uint8_t bmi160_set_pullup_configuration(const bmi160_t *bmi160, uint8_t v_contro
  *
  *
 */
-uint8_t bmi160_second_if_mag_compensate_xyz(const bmi160_t *bmi160, struct bmi160_mag_fifo_data_t mag_fifo_data,
-uint8_t v_mag_second_if_u8)
+uint8_t bmi160_second_if_mag_compensate_xyz(bmi160_t *bmi160, struct bmi160_mag_fifo_data_t mag_fifo_data, uint8_t v_mag_second_if_u8)
 {
 int8_t com_rslt = BMI160_INIT_VALUE;
 int16_t v_mag_x_s16 = BMI160_INIT_VALUE;
@@ -13448,38 +13182,28 @@ case BMI160_SEC_IF_BMM150:
     v_mag_x_s16 = (int16_t)((mag_fifo_data.mag_x_msb
     << BMI160_SHIFT_BIT_POSITION_BY_08_BITS)
     | (mag_fifo_data.mag_x_lsb));
-    v_mag_x_s16 = (int16_t)
-    (v_mag_x_s16 >> BMI160_SHIFT_BIT_POSITION_BY_03_BITS);
+    v_mag_x_s16 = (int16_t)(v_mag_x_s16 >> BMI160_SHIFT_BIT_POSITION_BY_03_BITS);
     /* y data*/
     v_mag_y_s16 = (int16_t)((mag_fifo_data.mag_y_msb
     << BMI160_SHIFT_BIT_POSITION_BY_08_BITS)
     | (mag_fifo_data.mag_y_lsb));
-    v_mag_y_s16 = (int16_t)
-    (v_mag_y_s16 >> BMI160_SHIFT_BIT_POSITION_BY_03_BITS);
+    v_mag_y_s16 = (int16_t)(v_mag_y_s16 >> BMI160_SHIFT_BIT_POSITION_BY_03_BITS);
     /* z data*/
     v_mag_z_s16 = (int16_t)((mag_fifo_data.mag_z_msb
     << BMI160_SHIFT_BIT_POSITION_BY_08_BITS)
     | (mag_fifo_data.mag_z_lsb));
-    v_mag_z_s16 = (int16_t)
-    (v_mag_z_s16 >> BMI160_SHIFT_BIT_POSITION_BY_01_BIT);
+    v_mag_z_s16 = (int16_t)(v_mag_z_s16 >> BMI160_SHIFT_BIT_POSITION_BY_01_BIT);
     /* r data*/
     v_mag_r_u16 = (uint16_t)((mag_fifo_data.mag_r_y2_msb
     << BMI160_SHIFT_BIT_POSITION_BY_08_BITS)
     | (mag_fifo_data.mag_r_y2_lsb));
-    v_mag_r_u16 = (uint16_t)
-    (v_mag_r_u16 >> BMI160_SHIFT_BIT_POSITION_BY_02_BITS);
+    v_mag_r_u16 = (uint16_t)(v_mag_r_u16 >> BMI160_SHIFT_BIT_POSITION_BY_02_BITS);
     /* Compensated mag x data */
-    processed_data.x =
-    bmi160_bmm150_mag_compensate_X(bmi160, v_mag_x_s16,
-    v_mag_r_u16);
+    processed_data.x = bmi160_bmm150_mag_compensate_X(bmi160, v_mag_x_s16, v_mag_r_u16);
     /* Compensated mag y data */
-    processed_data.y =
-    bmi160_bmm150_mag_compensate_Y(bmi160, v_mag_y_s16,
-    v_mag_r_u16);
+    processed_data.y = bmi160_bmm150_mag_compensate_Y(bmi160, v_mag_y_s16, v_mag_r_u16);
     /* Compensated mag z data */
-    processed_data.z =
-    bmi160_bmm150_mag_compensate_Z(bmi160, v_mag_z_s16,
-    v_mag_r_u16);
+    processed_data.z = bmi160_bmm150_mag_compensate_Z(bmi160, v_mag_z_s16, v_mag_r_u16);
 break;
 case BMI160_SEC_IF_AKM09911:
     /* x data*/
@@ -13495,14 +13219,11 @@ case BMI160_SEC_IF_AKM09911:
     << BMI160_SHIFT_BIT_POSITION_BY_08_BITS)
     | (mag_fifo_data.mag_z_lsb));
     /* Compensated for X data */
-    processed_data.x =
-    bmi160_bst_akm09911_compensate_X(bmi160, v_mag_x_s16);
+    processed_data.x = bmi160_bst_akm09911_compensate_X(bmi160, v_mag_x_s16);
     /* Compensated for Y data */
-    processed_data.y =
-    bmi160_bst_akm09911_compensate_Y(bmi160, v_mag_y_s16);
+    processed_data.y = bmi160_bst_akm09911_compensate_Y(bmi160, v_mag_y_s16);
     /* Compensated for Z data */
-    processed_data.z =
-    bmi160_bst_akm09911_compensate_Z(bmi160, v_mag_z_s16);
+    processed_data.z = bmi160_bst_akm09911_compensate_Z(bmi160, v_mag_z_s16);
 break;
 case BMI160_SEC_IF_AKM09912:
     /* x data*/
@@ -13518,39 +13239,31 @@ case BMI160_SEC_IF_AKM09912:
     << BMI160_SHIFT_BIT_POSITION_BY_08_BITS)
     | (mag_fifo_data.mag_z_lsb));
     /* Compensated for X data */
-    processed_data.x =
-    bmi160_bst_akm09912_compensate_X(bmi160, v_mag_x_s16);
+    processed_data.x = bmi160_bst_akm09912_compensate_X(bmi160, v_mag_x_s16);
     /* Compensated for Y data */
-    processed_data.y =
-    bmi160_bst_akm09912_compensate_Y(bmi160, v_mag_y_s16);
+    processed_data.y = bmi160_bst_akm09912_compensate_Y(bmi160, v_mag_y_s16);
     /* Compensated for Z data */
-    processed_data.z =
-    bmi160_bst_akm09912_compensate_Z(bmi160, v_mag_z_s16);
+    processed_data.z = bmi160_bst_akm09912_compensate_Z(bmi160, v_mag_z_s16);
 break;
 case BMI160_SEC_IF_YAS532:
     /* read the xyy1 data*/
-    v_busy_yas532_u8 =
-    ((mag_fifo_data.mag_x_lsb
+    v_busy_yas532_u8 = ((mag_fifo_data.mag_x_lsb
     >> BMI160_SHIFT_BIT_POSITION_BY_07_BITS) & 0x01);
-    v_temp_yas532_u16 =
-    (uint16_t)((((int32_t)mag_fifo_data.mag_x_lsb
+    v_temp_yas532_u16 = (uint16_t)((((int32_t)mag_fifo_data.mag_x_lsb
     << BMI160_SHIFT_BIT_POSITION_BY_03_BITS)
     & 0x3F8) | ((mag_fifo_data.mag_x_msb
     >> BMI160_SHIFT_BIT_POSITION_BY_05_BITS) & 0x07));
 
-    v_xy1y2_u16[0] =
-    (uint16_t)((((int32_t)mag_fifo_data.mag_y_lsb
+    v_xy1y2_u16[0] = (uint16_t)((((int32_t)mag_fifo_data.mag_y_lsb
     << BMI160_SHIFT_BIT_POSITION_BY_06_BITS) & 0x1FC0)
     | ((mag_fifo_data.mag_y_msb >>
     BMI160_SHIFT_BIT_POSITION_BY_02_BITS) & 0x3F));
-    v_xy1y2_u16[1] =
-    (uint16_t)((((int32_t)mag_fifo_data.mag_z_lsb
+    v_xy1y2_u16[1] = (uint16_t)((((int32_t)mag_fifo_data.mag_z_lsb
     << BMI160_SHIFT_BIT_POSITION_BY_06_BITS)
     & 0x1FC0)
     | ((mag_fifo_data.mag_z_msb
     >> BMI160_SHIFT_BIT_POSITION_BY_02_BITS) & 0x3F));
-    v_xy1y2_u16[2] =
-    (uint16_t)((((int32_t)mag_fifo_data.mag_r_y2_lsb
+    v_xy1y2_u16[2] = (uint16_t)((((int32_t)mag_fifo_data.mag_r_y2_lsb
     << BMI160_SHIFT_BIT_POSITION_BY_06_BITS)
     & 0x1FC0)
     | ((mag_fifo_data.mag_r_y2_msb
@@ -13563,22 +13276,17 @@ case BMI160_SEC_IF_YAS532:
             v_overflow_yas532_u8 |= (1 << (i * 2 + 1));
     }
     /* assign the data*/
-    com_rslt = bmi160_bst_yas532_fifo_xyz_data(bmi160, bmi160, v_xy1y2_u16, 1, v_overflow_yas532_u8,
-    v_temp_yas532_u16, v_busy_yas532_u8);
-    processed_data.x =
-    fifo_xyz_data.yas532_vector_xyz[0];
-    processed_data.y =
-    fifo_xyz_data.yas532_vector_xyz[1];
-    processed_data.z =
-    fifo_xyz_data.yas532_vector_xyz[2];
+    com_rslt = bmi160_bst_yas532_fifo_xyz_data(bmi160, v_xy1y2_u16, 1, v_overflow_yas532_u8, v_temp_yas532_u16, v_busy_yas532_u8);
+    processed_data.x = fifo_xyz_data.yas532_vector_xyz[0];
+    processed_data.y = fifo_xyz_data.yas532_vector_xyz[1];
+    processed_data.z = fifo_xyz_data.yas532_vector_xyz[2];
 break;
 case BMI160_SEC_IF_YAS537:
     /* read the busy flag*/
     v_busy_u8 = mag_fifo_data.mag_y_lsb
     >> BMI160_SHIFT_BIT_POSITION_BY_07_BITS;
     /* read the coil status*/
-    v_coil_stat_u8 =
-    ((mag_fifo_data.mag_y_lsb >>
+    v_coil_stat_u8 = ((mag_fifo_data.mag_y_lsb >>
     BMI160_SHIFT_BIT_POSITION_BY_06_BITS) & 0X01);
     /* read temperature data*/
     v_temperature_u16 = (uint16_t)((mag_fifo_data.mag_x_lsb
@@ -13625,20 +13333,16 @@ case BMI160_SEC_IF_YAS537:
     for (i = 0; i < 3; i++) {
         if (YAS537_DATA_OVERFLOW
         <= xy1y2[i])
-            v_ouflow_u8 |=
-            (1 << (i * 2));
-        if (xy1y2[i] ==
-        YAS537_DATA_UNDERFLOW)
+            v_ouflow_u8 |= (1 << (i * 2));
+        if (xy1y2[i] == YAS537_DATA_UNDERFLOW)
             v_ouflow_u8
             |= (1 << (i * 2 + 1));
     }
-    com_rslt = bmi160_bst_yamaha_yas537_fifo_xyz_data(bmi160, bmi160, xy1y2, v_ouflow_u8, v_coil_stat_u8, v_busy_u8);
-    processed_data.x =
-    fifo_vector_xyz.yas537_vector_xyz[0];
-    processed_data.y =
-    fifo_vector_xyz.yas537_vector_xyz[1];
-    processed_data.z =
-    fifo_vector_xyz.yas537_vector_xyz[2];
+    
+    com_rslt = bmi160_bst_yamaha_yas537_fifo_xyz_data(bmi160, xy1y2, v_ouflow_u8, v_coil_stat_u8, v_busy_u8);
+    processed_data.x = fifo_vector_xyz.yas537_vector_xyz[0];
+    processed_data.y = fifo_vector_xyz.yas537_vector_xyz[1];
+    processed_data.z = fifo_vector_xyz.yas537_vector_xyz[2];
 break;
 default:
     com_rslt = E_BMI160_OUT_OF_RANGE;
@@ -13675,13 +13379,12 @@ break;
  *
  *
  */
-uint8_t bmi160_read_fifo_header_data(bmi160, const bmi160_t *bmi160, uint8_t v_mag_if_u8)
+uint8_t bmi160_read_fifo_header_data(bmi160_t *bmi160, uint8_t v_mag_if_u8)
 {
     uint8_t com_rslt = E_BMI160_COMM_RES;
     struct bmi160_fifo_data_header_t header_data;
     /* read the whole fifo data*/
-    com_rslt =
-    bmi160_read_fifo_header_data_user_defined_length(bmi160, FIFO_FRAME, v_mag_if_u8, &header_data);
+    com_rslt = bmi160_read_fifo_header_data_user_defined_length(bmi160, FIFO_FRAME, v_mag_if_u8, &header_data);
     return com_rslt;
 }
 /*!
@@ -13713,8 +13416,7 @@ uint8_t bmi160_read_fifo_header_data(bmi160, const bmi160_t *bmi160, uint8_t v_m
  *
  *
  */
-uint8_t bmi160_read_fifo_header_data_user_defined_length(const bmi160_t *bmi160, uint16_t v_fifo_user_length_u16, uint8_t v_mag_if_mag_u8,
-struct bmi160_fifo_data_header_t *fifo_header_data)
+uint8_t bmi160_read_fifo_header_data_user_defined_length(bmi160_t *bmi160, uint16_t v_fifo_user_length_u16, uint8_t v_mag_if_mag_u8, struct bmi160_fifo_data_header_t *fifo_header_data)
 {
     uint8_t com_rslt = E_BMI160_COMM_RES;
     uint8_t v_accel_index_u8 = BMI160_INIT_VALUE;
@@ -13731,8 +13433,7 @@ struct bmi160_fifo_data_header_t *fifo_header_data)
     fifo_header_data->mag_frame_count = BMI160_INIT_VALUE;
     fifo_header_data->gyro_frame_count = BMI160_INIT_VALUE;
     /* read fifo v_data_u8*/
-    com_rslt = bmi160_fifo_data(bmi160, &v_fifo_data_u8[BMI160_INIT_VALUE],
-    v_fifo_user_length_u16);
+    com_rslt = bmi160_fifo_data(bmi160, &v_fifo_data_u8[BMI160_INIT_VALUE], v_fifo_user_length_u16);
     v_fifo_length_u16 = v_fifo_user_length_u16;
     for (v_fifo_index_u16 = BMI160_INIT_VALUE;
     v_fifo_index_u16 < v_fifo_length_u16;) {
@@ -13825,8 +13526,7 @@ struct bmi160_fifo_data_header_t *fifo_header_data)
             v_fifo_index_u16 = v_fifo_index_u16
             + BMI160_FIFO_INDEX_LENGTH;
 
-            if ((v_fifo_index_u16 + BMI160_FIFO_M_LENGTH) >
-            (v_fifo_length_u16)) {
+            if ((v_fifo_index_u16 + BMI160_FIFO_M_LENGTH) >(v_fifo_length_u16)) {
                 v_last_return_stat_s8 = FIFO_M_OVER_LEN;
             break;
             }
@@ -14159,21 +13859,17 @@ struct bmi160_fifo_data_header_t *fifo_header_data)
             BMI160_GEN_READ_WRITE_DATA_LENGTH;
 
             if ((v_fifo_index_u16
-            + BMI160_FIFO_SENSOR_TIME_LENGTH) >
-            (v_fifo_length_u16)) {
+            + BMI160_FIFO_SENSOR_TIME_LENGTH) >(v_fifo_length_u16)) {
                 v_last_return_stat_s8
                 = FIFO_SENSORTIME_RETURN;
             break;
             }
             /* Sensor time */
-            fifo_header_data->fifo_time = (uint32_t)
-            ((v_fifo_data_u8[v_fifo_index_u16 +
+            fifo_header_data->fifo_time = (uint32_t)((v_fifo_data_u8[v_fifo_index_u16 +
             BMI160_FIFO_SENSOR_TIME_MSB]
-            << BMI160_SHIFT_BIT_POSITION_BY_16_BITS) |
-            (v_fifo_data_u8[v_fifo_index_u16 +
+            << BMI160_SHIFT_BIT_POSITION_BY_16_BITS) |(v_fifo_data_u8[v_fifo_index_u16 +
             BMI160_FIFO_SENSOR_TIME_XLSB]
-            << BMI160_SHIFT_BIT_POSITION_BY_08_BITS) |
-            (v_fifo_data_u8[v_fifo_index_u16 +
+            << BMI160_SHIFT_BIT_POSITION_BY_08_BITS) |(v_fifo_data_u8[v_fifo_index_u16 +
             BMI160_FIFO_SENSOR_TIME_LSB]));
 
             v_fifo_index_u16 = v_fifo_index_u16 +
@@ -14226,8 +13922,7 @@ struct bmi160_fifo_data_header_t *fifo_header_data)
                 v_last_return_stat_s8 = FIFO_OVER_READ_RETURN;
             break;
             }
-            if (v_fifo_data_u8[v_fifo_index_u16] ==
-            FIFO_HEAD_OVER_READ_MSB) {
+            if (v_fifo_data_u8[v_fifo_index_u16] == FIFO_HEAD_OVER_READ_MSB) {
                 /*fifo over read frame index + 1*/
                 v_fifo_index_u16 = v_fifo_index_u16 +
                 BMI160_FIFO_INDEX_LENGTH;
@@ -14276,13 +13971,12 @@ return com_rslt;
  *
  *
  */
-uint8_t bmi160_read_fifo_headerless_mode(const bmi160_t *bmi160, uint8_t v_mag_if_u8) {
+uint8_t bmi160_read_fifo_headerless_mode(bmi160_t *bmi160, uint8_t v_mag_if_u8) {
 
     uint8_t com_rslt = E_BMI160_COMM_RES;
     struct bmi160_fifo_data_header_less_t headerless_data;
     /* read the whole FIFO data*/
-    com_rslt =
-    bmi160_read_fifo_headerless_mode_user_defined_length(bmi160, FIFO_FRAME, &headerless_data, v_mag_if_u8);
+    com_rslt = bmi160_read_fifo_headerless_mode_user_defined_length(bmi160, FIFO_FRAME, &headerless_data, v_mag_if_u8);
     return com_rslt;
 }
 /*!
@@ -14316,9 +14010,7 @@ uint8_t bmi160_read_fifo_headerless_mode(const bmi160_t *bmi160, uint8_t v_mag_i
  *
  */
 uint8_t
-bmi160_read_fifo_headerless_mode_user_defined_length(const bmi160_t *bmi160, uint16_t v_fifo_user_length_u16,
-struct bmi160_fifo_data_header_less_t *fifo_data,
-uint8_t v_mag_if_mag_u8)
+bmi160_read_fifo_headerless_mode_user_defined_length(bmi160_t *bmi160, uint16_t v_fifo_user_length_u16, struct bmi160_fifo_data_header_less_t *fifo_data, uint8_t v_mag_if_mag_u8)
 {
 uint8_t v_data_u8 = BMI160_INIT_VALUE;
 uint32_t v_fifo_index_u16 = BMI160_INIT_VALUE;
@@ -14333,12 +14025,10 @@ fifo_data->gyro_frame_count = BMI160_INIT_VALUE;
 /* disable the header data */
 com_rslt = bmi160_set_fifo_header_enable(bmi160,BMI160_INIT_VALUE);
 /* read mag, accel and gyro enable status*/
-com_rslt += bmi160_read_reg(bmi160, BMI160_USER_FIFO_CONFIG_1_ADDR,
-&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+com_rslt += bmi160_read_reg(bmi160, BMI160_USER_FIFO_CONFIG_1_ADDR, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 v_data_u8 = v_data_u8 & BMI160_FIFO_M_G_A_ENABLE;
 /* read the fifo data of 1024 bytes*/
-com_rslt += bmi160_fifo_data(bmi160, &v_fifo_data_u8[BMI160_INIT_VALUE],
-v_fifo_user_length_u16);
+com_rslt += bmi160_fifo_data(bmi160, &v_fifo_data_u8[BMI160_INIT_VALUE], v_fifo_user_length_u16);
 v_fifo_length_u16 = v_fifo_user_length_u16;
 /* loop for executing the different conditions */
 for (v_fifo_index_u16 = BMI160_INIT_VALUE;
@@ -14663,8 +14353,7 @@ v_fifo_index_u16 < v_fifo_length_u16;) {
     }
     /* condition  for fifo over read enable*/
     if (v_fifo_data_u8[v_fifo_index_u16] == FIFO_CONFIG_CHECK1 &&
-    v_fifo_data_u8[v_fifo_index_u16 + BMI160_FIFO_INDEX_LENGTH] ==
-    FIFO_CONFIG_CHECK2) {
+    v_fifo_data_u8[v_fifo_index_u16 + BMI160_FIFO_INDEX_LENGTH] == FIFO_CONFIG_CHECK2) {
         break;
         }
     }
@@ -14675,10 +14364,9 @@ v_fifo_index_u16 < v_fifo_length_u16;) {
  *    Before start reading the mag compensated data's
  *    make sure the following two points are addressed
  *    @note
- *    1.    Make sure the mag interface is enabled or not,
- *        by using the bmi160_get_if_mode() function.
+ *    1.    Make sure the mag interface is enabled or not, *        by using the bmi160_get_if_mode(bmi160, ) function.
  *        If mag interface is not enabled set the value of 0x02
- *        to the function bmi160_get_if_mode(0x02)
+ *        to the function bmi160_get_if_mode(bmi160, 0x02)
  *    @note
  *    2.    And also confirm the secondary-interface power mode
  *        is not in the SUSPEND mode.
@@ -14703,10 +14391,10 @@ uint8_t bmi160_bmm150_mag_compensate_xyz(const bmi160_t *bmi160, struct bmi160_m
     if (com_rslt)
         return com_rslt;
     /* Compensation for X axis */
-    mag_comp_xyz->x = bmi160_bmm150_mag_compensate_X(bmi160, bmi160, mag_xyzr.x, mag_xyzr.r);
+    mag_comp_xyz->x = bmi160_bmm150_mag_compensate_X(bmi160, mag_xyzr.x, mag_xyzr.r);
 
     /* Compensation for Y axis */
-    mag_comp_xyz->y = bmi160_bmm150_mag_compensate_Y(bmi160, bmi160, mag_xyzr.y, mag_xyzr.r);
+    mag_comp_xyz->y = bmi160_bmm150_mag_compensate_Y(bmi160, mag_xyzr.y, mag_xyzr.r);
 
     /* Compensation for Z axis */
     mag_comp_xyz->z = bmi160_bmm150_mag_compensate_Z(bmi160, mag_xyzr.z, mag_xyzr.r);
@@ -14719,10 +14407,9 @@ uint8_t bmi160_bmm150_mag_compensate_xyz(const bmi160_t *bmi160, struct bmi160_m
  *    Before start reading the mag compensated X data
  *    make sure the following two points are addressed
  *    @note
- *    1.    Make sure the mag interface is enabled or not,
- *        by using the bmi160_get_if_mode() function.
+ *    1.    Make sure the mag interface is enabled or not, *        by using the bmi160_get_if_mode(bmi160, ) function.
  *        If mag interface is not enabled set the value of 0x02
- *        to the function bmi160_get_if_mode(0x02)
+ *        to the function bmi160_get_if_mode(bmi160, 0x02)
  *    @note
  *    2.    And also confirm the secondary-interface power mode
  *        is not in the SUSPEND mode.
@@ -14747,25 +14434,18 @@ if (v_mag_data_x_s16 != BMI160_MAG_FLIP_OVERFLOW_ADCVAL) {
     if ((v_data_r_u16 != 0)
     || (mag_trim.dig_xyz1 != 0)) {
         inter_retval = ((int32_t)(((uint16_t) ((((int32_t)mag_trim.dig_xyz1)
-        << BMI160_SHIFT_BIT_POSITION_BY_14_BITS)/
-         (v_data_r_u16 != 0 ?
+        << BMI160_SHIFT_BIT_POSITION_BY_14_BITS)/(v_data_r_u16 != 0 ?
          v_data_r_u16 : mag_trim.dig_xyz1))) - ((uint16_t)0x4000)));
     } else {
         inter_retval = BMI160_MAG_OVERFLOW_OUTPUT;
         return inter_retval;
     }
-    inter_retval = ((int32_t)((((int32_t)v_mag_data_x_s16) *
-            ((((((((int32_t)mag_trim.dig_xy2) *
-            ((((int32_t)inter_retval) *
-            ((int32_t)inter_retval))
+    inter_retval = ((int32_t)((((int32_t)v_mag_data_x_s16) *((((((((int32_t)mag_trim.dig_xy2) *((((int32_t)inter_retval) *((int32_t)inter_retval))
             >> BMI160_SHIFT_BIT_POSITION_BY_07_BITS)) +
              (((int32_t)inter_retval) *
               ((int32_t)(((int16_t)mag_trim.dig_xy1)
               << BMI160_SHIFT_BIT_POSITION_BY_07_BITS))))
-              >> BMI160_SHIFT_BIT_POSITION_BY_09_BITS) +
-           ((int32_t)0x100000)) *
-          ((int32_t)(((int16_t)mag_trim.dig_x2) +
-          ((int16_t)0xA0))))
+              >> BMI160_SHIFT_BIT_POSITION_BY_09_BITS) +((int32_t)0x100000)) *((int32_t)(((int16_t)mag_trim.dig_x2) +((int16_t)0xA0))))
           >> BMI160_SHIFT_BIT_POSITION_BY_12_BITS))
           >> BMI160_SHIFT_BIT_POSITION_BY_13_BITS)) + (((int16_t)mag_trim.dig_x1)
         << BMI160_SHIFT_BIT_POSITION_BY_03_BITS);
@@ -14784,10 +14464,9 @@ return inter_retval;
  *    Before start reading the mag compensated Y data
  *    make sure the following two points are addressed
  *    @note
- *    1.    Make sure the mag interface is enabled or not,
- *        by using the bmi160_get_if_mode() function.
+ *    1.    Make sure the mag interface is enabled or not, *        by using the bmi160_get_if_mode(bmi160, ) function.
  *        If mag interface is not enabled set the value of 0x02
- *        to the function bmi160_get_if_mode(0x02)
+ *        to the function bmi160_get_if_mode(bmi160, 0x02)
  *    @note
  *    2.    And also confirm the secondary-interface power mode
  *        is not in the SUSPEND mode.
@@ -14842,10 +14521,9 @@ return inter_retval;
  *    Before start reading the mag compensated Z data
  *    make sure the following two points are addressed
  *    @note
- *    1.    Make sure the mag interface is enabled or not,
- *        by using the bmi160_get_if_mode() function.
+ *    1.    Make sure the mag interface is enabled or not, *        by using the bmi160_get_if_mode(bmi160, ) function.
  *        If mag interface is not enabled set the value of 0x02
- *        to the function bmi160_get_if_mode(0x02)
+ *        to the function bmi160_get_if_mode(bmi160, 0x02)
  *    @note
  *    2.    And also confirm the secondary-interface power mode
  *        is not in the SUSPEND mode.
@@ -14870,16 +14548,9 @@ int32_t bmi160_bmm150_mag_compensate_Z(const bmi160_t *bmi160, int16_t v_mag_dat
            && (mag_trim.dig_z2 != 0)
            && (mag_trim.dig_z1 != 0)) {
             retval = (((((int32_t)(v_mag_data_z_s16 - mag_trim.dig_z4))
-            << BMI160_SHIFT_BIT_POSITION_BY_15_BITS) -
-            ((((int32_t)mag_trim.dig_z3) *
-            ((int32_t)(((int16_t)v_data_r_u16) -
-            ((int16_t)mag_trim.dig_xyz1))))
-            >> BMI160_SHIFT_BIT_POSITION_BY_02_BITS))/
-            (mag_trim.dig_z2 +
-            ((int16_t)(((((int32_t)mag_trim.dig_z1) *
-            ((((int16_t)v_data_r_u16)
-            << BMI160_SHIFT_BIT_POSITION_BY_01_BIT))) +
-            (1 << BMI160_SHIFT_BIT_POSITION_BY_15_BITS))
+            << BMI160_SHIFT_BIT_POSITION_BY_15_BITS) -((((int32_t)mag_trim.dig_z3) *((int32_t)(((int16_t)v_data_r_u16) -((int16_t)mag_trim.dig_xyz1))))
+            >> BMI160_SHIFT_BIT_POSITION_BY_02_BITS))/(mag_trim.dig_z2 +((int16_t)(((((int32_t)mag_trim.dig_z1) *((((int16_t)v_data_r_u16)
+            << BMI160_SHIFT_BIT_POSITION_BY_01_BIT))) +(1 << BMI160_SHIFT_BIT_POSITION_BY_15_BITS))
             >> BMI160_SHIFT_BIT_POSITION_BY_16_BITS))));
         }
     } else {
@@ -14897,7 +14568,7 @@ int32_t bmi160_bmm150_mag_compensate_Z(const bmi160_t *bmi160, int16_t v_mag_dat
  *
  *
 */
-uint8_t bmi160_bmm150_mag_interface_init(const bmi160_t *bmi160, uint8_t *v_chip_id_u8)
+uint8_t bmi160_bmm150_mag_interface_init(bmi160_t *bmi160, uint8_t *v_chip_id_u8)
 {
     /* This variable used for provide the communication
     results*/
@@ -14920,7 +14591,7 @@ uint8_t bmi160_bmm150_mag_interface_init(const bmi160_t *bmi160, uint8_t *v_chip
     /*switch the page1*/
     com_rslt += bmi160_set_target_page(bmi160, BMI160_WRITE_TARGET_PAGE1);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
-    bmi160_get_target_page(&v_data_u8);
+    bmi160_get_target_page(bmi160, &v_data_u8);
     com_rslt += bmi160_set_paging_enable(bmi160, BMI160_WRITE_ENABLE_PAGE1);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     bmi160_get_paging_enable(bmi160, &v_data_u8);
@@ -14934,7 +14605,7 @@ uint8_t bmi160_bmm150_mag_interface_init(const bmi160_t *bmi160, uint8_t *v_chip
     /*switch the page0*/
     com_rslt += bmi160_set_target_page(bmi160, BMI160_WRITE_TARGET_PAGE0);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
-    bmi160_get_target_page(&v_data_u8);
+    bmi160_get_target_page(bmi160, &v_data_u8);
     /* Write the BMM150 i2c address*/
     com_rslt += bmi160_set_i2c_device_addr(bmi160, BMI160_AUX_BMM150_I2C_ADDRESS);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
@@ -15033,8 +14704,7 @@ uint8_t bmi160_bmm150_mag_wakeup(const bmi160_t *bmi160)
  *    @note
  *    Before set the mag power mode
  *    make sure the following two point is addressed
- *        Make sure the mag interface is enabled or not,
- *        by using the bmi160_get_if_mode() function.
+ *        Make sure the mag interface is enabled or not, *        by using the bmi160_get_if_mode() function.
  *        If mag interface is not enabled set the value of 0x02
  *        to the function bmi160_get_if_mode(0x02)
  *
@@ -15051,7 +14721,7 @@ uint8_t bmi160_bmm150_mag_wakeup(const bmi160_t *bmi160)
  *
  *
 */
-uint8_t bmi160_set_bmm150_mag_and_secondary_if_power_mode(const bmi160_t *bmi160, uint8_t v_mag_sec_if_pow_mode_u8)
+uint8_t bmi160_set_bmm150_mag_and_secondary_if_power_mode(bmi160_t *bmi160, uint8_t v_mag_sec_if_pow_mode_u8)
 {
     /* variable used for return the status of communication result*/
     uint8_t com_rslt = BMI160_INIT_VALUE;
@@ -15097,8 +14767,7 @@ uint8_t bmi160_set_bmm150_mag_and_secondary_if_power_mode(const bmi160_t *bmi160
  *    Before set the mag power mode
  *    make sure the following two points are addressed
  *    @note
- *    1.    Make sure the mag interface is enabled or not,
- *        by using the bmi160_get_if_mode() function.
+ *    1.    Make sure the mag interface is enabled or not, *        by using the bmi160_get_if_mode() function.
  *        If mag interface is not enabled set the value of 0x02
  *        to the function bmi160_get_if_mode(0x02)
  *    @note
@@ -15122,7 +14791,7 @@ uint8_t bmi160_set_bmm150_mag_and_secondary_if_power_mode(const bmi160_t *bmi160
  *
  *
 */
-uint8_t bmi160_bmm150_mag_set_power_mode(const bmi160_t *bmi160, uint8_t v_mag_pow_mode_u8)
+uint8_t bmi160_bmm150_mag_set_power_mode(bmi160_t *bmi160, uint8_t v_mag_pow_mode_u8)
 {
     /* variable used for return the status of communication result*/
     uint8_t com_rslt = E_BMI160_COMM_RES;
@@ -15182,8 +14851,7 @@ uint8_t bmi160_bmm150_mag_set_power_mode(const bmi160_t *bmi160, uint8_t v_mag_p
  *    Before set the mag preset mode
  *    make sure the following two points are addressed
  *    @note
- *    1.    Make sure the mag interface is enabled or not,
- *        by using the bmi160_get_if_mode() function.
+ *    1.    Make sure the mag interface is enabled or not, *        by using the bmi160_get_if_mode() function.
  *        If mag interface is not enabled set the value of 0x02
  *        to the function bmi160_get_if_mode(0x02)
  *    @note
@@ -15208,7 +14876,7 @@ uint8_t bmi160_bmm150_mag_set_power_mode(const bmi160_t *bmi160, uint8_t v_mag_p
  *    @retval -1 -> Error
  *
  */
-uint8_t bmi160_set_bmm150_mag_presetmode(const bmi160_t *bmi160, uint8_t v_mode_u8)
+uint8_t bmi160_set_bmm150_mag_presetmode(bmi160_t *bmi160, uint8_t v_mode_u8)
 {
     /* variable used for return the status of communication result*/
     uint8_t com_rslt = E_BMI160_COMM_RES;
@@ -15326,8 +14994,7 @@ uint8_t bmi160_set_bmm150_mag_presetmode(const bmi160_t *bmi160, uint8_t v_mode_
  *    Before reading the mag trimming values
  *    make sure the following two points are addressed
  *    @note
- *    1.    Make sure the mag interface is enabled or not,
- *        by using the bmi160_get_if_mode() function.
+ *    1.    Make sure the mag interface is enabled or not, *        by using the bmi160_get_if_mode() function.
  *        If mag interface is not enabled set the value of 0x02
  *        to the function bmi160_get_if_mode(0x02)
  *    @note
@@ -15353,11 +15020,7 @@ uint8_t bmi160_read_bmm150_mag_trim(const bmi160_t *bmi160)
     /* Array holding the bmm150 trim data
     */
     uint8_t v_data_u8[BMI160_MAG_TRIM_DATA_SIZE] = {
-    BMI160_INIT_VALUE, BMI160_INIT_VALUE,BMI160_INIT_VALUE, BMI160_INIT_VALUE,
-    BMI160_INIT_VALUE, BMI160_INIT_VALUE,BMI160_INIT_VALUE,
-    BMI160_INIT_VALUE, BMI160_INIT_VALUE,BMI160_INIT_VALUE,
-    BMI160_INIT_VALUE, BMI160_INIT_VALUE,BMI160_INIT_VALUE,
-    BMI160_INIT_VALUE, BMI160_INIT_VALUE,BMI160_INIT_VALUE};
+    BMI160_INIT_VALUE, BMI160_INIT_VALUE,BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE,BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE,BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE,BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE,BMI160_INIT_VALUE};
     /* read dig_x1 value */
     com_rslt = bmi160_set_mag_read_addr(bmi160, BMI160_MAG_DIG_X1);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
@@ -15415,10 +15078,8 @@ uint8_t bmi160_read_bmm150_mag_trim(const bmi160_t *bmi160)
     /* 0x04 is v_mag_x_s16 msb register */
     com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG, &v_data_u8[BMI160_BMM150_DIG_Z1_MSB], BMI160_GEN_READ_WRITE_DATA_LENGTH);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
-    mag_trim.dig_z1 =
-    (uint16_t)((((uint32_t)((uint8_t)v_data_u8[BMI160_BMM150_DIG_Z1_MSB]))
-            << BMI160_SHIFT_BIT_POSITION_BY_08_BITS) |
-            (v_data_u8[BMI160_BMM150_DIG_Z1_LSB]));
+    mag_trim.dig_z1 = (uint16_t)((((uint32_t)((uint8_t)v_data_u8[BMI160_BMM150_DIG_Z1_MSB]))
+            << BMI160_SHIFT_BIT_POSITION_BY_08_BITS) |(v_data_u8[BMI160_BMM150_DIG_Z1_LSB]));
 
     /* read dig_z2 lsb value */
     com_rslt += bmi160_set_mag_read_addr(bmi160, BMI160_MAG_DIG_Z2_LSB);
@@ -15432,10 +15093,8 @@ uint8_t bmi160_read_bmm150_mag_trim(const bmi160_t *bmi160)
     /* 0x04 is v_mag_x_s16 msb register */
     com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG, &v_data_u8[BMI160_BMM150_DIG_Z2_MSB], BMI160_GEN_READ_WRITE_DATA_LENGTH);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
-    mag_trim.dig_z2 =
-    (int16_t)((((int32_t)((int8_t)v_data_u8[BMI160_BMM150_DIG_Z2_MSB]))
-            << BMI160_SHIFT_BIT_POSITION_BY_08_BITS) |
-            (v_data_u8[BMI160_BMM150_DIG_Z2_LSB]));
+    mag_trim.dig_z2 = (int16_t)((((int32_t)((int8_t)v_data_u8[BMI160_BMM150_DIG_Z2_MSB]))
+            << BMI160_SHIFT_BIT_POSITION_BY_08_BITS) |(v_data_u8[BMI160_BMM150_DIG_Z2_LSB]));
 
     /* read dig_z3 lsb value */
     com_rslt += bmi160_set_mag_read_addr(bmi160, BMI160_MAG_DIG_Z3_LSB);
@@ -15449,10 +15108,8 @@ uint8_t bmi160_read_bmm150_mag_trim(const bmi160_t *bmi160)
     /* 0x04 is v_mag_x_s16 msb register */
     com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG, &v_data_u8[BMI160_BMM150_DIG_DIG_Z3_MSB], BMI160_GEN_READ_WRITE_DATA_LENGTH);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
-    mag_trim.dig_z3 =
-    (int16_t)((((int32_t)((int8_t)v_data_u8[BMI160_BMM150_DIG_DIG_Z3_MSB]))
-            << BMI160_SHIFT_BIT_POSITION_BY_08_BITS) |
-            (v_data_u8[BMI160_BMM150_DIG_DIG_Z3_LSB]));
+    mag_trim.dig_z3 = (int16_t)((((int32_t)((int8_t)v_data_u8[BMI160_BMM150_DIG_DIG_Z3_MSB]))
+            << BMI160_SHIFT_BIT_POSITION_BY_08_BITS) |(v_data_u8[BMI160_BMM150_DIG_DIG_Z3_LSB]));
     /* read dig_z4 lsb value */
     com_rslt += bmi160_set_mag_read_addr(bmi160, BMI160_MAG_DIG_Z4_LSB);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
@@ -15465,10 +15122,8 @@ uint8_t bmi160_read_bmm150_mag_trim(const bmi160_t *bmi160)
     /* 0x04 is v_mag_x_s16 msb register */
     com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG, &v_data_u8[BMI160_BMM150_DIG_DIG_Z4_MSB], BMI160_GEN_READ_WRITE_DATA_LENGTH);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
-    mag_trim.dig_z4 =
-    (int16_t)((((int32_t)((int8_t)v_data_u8[BMI160_BMM150_DIG_DIG_Z4_MSB]))
-            << BMI160_SHIFT_BIT_POSITION_BY_08_BITS) |
-            (v_data_u8[BMI160_BMM150_DIG_DIG_Z4_LSB]));
+    mag_trim.dig_z4 = (int16_t)((((int32_t)((int8_t)v_data_u8[BMI160_BMM150_DIG_DIG_Z4_MSB]))
+            << BMI160_SHIFT_BIT_POSITION_BY_08_BITS) |(v_data_u8[BMI160_BMM150_DIG_DIG_Z4_LSB]));
 
     /* read dig_xyz1 lsb value */
     com_rslt += bmi160_set_mag_read_addr(bmi160, BMI160_MAG_DIG_XYZ1_LSB);
@@ -15482,10 +15137,8 @@ uint8_t bmi160_read_bmm150_mag_trim(const bmi160_t *bmi160)
     /* 0x04 is v_mag_x_s16 msb register */
     com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG, &v_data_u8[BMI160_BMM150_DIG_DIG_XYZ1_MSB], BMI160_GEN_READ_WRITE_DATA_LENGTH);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
-    mag_trim.dig_xyz1 =
-    (uint16_t)((((uint32_t)((uint8_t)v_data_u8[BMI160_BMM150_DIG_DIG_XYZ1_MSB]))
-            << BMI160_SHIFT_BIT_POSITION_BY_08_BITS) |
-            (v_data_u8[BMI160_BMM150_DIG_DIG_XYZ1_LSB]));
+    mag_trim.dig_xyz1 = (uint16_t)((((uint32_t)((uint8_t)v_data_u8[BMI160_BMM150_DIG_DIG_XYZ1_MSB]))
+            << BMI160_SHIFT_BIT_POSITION_BY_08_BITS) |(v_data_u8[BMI160_BMM150_DIG_DIG_XYZ1_LSB]));
 
     return com_rslt;
 }
@@ -15510,7 +15163,7 @@ uint8_t bmi160_read_bmm150_mag_trim(const bmi160_t *bmi160)
  *
  *
 */
-uint8_t bmi160_bst_akm_mag_interface_init(const bmi160_t *bmi160, uint8_t v_akm_i2c_address_u8)
+uint8_t bmi160_bst_akm_mag_interface_init(bmi160_t *bmi160, uint8_t v_akm_i2c_address_u8)
 {
     /* variable used for return the status of communication result*/
     uint8_t com_rslt = E_BMI160_COMM_RES;
@@ -15522,7 +15175,7 @@ uint8_t bmi160_bst_akm_mag_interface_init(const bmi160_t *bmi160, uint8_t v_akm_
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     com_rslt += bmi160_set_command_register(bmi160, MAG_MODE_NORMAL);
     HAL_Delay(BMI160_AKM_INIT_DELAY);
-    bmi160_get_mag_power_mode_stat(&v_data_u8);
+    bmi160_get_mag_power_mode_stat(bmi160, &v_data_u8);
     /* register 0x7E write the 0x37, 0x9A and 0x30*/
     com_rslt += bmi160_set_command_register(bmi160, BMI160_COMMAND_REG_ONE);
     HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
@@ -15531,9 +15184,9 @@ uint8_t bmi160_bst_akm_mag_interface_init(const bmi160_t *bmi160, uint8_t v_akm_
     com_rslt += bmi160_set_command_register(bmi160, BMI160_COMMAND_REG_THREE);
     HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
     /*switch the page1*/
-    com_rslt += bmi160_set_target_page(BMI160_WRITE_TARGET_PAGE1);
+    com_rslt += bmi160_set_target_page(bmi160, BMI160_WRITE_TARGET_PAGE1);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
-    bmi160_get_target_page(&v_data_u8);
+    bmi160_get_target_page(bmi160, &v_data_u8);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     com_rslt += bmi160_set_paging_enable(bmi160,BMI160_WRITE_ENABLE_PAGE1);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
@@ -15541,16 +15194,16 @@ uint8_t bmi160_bst_akm_mag_interface_init(const bmi160_t *bmi160, uint8_t v_akm_
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     /* enable the pullup configuration from
     the register 0x05 bit 4 and 5  to 10*/
-    bmi160_get_pullup_configuration(&v_pull_value_u8);
+    bmi160_get_pullup_configuration(bmi160, &v_pull_value_u8);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     v_pull_value_u8 = v_pull_value_u8 | BMI160_PULL_UP_DATA;
-    com_rslt += bmi160_set_pullup_configuration(v_pull_value_u8);
+    com_rslt += bmi160_set_pullup_configuration(bmi160, v_pull_value_u8);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 
     /*switch the page0*/
-    com_rslt += bmi160_set_target_page(BMI160_WRITE_TARGET_PAGE0);
+    com_rslt += bmi160_set_target_page(bmi160, BMI160_WRITE_TARGET_PAGE0);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
-    bmi160_get_target_page(&v_data_u8);
+    bmi160_get_target_page(bmi160, &v_data_u8);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     /* Write the AKM09911 0r AKM09912 i2c address*/
     com_rslt += bmi160_set_i2c_device_addr(bmi160, v_akm_i2c_address_u8);
@@ -15561,9 +15214,9 @@ uint8_t bmi160_bst_akm_mag_interface_init(const bmi160_t *bmi160, uint8_t v_akm_
     bmi160_get_mag_manual_enable(bmi160,&v_data_u8);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     /*Enable the MAG interface */
-    com_rslt += bmi160_set_if_mode(BMI160_ENABLE_MAG_IF_MODE);
+    com_rslt += bmi160_set_if_mode(bmi160, BMI160_ENABLE_MAG_IF_MODE);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
-    bmi160_get_if_mode(&v_data_u8);
+    bmi160_get_if_mode(bmi160, &v_data_u8);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 
     /* Set the AKM Fuse ROM mode */
@@ -15576,15 +15229,14 @@ uint8_t bmi160_bst_akm_mag_interface_init(const bmi160_t *bmi160, uint8_t v_akm_
     /* Read the Fuse ROM v_data_u8 from registers
     0x60,0x61 and 0x62*/
     /* ASAX v_data_u8 */
-    com_rslt += bmi160_read_bst_akm_sensitivity_data(bmi160, );
+    com_rslt += bmi160_read_bst_akm_sensitivity_data(bmi160);
     HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
     /* read the device id of the AKM sensor
     if device id is 0x05 - AKM09911
     if device id is 0x04 - AKM09912*/
     com_rslt += bmi160_set_mag_read_addr(bmi160, AKM_CHIP_ID_REG);
     /* 0x04 is mag_x lsb register */
-    com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG,
-    &v_akm_chip_id_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+    com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG, &v_akm_chip_id_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
     /* Set value power down mode mode*/
     com_rslt += bmi160_set_mag_write_data(bmi160, AKM_POWER_DOWN_MODE_DATA);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
@@ -15600,12 +15252,12 @@ uint8_t bmi160_bst_akm_mag_interface_init(const bmi160_t *bmi160, uint8_t v_akm_
     /* Set the AKM read xyz v_data_u8 address*/
     com_rslt += bmi160_set_mag_read_addr(bmi160, AKM_DATA_REGISTER);
     /* write the mag v_data_bw_u8 as 25Hz*/
-    com_rslt += bmi160_set_mag_output_data_rate(BMI160_MAG_OUTPUT_DATA_RATE_25HZ);
+    com_rslt += bmi160_set_mag_output_data_rate(bmi160, BMI160_MAG_OUTPUT_DATA_RATE_25HZ);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     /* Enable mag interface to auto mode*/
-    com_rslt += bmi160_set_mag_manual_enable(bmi160,BMI160_MANUAL_DISABLE);
+    com_rslt += bmi160_set_mag_manual_enable(bmi160, BMI160_MANUAL_DISABLE);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
-    bmi160_get_mag_manual_enable(bmi160,&v_data_u8);
+    bmi160_get_mag_manual_enable(bmi160, &v_data_u8);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 
     return com_rslt;
@@ -15616,10 +15268,9 @@ uint8_t bmi160_bst_akm_mag_interface_init(const bmi160_t *bmi160, uint8_t v_akm_
  *
  *    @note Before reading the mag sensitivity values
  *    make sure the following two points are addressed
- *    @note    1.    Make sure the mag interface is enabled or not,
- *        by using the bmi160_get_if_mode() function.
+ *    @note    1.    Make sure the mag interface is enabled or not, *        by using the bmi160_get_if_mode(bmi160, ) function.
  *        If mag interface is not enabled set the value of 0x02
- *        to the function bmi160_get_if_mode(0x02)
+ *        to the function bmi160_get_if_mode(bmi160, 0x02)
  *    @note    2.    And also confirm the secondary-interface power mode
  *        is not in the SUSPEND mode.
  *        by using the function bmi160_get_mag_pmu_status().
@@ -15640,33 +15291,26 @@ uint8_t bmi160_read_bst_akm_sensitivity_data(const bmi160_t *bmi160)
     uint8_t com_rslt = E_BMI160_COMM_RES;
     /* Array holding the sensitivity ax,ay and az data*/
     uint8_t v_data_u8[BMI160_AKM_SENSITIVITY_DATA_SIZE] = {
-    BMI160_INIT_VALUE,
-    BMI160_INIT_VALUE, BMI160_INIT_VALUE};
+    BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE};
     /* read asax value */
     com_rslt = bmi160_set_mag_read_addr(bmi160, BMI160_BST_AKM_ASAX);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     /* 0x04 is secondary read mag x lsb register */
-    com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG,
-    &v_data_u8[AKM_ASAX],
-    BMI160_GEN_READ_WRITE_DATA_LENGTH);
+    com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG, &v_data_u8[AKM_ASAX], BMI160_GEN_READ_WRITE_DATA_LENGTH);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     akm_asa_data.asax = v_data_u8[AKM_ASAX];
     /* read asay value */
     com_rslt += bmi160_set_mag_read_addr(bmi160, BMI160_BST_AKM_ASAY);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     /* 0x04 is secondary read mag x lsb register */
-    com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG,
-    &v_data_u8[AKM_ASAY],
-    BMI160_GEN_READ_WRITE_DATA_LENGTH);
+    com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG, &v_data_u8[AKM_ASAY], BMI160_GEN_READ_WRITE_DATA_LENGTH);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     akm_asa_data.asay = v_data_u8[AKM_ASAY];
     /* read asaz value */
     com_rslt += bmi160_set_mag_read_addr(bmi160, BMI160_BST_AKM_ASAZ);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     /* 0x04 is secondary read mag x lsb register */
-    com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG,
-    &v_data_u8[AKM_ASAZ],
-    BMI160_GEN_READ_WRITE_DATA_LENGTH);
+    com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG, &v_data_u8[AKM_ASAZ], BMI160_GEN_READ_WRITE_DATA_LENGTH);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     akm_asa_data.asaz = v_data_u8[AKM_ASAZ];
 
@@ -15677,10 +15321,9 @@ uint8_t bmi160_read_bst_akm_sensitivity_data(const bmi160_t *bmi160)
  *    of AKM09911 the out put of X as int32_t
  *    @note    Before start reading the mag compensated X data
  *            make sure the following two points are addressed
- *    @note 1.    Make sure the mag interface is enabled or not,
- *        by using the bmi160_get_if_mode() function.
+ *    @note 1.    Make sure the mag interface is enabled or not, *        by using the bmi160_get_if_mode(bmi160, ) function.
  *        If mag interface is not enabled set the value of 0x02
- *        to the function bmi160_get_if_mode(0x02)
+ *        to the function bmi160_get_if_mode(bmi160, 0x02)
  *    @note 2.    And also confirm the secondary-interface power mode
  *        is not in the SUSPEND mode.
  *        by using the function bmi160_get_mag_pmu_status().
@@ -15699,8 +15342,7 @@ int32_t bmi160_bst_akm09911_compensate_X(const bmi160_t *bmi160, int16_t v_bst_a
     /*Return value of AKM x compensated v_data_u8*/
     int32_t retval = BMI160_INIT_VALUE;
     /* Convert raw v_data_u8 into compensated v_data_u8*/
-    retval = (v_bst_akm_x_s16 *
-    ((akm_asa_data.asax/AKM09911_SENSITIVITY_DIV) +
+    retval = (v_bst_akm_x_s16 *((akm_asa_data.asax/AKM09911_SENSITIVITY_DIV) +
     BMI160_GEN_READ_WRITE_DATA_LENGTH));
     return retval;
 }
@@ -15709,10 +15351,9 @@ int32_t bmi160_bst_akm09911_compensate_X(const bmi160_t *bmi160, int16_t v_bst_a
  *    of AKM09911 the out put of Y as int32_t
  *    @note    Before start reading the mag compensated Y data
  *            make sure the following two points are addressed
- *    @note 1.    Make sure the mag interface is enabled or not,
- *        by using the bmi160_get_if_mode() function.
+ *    @note 1.    Make sure the mag interface is enabled or not, *        by using the bmi160_get_if_mode(bmi160, ) function.
  *        If mag interface is not enabled set the value of 0x02
- *        to the function bmi160_get_if_mode(0x02)
+ *        to the function bmi160_get_if_mode(bmi160, 0x02)
  *    @note 2.    And also confirm the secondary-interface power mode
  *        is not in the SUSPEND mode.
  *        by using the function bmi160_get_mag_pmu_status().
@@ -15731,8 +15372,7 @@ int32_t bmi160_bst_akm09911_compensate_Y(const bmi160_t *bmi160, int16_t v_bst_a
     /*Return value of AKM y compensated v_data_u8*/
     int32_t retval = BMI160_INIT_VALUE;
     /* Convert raw v_data_u8 into compensated v_data_u8*/
-    retval = (v_bst_akm_y_s16 *
-    ((akm_asa_data.asay/AKM09911_SENSITIVITY_DIV) +
+    retval = (v_bst_akm_y_s16 *((akm_asa_data.asay/AKM09911_SENSITIVITY_DIV) +
     BMI160_GEN_READ_WRITE_DATA_LENGTH));
     return retval;
 }
@@ -15741,10 +15381,9 @@ int32_t bmi160_bst_akm09911_compensate_Y(const bmi160_t *bmi160, int16_t v_bst_a
  *    of AKM09911 the out put of Z as int32_t
  *    @note    Before start reading the mag compensated Z data
  *            make sure the following two points are addressed
- *    @note 1.    Make sure the mag interface is enabled or not,
- *        by using the bmi160_get_if_mode() function.
+ *    @note 1.    Make sure the mag interface is enabled or not, *        by using the bmi160_get_if_mode(bmi160, ) function.
  *        If mag interface is not enabled set the value of 0x02
- *        to the function bmi160_get_if_mode(0x02)
+ *        to the function bmi160_get_if_mode(bmi160, 0x02)
  *    @note 2.    And also confirm the secondary-interface power mode
  *        is not in the SUSPEND mode.
  *        by using the function bmi160_get_mag_pmu_status().
@@ -15763,8 +15402,7 @@ int32_t bmi160_bst_akm09911_compensate_Z(const bmi160_t *bmi160, int16_t v_bst_a
     /*Return value of AKM z compensated v_data_u8*/
     int32_t retval = BMI160_INIT_VALUE;
     /* Convert raw v_data_u8 into compensated v_data_u8*/
-    retval = (v_bst_akm_z_s16 *
-    ((akm_asa_data.asaz/AKM09911_SENSITIVITY_DIV) +
+    retval = (v_bst_akm_z_s16 *((akm_asa_data.asaz/AKM09911_SENSITIVITY_DIV) +
     BMI160_GEN_READ_WRITE_DATA_LENGTH));
     return retval;
 }
@@ -15773,10 +15411,9 @@ int32_t bmi160_bst_akm09911_compensate_Z(const bmi160_t *bmi160, int16_t v_bst_a
  *    of AKM09912 the out put of X as int32_t
  *    @note    Before start reading the mag compensated X data
  *            make sure the following two points are addressed
- *    @note 1.    Make sure the mag interface is enabled or not,
- *        by using the bmi160_get_if_mode() function.
+ *    @note 1.    Make sure the mag interface is enabled or not, *        by using the bmi160_get_if_mode(bmi160, ) function.
  *        If mag interface is not enabled set the value of 0x02
- *        to the function bmi160_get_if_mode(0x02)
+ *        to the function bmi160_get_if_mode(bmi160, 0x02)
  *    @note 2.    And also confirm the secondary-interface power mode
  *        is not in the SUSPEND mode.
  *        by using the function bmi160_get_mag_pmu_status().
@@ -15795,8 +15432,7 @@ int32_t bmi160_bst_akm09912_compensate_X(const bmi160_t *bmi160, int16_t v_bst_a
     /*Return value of AKM x compensated data*/
     int32_t retval = BMI160_INIT_VALUE;
     /* Convert raw data into compensated data*/
-    retval = v_bst_akm_x_s16 *
-    (akm_asa_data.asax + AKM09912_SENSITIVITY)
+    retval = v_bst_akm_x_s16 *(akm_asa_data.asax + AKM09912_SENSITIVITY)
     / AKM09912_SENSITIVITY_DIV;
     return retval;
 }
@@ -15805,10 +15441,9 @@ int32_t bmi160_bst_akm09912_compensate_X(const bmi160_t *bmi160, int16_t v_bst_a
  *    of AKM09912 the out put of Y as int32_t
  *    @note    Before start reading the mag compensated Y data
  *            make sure the following two points are addressed
- *    @note 1.    Make sure the mag interface is enabled or not,
- *        by using the bmi160_get_if_mode() function.
+ *    @note 1.    Make sure the mag interface is enabled or not, *        by using the bmi160_get_if_mode(bmi160, ) function.
  *        If mag interface is not enabled set the value of 0x02
- *        to the function bmi160_get_if_mode(0x02)
+ *        to the function bmi160_get_if_mode(bmi160, 0x02)
  *    @note 2.    And also confirm the secondary-interface power mode
  *        is not in the SUSPEND mode.
  *        by using the function bmi160_get_mag_pmu_status().
@@ -15827,8 +15462,7 @@ int32_t bmi160_bst_akm09912_compensate_Y(const bmi160_t *bmi160, int16_t v_bst_a
     /*Return value of AKM y compensated data*/
     int32_t retval = BMI160_INIT_VALUE;
     /* Convert raw data into compensated data*/
-    retval = v_bst_akm_y_s16 *
-    (akm_asa_data.asax + AKM09912_SENSITIVITY)
+    retval = v_bst_akm_y_s16 *(akm_asa_data.asax + AKM09912_SENSITIVITY)
     / AKM09912_SENSITIVITY_DIV;
     return retval;
 }
@@ -15837,10 +15471,9 @@ int32_t bmi160_bst_akm09912_compensate_Y(const bmi160_t *bmi160, int16_t v_bst_a
  *    of AKM09912 the out put of Z as int32_t
  *    @note    Before start reading the mag compensated Z data
  *            make sure the following two points are addressed
- *    @note 1.    Make sure the mag interface is enabled or not,
- *        by using the bmi160_get_if_mode() function.
+ *    @note 1.    Make sure the mag interface is enabled or not, *        by using the bmi160_get_if_mode(bmi160, ) function.
  *        If mag interface is not enabled set the value of 0x02
- *        to the function bmi160_get_if_mode(0x02)
+ *        to the function bmi160_get_if_mode(bmi160, 0x02)
  *    @note 2.    And also confirm the secondary-interface power mode
  *        is not in the SUSPEND mode.
  *        by using the function bmi160_get_mag_pmu_status().
@@ -15859,8 +15492,7 @@ int32_t bmi160_bst_akm09912_compensate_Z(const bmi160_t *bmi160, int16_t v_bst_a
     /*Return value of AKM z compensated data*/
     int32_t retval = BMI160_INIT_VALUE;
     /* Convert raw data into compensated data*/
-    retval = v_bst_akm_z_s16 *
-    (akm_asa_data.asax + AKM09912_SENSITIVITY)
+    retval = v_bst_akm_z_s16 *(akm_asa_data.asax + AKM09912_SENSITIVITY)
     / AKM09912_SENSITIVITY_DIV;
     return retval;
 }
@@ -15869,10 +15501,9 @@ int32_t bmi160_bst_akm09912_compensate_Z(const bmi160_t *bmi160, int16_t v_bst_a
  *    AKM09911
  *    @note Before start reading the mag compensated data's
  *    make sure the following two points are addressed
- *    @note    1.    Make sure the mag interface is enabled or not,
- *        by using the bmi160_get_if_mode() function.
+ *    @note    1.    Make sure the mag interface is enabled or not, *        by using the bmi160_get_if_mode(bmi160, ) function.
  *        If mag interface is not enabled set the value of 0x02
- *        to the function bmi160_get_if_mode(0x02)
+ *        to the function bmi160_get_if_mode(bmi160, 0x02)
  *    @note    2.    And also confirm the secondary-interface power mode
  *        is not in the SUSPEND mode.
  *        by using the function bmi160_get_mag_pmu_status().
@@ -15910,10 +15541,9 @@ uint8_t bmi160_bst_akm09911_compensate_xyz(const bmi160_t *bmi160, struct bmi160
  *    AKM09912
  *    @note Before start reading the mag compensated data's
  *    make sure the following two points are addressed
- *    @note    1.    Make sure the mag interface is enabled or not,
- *        by using the bmi160_get_if_mode() function.
+ *    @note    1.    Make sure the mag interface is enabled or not, *        by using the bmi160_get_if_mode(bmi160, ) function.
  *        If mag interface is not enabled set the value of 0x02
- *        to the function bmi160_get_if_mode(0x02)
+ *        to the function bmi160_get_if_mode(bmi160, 0x02)
  *    @note    2.    And also confirm the secondary-interface power mode
  *        is not in the SUSPEND mode.
  *        by using the function bmi160_get_mag_pmu_status().
@@ -15951,10 +15581,9 @@ uint8_t bmi160_bst_akm09912_compensate_xyz(const bmi160_t *bmi160, struct bmi160
  *    power mode.
  *    @note Before set the AKM power mode
  *    make sure the following two points are addressed
- *    @note    1.    Make sure the mag interface is enabled or not,
- *        by using the bmi160_get_if_mode() function.
+ *    @note    1.    Make sure the mag interface is enabled or not, *        by using the bmi160_get_if_mode(bmi160, ) function.
  *        If mag interface is not enabled set the value of 0x02
- *        to the function bmi160_get_if_mode(0x02)
+ *        to the function bmi160_get_if_mode(bmi160, 0x02)
  *    @note    2.    And also confirm the secondary-interface power mode
  *        is not in the SUSPEND mode.
  *        by using the function bmi160_get_mag_pmu_status().
@@ -15976,7 +15605,7 @@ uint8_t bmi160_bst_akm09912_compensate_xyz(const bmi160_t *bmi160, struct bmi160
  *
  *
 */
-uint8_t bmi160_bst_akm_set_powermode(const bmi160_t *bmi160, uint8_t v_akm_pow_mode_u8)
+uint8_t bmi160_bst_akm_set_powermode(bmi160_t *bmi160, uint8_t v_akm_pow_mode_u8)
 {
     /* variable used for return the status of communication result*/
     uint8_t com_rslt = E_BMI160_COMM_RES;
@@ -15996,7 +15625,7 @@ uint8_t bmi160_bst_akm_set_powermode(const bmi160_t *bmi160, uint8_t v_akm_pow_m
     case AKM_SINGLE_MEAS_MODE:
         /* Set the power mode of AKM as
         single measurement mode*/
-        com_rslt += bmi160_set_mag_write_data (AKM_SINGLE_MEASUREMENT_MODE);
+        com_rslt += bmi160_set_mag_write_data (bmi160, AKM_SINGLE_MEASUREMENT_MODE);
         HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
         com_rslt += bmi160_set_mag_write_addr(bmi160, AKM_POWER_MODE_REG);
         HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
@@ -16024,7 +15653,7 @@ uint8_t bmi160_bst_akm_set_powermode(const bmi160_t *bmi160, uint8_t v_akm_pow_m
     }
     /* set mag interface auto mode*/
     if (bmi160->mag_manual_enable == BMI160_MANUAL_ENABLE) {
-        com_rslt += bmi160_set_mag_manual_enable(bmi160,BMI160_MANUAL_DISABLE);
+        com_rslt += bmi160_set_mag_manual_enable(bmi160, BMI160_MANUAL_DISABLE);
         HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     }
     return com_rslt;
@@ -16034,10 +15663,9 @@ uint8_t bmi160_bst_akm_set_powermode(const bmi160_t *bmi160, uint8_t v_akm_pow_m
  *    power mode of AKM09911 and AKM09912
  *    @note Before set the mag power mode
  *    make sure the following two point is addressed
- *        Make sure the mag interface is enabled or not,
- *        by using the bmi160_get_if_mode() function.
+ *        Make sure the mag interface is enabled or not, *        by using the bmi160_get_if_mode(bmi160, ) function.
  *        If mag interface is not enabled set the value of 0x02
- *        to the function bmi160_get_if_mode(0x02)
+ *        to the function bmi160_get_if_mode(bmi160, 0x02)
  *
  *    @param v_mag_sec_if_pow_mode_u8 : The value of secondary if power mode
  *  value   |    Description
@@ -16052,7 +15680,7 @@ uint8_t bmi160_bst_akm_set_powermode(const bmi160_t *bmi160, uint8_t v_akm_pow_m
  *
  *
 */
-uint8_t bmi160_set_bst_akm_and_secondary_if_powermode(const bmi160_t *bmi160, uint8_t v_mag_sec_if_pow_mode_u8)
+uint8_t bmi160_set_bst_akm_and_secondary_if_powermode(bmi160_t *bmi160, uint8_t v_mag_sec_if_pow_mode_u8)
 {
     /* variable used for return the status of communication result*/
     uint8_t com_rslt = E_BMI160_COMM_RES;
@@ -16061,22 +15689,22 @@ uint8_t bmi160_set_bst_akm_and_secondary_if_powermode(const bmi160_t *bmi160, ui
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     /* set mag interface manual mode*/
     if (bmi160->mag_manual_enable != BMI160_MANUAL_ENABLE) {
-        com_rslt = bmi160_set_mag_manual_enable(bmi160,BMI160_MANUAL_ENABLE);
+        com_rslt = bmi160_set_mag_manual_enable(bmi160, BMI160_MANUAL_ENABLE);
         HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     }
     switch (v_mag_sec_if_pow_mode_u8) {
     case BMI160_MAG_FORCE_MODE:
         /* set the secondary mag power mode as NORMAL*/
-        com_rslt += bmi160_set_mag_interface_normal();
+        com_rslt += bmi160_set_mag_interface_normal(bmi160);
         /* set the akm power mode as single measurement mode*/
-        com_rslt += bmi160_bst_akm_set_powermode(AKM_SINGLE_MEAS_MODE);
+        com_rslt += bmi160_bst_akm_set_powermode(bmi160, AKM_SINGLE_MEAS_MODE);
         HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
         com_rslt += bmi160_set_mag_read_addr(bmi160, AKM_DATA_REGISTER);
         HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     break;
     case BMI160_MAG_SUSPEND_MODE:
         /* set the akm power mode as power down mode*/
-        com_rslt += bmi160_bst_akm_set_powermode(AKM_POWER_DOWN_MODE);
+        com_rslt += bmi160_bst_akm_set_powermode(bmi160, AKM_POWER_DOWN_MODE);
         HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
         /* set the secondary mag power mode as SUSPEND*/
         com_rslt += bmi160_set_command_register(bmi160, MAG_MODE_SUSPEND);
@@ -16102,7 +15730,7 @@ uint8_t bmi160_set_bst_akm_and_secondary_if_powermode(const bmi160_t *bmi160, ui
  *
  *
 */
-uint8_t bmi160_bst_yamaha_yas532_mag_interface_init(const bmi160_t *bmi160)
+uint8_t bmi160_bst_yamaha_yas532_mag_interface_init(bmi160_t *bmi160)
 {
     /* This variable used for provide the communication
     results*/
@@ -16114,7 +15742,7 @@ uint8_t bmi160_bst_yamaha_yas532_mag_interface_init(const bmi160_t *bmi160)
     com_rslt = bmi160_set_command_register(bmi160, ACCEL_MODE_NORMAL);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     /* write mag power mode as NORMAL*/
-    com_rslt += bmi160_set_mag_interface_normal();
+    com_rslt += bmi160_set_mag_interface_normal(bmi160);
     /* register 0x7E write the 0x37, 0x9A and 0x30*/
     com_rslt += bmi160_set_command_register(bmi160, BMI160_COMMAND_REG_ONE);
     HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
@@ -16123,9 +15751,9 @@ uint8_t bmi160_bst_yamaha_yas532_mag_interface_init(const bmi160_t *bmi160)
     com_rslt += bmi160_set_command_register(bmi160, BMI160_COMMAND_REG_THREE);
     HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
     /*switch the page1*/
-    com_rslt += bmi160_set_target_page(BMI160_WRITE_TARGET_PAGE1);
+    com_rslt += bmi160_set_target_page(bmi160, BMI160_WRITE_TARGET_PAGE1);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
-    bmi160_get_target_page(&v_data_u8);
+    bmi160_get_target_page(bmi160, &v_data_u8);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     com_rslt += bmi160_set_paging_enable(bmi160,BMI160_WRITE_ENABLE_PAGE1);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
@@ -16133,15 +15761,15 @@ uint8_t bmi160_bst_yamaha_yas532_mag_interface_init(const bmi160_t *bmi160)
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     /* enable the pullup configuration from
     the register 0x05 bit 4 and 5 as 10*/
-    bmi160_get_pullup_configuration(&v_pull_value_u8);
+    bmi160_get_pullup_configuration(bmi160, &v_pull_value_u8);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     v_pull_value_u8 = v_pull_value_u8 | BMI160_PULL_UP_DATA;
-    com_rslt += bmi160_set_pullup_configuration(v_pull_value_u8);
+    com_rslt += bmi160_set_pullup_configuration(bmi160, v_pull_value_u8);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     /*switch the page0*/
-    com_rslt += bmi160_set_target_page(BMI160_WRITE_TARGET_PAGE0);
+    com_rslt += bmi160_set_target_page(bmi160, BMI160_WRITE_TARGET_PAGE0);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
-    bmi160_get_target_page(&v_data_u8);
+    bmi160_get_target_page(bmi160, &v_data_u8);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     /* Write the YAS532 i2c address*/
     com_rslt += bmi160_set_i2c_device_addr(bmi160, BMI160_AUX_YAS532_I2C_ADDRESS);
@@ -16152,19 +15780,18 @@ uint8_t bmi160_bst_yamaha_yas532_mag_interface_init(const bmi160_t *bmi160)
     bmi160_get_mag_manual_enable(bmi160,&v_data_u8);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     /*Enable the MAG interface */
-    com_rslt += bmi160_set_if_mode(BMI160_ENABLE_MAG_IF_MODE);
+    com_rslt += bmi160_set_if_mode(bmi160, BMI160_ENABLE_MAG_IF_MODE);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
-    bmi160_get_if_mode(&v_data_u8);
+    bmi160_get_if_mode(bmi160, &v_data_u8);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     v_data_u8 = BMI160_MANUAL_DISABLE;
     /* Read the YAS532 device id is 0x02*/
     com_rslt += bmi160_set_mag_read_addr(bmi160, BMI160_YAS_DEVICE_ID_REG);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
-    com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG,
-    &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+    com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     /* Read the YAS532 calibration data*/
-    com_rslt += bmi160_bst_yamaha_yas532_calib_values();
+    com_rslt += bmi160_bst_yamaha_yas532_calib_values(bmi160);
     HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
     /* Assign the data acquisition mode*/
     yas532_data.measure_state = YAS532_MAG_STATE_INIT_COIL;
@@ -16185,9 +15812,9 @@ uint8_t bmi160_bst_yamaha_yas532_mag_interface_init(const bmi160_t *bmi160)
     }
     yas532_data.last_raw[3] = 0;
     /* Set the initial values of yas532*/
-    com_rslt += bmi160_bst_yas532_set_initial_values();
+    com_rslt += bmi160_bst_yas532_set_initial_values(bmi160);
     /* write the mag v_data_bw_u8 as 25Hz*/
-    com_rslt += bmi160_set_mag_output_data_rate(BMI160_MAG_OUTPUT_DATA_RATE_25HZ);
+    com_rslt += bmi160_set_mag_output_data_rate(bmi160, BMI160_MAG_OUTPUT_DATA_RATE_25HZ);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     /* Enable mag interface to auto mode*/
     com_rslt += bmi160_set_mag_manual_enable(bmi160,BMI160_MANUAL_DISABLE);
@@ -16207,7 +15834,7 @@ uint8_t bmi160_bst_yamaha_yas532_mag_interface_init(const bmi160_t *bmi160)
  *
  *
  */
-uint8_t bmi160_bst_yas532_set_initial_values(const bmi160_t *bmi160)
+uint8_t bmi160_bst_yas532_set_initial_values(bmi160_t *bmi160)
 {
 /* This variable used for provide the communication
     results*/
@@ -16229,7 +15856,7 @@ uint8_t bmi160_bst_yas532_set_initial_values(const bmi160_t *bmi160)
     HAL_Delay(BMI160_YAS532_SET_INITIAL_VALUE_DELAY);
     /* check the valid offset*/
     if (is_valid_offset(yas532_data.v_hard_offset_s8)) {
-        com_rslt += bmi160_bst_yas532_set_offset(yas532_data.v_hard_offset_s8);
+        com_rslt += bmi160_bst_yas532_set_offset(bmi160, yas532_data.v_hard_offset_s8);
         yas532_data.measure_state = YAS532_MAG_STATE_NORMAL;
     } else {
         /* set the default offset as invalid offset*/
@@ -16249,31 +15876,28 @@ uint8_t bmi160_bst_yas532_set_initial_values(const bmi160_t *bmi160)
  *
  *
 */
-uint8_t bmi160_bst_yas532_magnetic_measure_set_offset(const bmi160_t *bmi160)
+uint8_t bmi160_bst_yas532_magnetic_measure_set_offset(bmi160_t *bmi160)
 {
     /* This variable used for provide the communication
     results*/
     uint8_t com_rslt = E_BMI160_COMM_RES;
     /* used for offset value set to the offset register*/
     int8_t v_hard_offset_s8[BMI160_HARD_OFFSET_DATA_SIZE] = {
-    BMI160_INIT_VALUE,
-    BMI160_INIT_VALUE, BMI160_INIT_VALUE};
+    BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE};
     /* offset correction factors*/
     static const uint8_t v_correct_u8[BMI160_YAS_CORRECT_DATA_SIZE] = {
     16, 8, 4, 2, 1};
     /* used for the temperature */
     uint16_t v_temp_u16 = BMI160_INIT_VALUE;
     /* used for the xy1y2 read*/
-    uint16_t v_xy1y2_u16[BMI160_YAS_XY1Y2_DATA_SIZE] = {BMI160_INIT_VALUE,
-    BMI160_INIT_VALUE, BMI160_INIT_VALUE};
+    uint16_t v_xy1y2_u16[BMI160_YAS_XY1Y2_DATA_SIZE] = {BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE};
     /* local flag for assign the values*/
-    int32_t v_flag_s32[BMI160_YAS_FLAG_DATA_SIZE] = {BMI160_INIT_VALUE,
-    BMI160_INIT_VALUE, BMI160_INIT_VALUE};
+    int32_t v_flag_s32[BMI160_YAS_FLAG_DATA_SIZE] = {BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE};
     uint8_t i, j, v_busy_u8, v_overflow_u8 = BMI160_INIT_VALUE;
 
     for (i = 0; i < 5; i++) {
         /* set the offset values*/
-        com_rslt = bmi160_bst_yas532_set_offset(v_hard_offset_s8);
+        com_rslt = bmi160_bst_yas532_set_offset(bmi160, v_hard_offset_s8);
         /* read the sensor data*/
         com_rslt += bmi160_bst_yas532_normal_measurement_data(bmi160, BMI160_YAS532_ACQ_START, &v_busy_u8, &v_temp_u16, v_xy1y2_u16, &v_overflow_u8);
         /* check the sensor busy status*/
@@ -16297,7 +15921,7 @@ uint8_t bmi160_bst_yas532_magnetic_measure_set_offset(const bmi160_t *bmi160)
         }
     }
     /* set the offset */
-    com_rslt += bmi160_bst_yas532_set_offset(v_hard_offset_s8);
+    com_rslt += bmi160_bst_yas532_set_offset(bmi160, v_hard_offset_s8);
     return com_rslt;
 }
 /*!
@@ -16318,51 +15942,38 @@ uint8_t bmi160_bst_yamaha_yas532_calib_values(const bmi160_t *bmi160)
     uint8_t com_rslt = E_BMI160_COMM_RES;
     /* Array holding the YAS532 calibration values */
     uint8_t v_data_u8[BMI160_YAS532_CALIB_DATA_SIZE] = {
-    BMI160_INIT_VALUE, BMI160_INIT_VALUE,
-    BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE,
-    BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE,
-    BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE,
-    BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE};
+    BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE};
     /* Read the DX value */
     com_rslt = bmi160_set_mag_read_addr(bmi160, BMI160_YAS532_CALIB_CX);
     HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
     /* 0x04 is secondary read mag x lsb register */
-    com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG,
-    &v_data_u8[0], BMI160_GEN_READ_WRITE_DATA_LENGTH);
+    com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG, &v_data_u8[0], BMI160_GEN_READ_WRITE_DATA_LENGTH);
     yas532_data.calib_yas532.cx = (int32_t)((v_data_u8[0]
     * 10) - 1280);
     /* Read the DY1 value */
     com_rslt += bmi160_set_mag_read_addr(bmi160, BMI160_YAS532_CALIB_CY1);
     /* 0x04 is secondary read mag x lsb register */
-    com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG,
-    &v_data_u8[1], BMI160_GEN_READ_WRITE_DATA_LENGTH);
-    yas532_data.calib_yas532.cy1 =
-    (int32_t)((v_data_u8[1] * 10) - 1280);
+    com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG, &v_data_u8[1], BMI160_GEN_READ_WRITE_DATA_LENGTH);
+    yas532_data.calib_yas532.cy1 = (int32_t)((v_data_u8[1] * 10) - 1280);
     /* Read the DY2 value */
     com_rslt += bmi160_set_mag_read_addr(bmi160, BMI160_YAS532_CALIB_CY2);
     /* 0x04 is secondary read mag x lsb register */
-    com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG,
-    &v_data_u8[2], BMI160_GEN_READ_WRITE_DATA_LENGTH);
-    yas532_data.calib_yas532.cy2 =
-    (int32_t)((v_data_u8[2] * 10) - 1280);
+    com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG, &v_data_u8[2], BMI160_GEN_READ_WRITE_DATA_LENGTH);
+    yas532_data.calib_yas532.cy2 = (int32_t)((v_data_u8[2] * 10) - 1280);
     /* Read the D2 and D3 value */
     com_rslt += bmi160_set_mag_read_addr(bmi160, BMI160_YAS532_CALIB1);
     /* 0x04 is secondary read mag x lsb register */
-    com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG,
-    &v_data_u8[3], BMI160_GEN_READ_WRITE_DATA_LENGTH);
-    yas532_data.calib_yas532.a2 =
-    (int32_t)(((v_data_u8[3] >>
+    com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG, &v_data_u8[3], BMI160_GEN_READ_WRITE_DATA_LENGTH);
+    yas532_data.calib_yas532.a2 = (int32_t)(((v_data_u8[3] >>
     BMI160_SHIFT_BIT_POSITION_BY_02_BITS)
     & 0x03F) - 32);
     /* Read the D3 and D4 value */
     com_rslt += bmi160_set_mag_read_addr(bmi160, BMI160_YAS532_CALIB2);
     /* 0x04 is secondary read mag x lsb register */
-    com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG,
-    &v_data_u8[4], BMI160_GEN_READ_WRITE_DATA_LENGTH);
+    com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG, &v_data_u8[4], BMI160_GEN_READ_WRITE_DATA_LENGTH);
     /* calculate a3*/
     yas532_data.calib_yas532.a3 = (int32_t)((((v_data_u8[3] <<
-    BMI160_SHIFT_BIT_POSITION_BY_02_BITS) & 0x0C) |
-    ((v_data_u8[4]
+    BMI160_SHIFT_BIT_POSITION_BY_02_BITS) & 0x0C) |((v_data_u8[4]
     >> BMI160_SHIFT_BIT_POSITION_BY_06_BITS)
     & 0x03)) - 8);
     /* calculate a4*/
@@ -16372,21 +15983,17 @@ uint8_t bmi160_bst_yamaha_yas532_calib_values(const bmi160_t *bmi160)
     /* Read the D5 and D6 value */
     com_rslt += bmi160_set_mag_read_addr(bmi160, BMI160_YAS532_CALIB3);
     /* 0x04 is secondary read mag x lsb register */
-    com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG,
-    &v_data_u8[5], BMI160_GEN_READ_WRITE_DATA_LENGTH);
+    com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG, &v_data_u8[5], BMI160_GEN_READ_WRITE_DATA_LENGTH);
     /* calculate a5*/
-    yas532_data.calib_yas532.a5 =
-    (int32_t)(((v_data_u8[5]
+    yas532_data.calib_yas532.a5 = (int32_t)(((v_data_u8[5]
     >> BMI160_SHIFT_BIT_POSITION_BY_02_BITS)
     & 0x3F) + 38);
     /* Read the D6 and D7 value */
     com_rslt += bmi160_set_mag_read_addr(bmi160, BMI160_YAS532_CALIB4);
     /* 0x04 is secondary read mag x lsb register */
-    com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG,
-    &v_data_u8[6], BMI160_GEN_READ_WRITE_DATA_LENGTH);
+    com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG, &v_data_u8[6], BMI160_GEN_READ_WRITE_DATA_LENGTH);
     /* calculate a6*/
-    yas532_data.calib_yas532.a6 =
-    (int32_t)((((v_data_u8[5]
+    yas532_data.calib_yas532.a6 = (int32_t)((((v_data_u8[5]
     << BMI160_SHIFT_BIT_POSITION_BY_04_BITS)
     & 0x30) | ((v_data_u8[6] >>
      BMI160_SHIFT_BIT_POSITION_BY_04_BITS)
@@ -16394,36 +16001,30 @@ uint8_t bmi160_bst_yamaha_yas532_calib_values(const bmi160_t *bmi160)
      /* Read the D7 and D8 value */
     com_rslt += bmi160_set_mag_read_addr(bmi160, BMI160_YAS532_CALIB5);
     /* 0x04 is secondary read mag x lsb register */
-    com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG,
-    &v_data_u8[7], BMI160_GEN_READ_WRITE_DATA_LENGTH);
+    com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG, &v_data_u8[7], BMI160_GEN_READ_WRITE_DATA_LENGTH);
     /* calculate a7*/
     yas532_data.calib_yas532.a7 = (int32_t)((((v_data_u8[6]
     << BMI160_SHIFT_BIT_POSITION_BY_03_BITS)
-    & 0x78) |
-    ((v_data_u8[7]
+    & 0x78) |((v_data_u8[7]
     >> BMI160_SHIFT_BIT_POSITION_BY_05_BITS) &
     0x07)) - 64);
     /* Read the D8 and D9 value */
     com_rslt += bmi160_set_mag_read_addr(bmi160, BMI160_YAS532_CLAIB6);
     /* 0x04 is secondary read mag x lsb register */
-    com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG,
-    &v_data_u8[8], BMI160_GEN_READ_WRITE_DATA_LENGTH);
+    com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG, &v_data_u8[8], BMI160_GEN_READ_WRITE_DATA_LENGTH);
     /* calculate a8*/
     yas532_data.calib_yas532.a8 = (int32_t)((((v_data_u8[7] <<
-    BMI160_GEN_READ_WRITE_DATA_LENGTH) & 0x3E) |
-    ((v_data_u8[8] >>
+    BMI160_GEN_READ_WRITE_DATA_LENGTH) & 0x3E) |((v_data_u8[8] >>
     BMI160_SHIFT_BIT_POSITION_BY_07_BITS) & 0x01)) -
     32);
 
     /* Read the D8 and D9 value */
     com_rslt += bmi160_set_mag_read_addr(bmi160, BMI160_YAS532_CALIB7);
     /* 0x04 is secondary read mag x lsb register */
-    com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG,
-    &v_data_u8[9], BMI160_GEN_READ_WRITE_DATA_LENGTH);
+    com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG, &v_data_u8[9], BMI160_GEN_READ_WRITE_DATA_LENGTH);
     /* calculate a9*/
     yas532_data.calib_yas532.a9 = (int32_t)(((v_data_u8[8] <<
-    BMI160_GEN_READ_WRITE_DATA_LENGTH) & 0xFE) |
-     ((v_data_u8[9] >>
+    BMI160_GEN_READ_WRITE_DATA_LENGTH) & 0xFE) |((v_data_u8[9] >>
      BMI160_SHIFT_BIT_POSITION_BY_07_BITS) & 0x01));
     /* calculate k*/
     yas532_data.calib_yas532.k = (int32_t)((v_data_u8[9] >>
@@ -16431,56 +16032,42 @@ uint8_t bmi160_bst_yamaha_yas532_calib_values(const bmi160_t *bmi160)
     /* Read the  value from register 0x9A*/
     com_rslt += bmi160_set_mag_read_addr(bmi160, BMI160_YAS532_CALIB8);
     /* 0x04 is secondary read mag x lsb register */
-    com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG,
-    &v_data_u8[10],
-    BMI160_GEN_READ_WRITE_DATA_LENGTH);
+    com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG, &v_data_u8[10], BMI160_GEN_READ_WRITE_DATA_LENGTH);
     /* Read the  value from register 0x9B*/
     com_rslt += bmi160_set_mag_read_addr(bmi160, BMI160_YAS532_CALIIB9);
     /* 0x04 is secondary read mag x lsb register */
-    com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG,
-    &v_data_u8[11],
-    BMI160_GEN_READ_WRITE_DATA_LENGTH);
+    com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG, &v_data_u8[11], BMI160_GEN_READ_WRITE_DATA_LENGTH);
     /* Read the  value from register 0x9C*/
     com_rslt += bmi160_set_mag_read_addr(bmi160, BMI160_YAS532_CALIB10);
     /* 0x04 is secondary read mag x lsb register */
-    com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG,
-    &v_data_u8[12],
-    BMI160_GEN_READ_WRITE_DATA_LENGTH);
+    com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG, &v_data_u8[12], BMI160_GEN_READ_WRITE_DATA_LENGTH);
     /* Read the  value from register 0x9D*/
     com_rslt += bmi160_set_mag_read_addr(bmi160, BMI160_YAS532_CALIB11);
     /* 0x04 is secondary read mag x lsb register */
-    com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG,
-    &v_data_u8[13],
-    BMI160_GEN_READ_WRITE_DATA_LENGTH);
+    com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG, &v_data_u8[13], BMI160_GEN_READ_WRITE_DATA_LENGTH);
     /* Calculate the fxy1y2 and rxy1y1*/
-    yas532_data.calib_yas532.fxy1y2[0] =
-    (uint8_t)(((v_data_u8[10]
+    yas532_data.calib_yas532.fxy1y2[0] = (uint8_t)(((v_data_u8[10]
     & 0x01)
     << BMI160_SHIFT_BIT_POSITION_BY_01_BIT)
     | ((v_data_u8[11] >>
     BMI160_SHIFT_BIT_POSITION_BY_07_BITS) & 0x01));
-    yas532_data.calib_yas532.rxy1y2[0] =
-    ((int8_t)(((v_data_u8[10]
+    yas532_data.calib_yas532.rxy1y2[0] = ((int8_t)(((v_data_u8[10]
     >> BMI160_SHIFT_BIT_POSITION_BY_01_BIT) & 0x3F)
     << BMI160_SHIFT_BIT_POSITION_BY_02_BITS))
     >> BMI160_SHIFT_BIT_POSITION_BY_02_BITS;
-    yas532_data.calib_yas532.fxy1y2[1] =
-    (uint8_t)(((v_data_u8[11] & 0x01)
+    yas532_data.calib_yas532.fxy1y2[1] = (uint8_t)(((v_data_u8[11] & 0x01)
     << BMI160_SHIFT_BIT_POSITION_BY_01_BIT)
      | ((v_data_u8[12] >>
      BMI160_SHIFT_BIT_POSITION_BY_07_BITS) & 0x01));
-    yas532_data.calib_yas532.rxy1y2[1] =
-    ((int8_t)(((v_data_u8[11]
+    yas532_data.calib_yas532.rxy1y2[1] = ((int8_t)(((v_data_u8[11]
     >> BMI160_SHIFT_BIT_POSITION_BY_01_BIT) & 0x3F)
     << BMI160_SHIFT_BIT_POSITION_BY_02_BITS))
     >> BMI160_SHIFT_BIT_POSITION_BY_02_BITS;
-    yas532_data.calib_yas532.fxy1y2[2] =
-    (uint8_t)(((v_data_u8[12] & 0x01)
+    yas532_data.calib_yas532.fxy1y2[2] = (uint8_t)(((v_data_u8[12] & 0x01)
     << BMI160_SHIFT_BIT_POSITION_BY_01_BIT)
     | ((v_data_u8[13]
     >> BMI160_SHIFT_BIT_POSITION_BY_07_BITS) & 0x01));
-    yas532_data.calib_yas532.rxy1y2[2] =
-    ((int8_t)(((v_data_u8[12]
+    yas532_data.calib_yas532.rxy1y2[2] = ((int8_t)(((v_data_u8[12]
     >> BMI160_SHIFT_BIT_POSITION_BY_01_BIT) & 0x3F)
      << BMI160_SHIFT_BIT_POSITION_BY_02_BITS))
      >> BMI160_SHIFT_BIT_POSITION_BY_02_BITS;
@@ -16550,27 +16137,22 @@ uint8_t bmi160_bst_yas532_xy1y2_to_linear(const bmi160_t *bmi160, uint16_t *v_xy
  *
  *
  */
-uint8_t bmi160_bst_yas532_normal_measurement_data(const bmi160_t *bmi160, uint8_t v_acquisition_command_u8, uint8_t *v_busy_u8,
-uint16_t *v_temp_u16, uint16_t *v_xy1y2_u16, uint8_t *v_overflow_u8)
+uint8_t bmi160_bst_yas532_normal_measurement_data(bmi160_t *bmi160, uint8_t v_acquisition_command_u8, uint8_t *v_busy_u8, uint16_t *v_temp_u16, uint16_t *v_xy1y2_u16, uint8_t *v_overflow_u8)
 {
     /* This variable used for provide the communication
     results*/
     uint8_t com_rslt = E_BMI160_COMM_RES;
     /* Array holding the YAS532 xyy1 data*/
     uint8_t v_data_u8[BMI160_YAS_XY1Y2T_DATA_SIZE] = {
-    BMI160_INIT_VALUE,
-    BMI160_INIT_VALUE, BMI160_INIT_VALUE,
-    BMI160_INIT_VALUE, BMI160_INIT_VALUE,
-    BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE};
+    BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE};
     uint8_t i = BMI160_INIT_VALUE;
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) {
         return E_BMI160_NULL_PTR;
         } else {
         /* read the sensor data */
-        com_rslt = bmi160_bst_yas532_acquisition_command_register(v_acquisition_command_u8);
-        com_rslt +=
-        bmi160_bus_read(bmi160, BMI160_USER_DATA_MAG_X_LSB__REG, v_data_u8, BMI160_MAG_YAS_DATA_LENGTH);
+        com_rslt = bmi160_bst_yas532_acquisition_command_register(bmi160, v_acquisition_command_u8);
+        com_rslt += bmi160_bus_read(bmi160, BMI160_USER_DATA_MAG_X_LSB__REG, v_data_u8, BMI160_MAG_YAS_DATA_LENGTH);
          v_data_u8[0] = 0x31;
          v_data_u8[1] = 0xF8;
          v_data_u8[2] = 0x49;
@@ -16643,26 +16225,22 @@ uint16_t *v_temp_u16, uint16_t *v_xy1y2_u16, uint8_t *v_overflow_u8)
  *
  *
  */
-uint8_t bmi160_bst_yas532_measurement_xyz_data(const bmi160_t *bmi160, struct yas532_vector *xyz_data, uint8_t *v_overflow_s8, uint8_t v_temp_correction_u8,
-uint8_t v_acquisition_command_u8)
+uint8_t bmi160_bst_yas532_measurement_xyz_data(bmi160_t *bmi160, struct yas532_vector *xyz_data, uint8_t *v_overflow_s8, uint8_t v_temp_correction_u8, uint8_t v_acquisition_command_u8)
 {
     /* This variable used for provide the communication
     results*/
     uint8_t com_rslt = E_BMI160_COMM_RES;
     /* Array holding the linear calculation output*/
     int32_t v_xy1y2_linear_s32[BMI160_YAS_XY1Y2_DATA_SIZE] = {
-    BMI160_INIT_VALUE,
-    BMI160_INIT_VALUE, BMI160_INIT_VALUE};
+    BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE};
     /* Array holding the temperature data */
-    int32_t v_xyz_tmp_s32[BMI160_YAS_TEMP_DATA_SIZE] = {BMI160_INIT_VALUE,
-    BMI160_INIT_VALUE, BMI160_INIT_VALUE};
+    int32_t v_xyz_tmp_s32[BMI160_YAS_TEMP_DATA_SIZE] = {BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE};
     int32_t tmp = BMI160_INIT_VALUE;
     int32_t sx, sy1, sy2, sy, sz = BMI160_INIT_VALUE;
     uint8_t i, v_busy_u8 = BMI160_INIT_VALUE;
     uint16_t v_temp_u16 = BMI160_INIT_VALUE;
     /* Array holding the xyy1 sensor raw data*/
-    uint16_t v_xy1y2_u16[BMI160_YAS_XY1Y2_DATA_SIZE] = {BMI160_INIT_VALUE,
-    BMI160_INIT_VALUE, BMI160_INIT_VALUE};
+    uint16_t v_xy1y2_u16[BMI160_YAS_XY1Y2_DATA_SIZE] = {BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE};
     #if 1 < YAS532_MAG_TEMPERATURE_LOG
     int32_t sum = BMI160_INIT_VALUE;
     #endif
@@ -16680,18 +16258,16 @@ uint8_t v_acquisition_command_u8)
             yas532_data.measure_state = 0;
     break;
     case YAS532_MAG_STATE_MEASURE_OFFSET:
-        com_rslt = bmi160_bst_yas532_magnetic_measure_set_offset();
+        com_rslt = bmi160_bst_yas532_magnetic_measure_set_offset(bmi160);
         yas532_data.measure_state = 0;
     break;
     default:
     break;
     }
     /* Read sensor data*/
-    com_rslt += bmi160_bst_yas532_normal_measurement_data(bmi160, v_acquisition_command_u8, &v_busy_u8, &v_temp_u16,
-    v_xy1y2_u16, v_overflow_s8);
+    com_rslt += bmi160_bst_yas532_normal_measurement_data(bmi160, v_acquisition_command_u8, &v_busy_u8, &v_temp_u16, v_xy1y2_u16, v_overflow_s8);
     /* Calculate the linear data*/
-    com_rslt += bmi160_bst_yas532_xy1y2_to_linear(v_xy1y2_u16,
-    v_xy1y2_linear_s32);
+    com_rslt += bmi160_bst_yas532_xy1y2_to_linear(bmi160, v_xy1y2_u16, v_xy1y2_linear_s32);
     /* Calculate temperature correction */
     #if 1 < YAS532_MAG_TEMPERATURE_LOG
         yas532_data.temp_data.log[yas532_data.temp_data.idx++] = v_temp_u16;
@@ -16723,14 +16299,11 @@ uint8_t v_acquisition_command_u8)
     sy = sy1 - sy2;
     sz = -sy1 - sy2;
     #if 1
-    xyz_data->yas532_vector_xyz[0] = yas532_data.calib_yas532.k *
-    ((100 * sx + yas532_data.calib_yas532.a2 * sy +
+    xyz_data->yas532_vector_xyz[0] = yas532_data.calib_yas532.k *((100 * sx + yas532_data.calib_yas532.a2 * sy +
     yas532_data.calib_yas532.a3 * sz) / 10);
-    xyz_data->yas532_vector_xyz[1] = yas532_data.calib_yas532.k *
-    ((yas532_data.calib_yas532.a4 * sx + yas532_data.calib_yas532.a5 * sy +
+    xyz_data->yas532_vector_xyz[1] = yas532_data.calib_yas532.k *((yas532_data.calib_yas532.a4 * sx + yas532_data.calib_yas532.a5 * sy +
     yas532_data.calib_yas532.a6 * sz) / 10);
-    xyz_data->yas532_vector_xyz[2] = yas532_data.calib_yas532.k *
-    ((yas532_data.calib_yas532.a7 * sx + yas532_data.calib_yas532.a8 * sy +
+    xyz_data->yas532_vector_xyz[2] = yas532_data.calib_yas532.k *((yas532_data.calib_yas532.a7 * sx + yas532_data.calib_yas532.a8 * sy +
     yas532_data.calib_yas532.a9 * sz) / 10);
     if (yas532_data.transform != BMI160_NULL) {
         for (i = 0; i < 3; i++) {
@@ -16745,12 +16318,10 @@ uint8_t v_acquisition_command_u8)
         set_vector(xyz_data->yas532_vector_xyz, v_xyz_tmp_s32);
     }
     for (i = 0; i < 3; i++) {
-        xyz_data->yas532_vector_xyz[i] -=
-        xyz_data->yas532_vector_xyz[i] % 10;
+        xyz_data->yas532_vector_xyz[i] -= xyz_data->yas532_vector_xyz[i] % 10;
         if (*v_overflow_s8 & (1
         << (i * 2)))
-            xyz_data->yas532_vector_xyz[i] +=
-            1; /* set overflow */
+            xyz_data->yas532_vector_xyz[i] += 1; /* set overflow */
         if (*v_overflow_s8 & (1 << (i * 2 + 1)))
             xyz_data->yas532_vector_xyz[i] += 2; /* set underflow */
     }
@@ -16787,19 +16358,16 @@ if (v_busy_u8)
  *
  *
  */
-uint8_t bmi160_bst_yas532_fifo_xyz_data(const bmi160_t *bmi160, uint16_t *v_xy1y2_u16, uint8_t v_temp_correction_u8,
-int8_t v_overflow_s8, uint16_t v_temp_u16, uint8_t v_busy_u8)
+uint8_t bmi160_bst_yas532_fifo_xyz_data(const bmi160_t *bmi160, uint16_t *v_xy1y2_u16, uint8_t v_temp_correction_u8, int8_t v_overflow_s8, uint16_t v_temp_u16, uint8_t v_busy_u8)
 {
     /* This variable used for provide the communication
     results*/
     uint8_t com_rslt = E_BMI160_COMM_RES;
     /* Array holding the linear calculation output*/
     int32_t v_xy1y2_linear_s32[BMI160_YAS_XY1Y2_DATA_SIZE] = {
-    BMI160_INIT_VALUE,
-    BMI160_INIT_VALUE, BMI160_INIT_VALUE};
+    BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE};
     /* Array holding the temperature data */
-    int32_t v_xyz_tmp_s32[BMI160_YAS_TEMP_DATA_SIZE] = {BMI160_INIT_VALUE,
-    BMI160_INIT_VALUE, BMI160_INIT_VALUE};
+    int32_t v_xyz_tmp_s32[BMI160_YAS_TEMP_DATA_SIZE] = {BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE};
     int32_t tmp = BMI160_INIT_VALUE;
     int32_t sx, sy1, sy2, sy, sz = BMI160_INIT_VALUE;
     uint8_t i = BMI160_INIT_VALUE;
@@ -16808,8 +16376,7 @@ int8_t v_overflow_s8, uint16_t v_temp_u16, uint8_t v_busy_u8)
     #endif
     v_overflow_s8 = BMI160_INIT_VALUE;
     /* Calculate the linear data*/
-    com_rslt = bmi160_bst_yas532_xy1y2_to_linear(v_xy1y2_u16,
-    v_xy1y2_linear_s32);
+    com_rslt = bmi160_bst_yas532_xy1y2_to_linear(bmi160, v_xy1y2_u16, v_xy1y2_linear_s32);
     /* Calculate temperature correction */
     #if 1 < YAS532_MAG_TEMPERATURE_LOG
         yas532_data.temp_data.log[yas532_data.temp_data.idx++] = v_temp_u16;
@@ -16841,14 +16408,11 @@ int8_t v_overflow_s8, uint16_t v_temp_u16, uint8_t v_busy_u8)
     sy = sy1 - sy2;
     sz = -sy1 - sy2;
     #if 1
-    fifo_xyz_data.yas532_vector_xyz[0] = yas532_data.calib_yas532.k *
-    ((100 * sx + yas532_data.calib_yas532.a2 * sy +
+    fifo_xyz_data.yas532_vector_xyz[0] = yas532_data.calib_yas532.k *((100 * sx + yas532_data.calib_yas532.a2 * sy +
     yas532_data.calib_yas532.a3 * sz) / 10);
-    fifo_xyz_data.yas532_vector_xyz[1] = yas532_data.calib_yas532.k *
-    ((yas532_data.calib_yas532.a4 * sx + yas532_data.calib_yas532.a5 * sy +
+    fifo_xyz_data.yas532_vector_xyz[1] = yas532_data.calib_yas532.k *((yas532_data.calib_yas532.a4 * sx + yas532_data.calib_yas532.a5 * sy +
     yas532_data.calib_yas532.a6 * sz) / 10);
-    fifo_xyz_data.yas532_vector_xyz[2] = yas532_data.calib_yas532.k *
-    ((yas532_data.calib_yas532.a7 * sx + yas532_data.calib_yas532.a8 * sy +
+    fifo_xyz_data.yas532_vector_xyz[2] = yas532_data.calib_yas532.k *((yas532_data.calib_yas532.a7 * sx + yas532_data.calib_yas532.a8 * sy +
     yas532_data.calib_yas532.a9 * sz) / 10);
     if (yas532_data.transform != BMI160_NULL) {
         for (i = 0; i < 3; i++) {
@@ -16863,12 +16427,10 @@ int8_t v_overflow_s8, uint16_t v_temp_u16, uint8_t v_busy_u8)
         set_vector(fifo_xyz_data.yas532_vector_xyz, v_xyz_tmp_s32);
     }
     for (i = 0; i < 3; i++) {
-        fifo_xyz_data.yas532_vector_xyz[i] -=
-        fifo_xyz_data.yas532_vector_xyz[i] % 10;
+        fifo_xyz_data.yas532_vector_xyz[i] -= fifo_xyz_data.yas532_vector_xyz[i] % 10;
         if (v_overflow_s8 & (1
         << (i * 2)))
-            fifo_xyz_data.yas532_vector_xyz[i] +=
-            1; /* set overflow */
+            fifo_xyz_data.yas532_vector_xyz[i] += 1; /* set overflow */
         if (v_overflow_s8 & (1 << (i * 2 + 1)))
             fifo_xyz_data.yas532_vector_xyz[i] += 2;
     }
@@ -16925,7 +16487,7 @@ if (v_busy_u8)
  *
  *
  */
-uint8_t bmi160_bst_yas532_acquisition_command_register(const bmi160_t *bmi160, uint8_t v_command_reg_data_u8)
+uint8_t bmi160_bst_yas532_acquisition_command_register(bmi160_t *bmi160, uint8_t v_command_reg_data_u8)
 {
     uint8_t com_rslt = E_BMI160_COMM_RES;
 
@@ -16958,7 +16520,7 @@ uint8_t bmi160_bst_yas532_acquisition_command_register(const bmi160_t *bmi160, u
  *
  *
  */
-uint8_t bmi160_bst_yas532_set_offset(const int8_t *p_offset_s8)
+uint8_t bmi160_bst_yas532_set_offset(bmi160_t *bmi160, const int8_t *p_offset_s8)
 {
     /* This variable used for provide the communication
     results*/
@@ -17004,7 +16566,7 @@ uint8_t bmi160_bst_yas532_set_offset(const int8_t *p_offset_s8)
  *
  *
 */
-uint8_t bmi160_bst_yamaha_yas537_mag_interface_init(const bmi160_t *bmi160)
+uint8_t bmi160_bst_yamaha_yas537_mag_interface_init(bmi160_t *bmi160)
 {
 /* This variable used for provide the communication
 results*/
@@ -17016,7 +16578,7 @@ uint8_t i = BMI160_INIT_VALUE;
 com_rslt = bmi160_set_command_register(bmi160, ACCEL_MODE_NORMAL);
 HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /* write mag power mode as NORMAL*/
-com_rslt += bmi160_set_mag_interface_normal();
+com_rslt += bmi160_set_mag_interface_normal(bmi160);
 /* register 0x7E write the 0x37, 0x9A and 0x30*/
 com_rslt += bmi160_set_command_register(bmi160, BMI160_COMMAND_REG_ONE);
 HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
@@ -17025,9 +16587,9 @@ HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 com_rslt += bmi160_set_command_register(bmi160, BMI160_COMMAND_REG_THREE);
 HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 /*switch the page1*/
-com_rslt += bmi160_set_target_page(BMI160_WRITE_TARGET_PAGE1);
+com_rslt += bmi160_set_target_page(bmi160, BMI160_WRITE_TARGET_PAGE1);
 HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
-bmi160_get_target_page(&v_data_u8);
+bmi160_get_target_page(bmi160, &v_data_u8);
 HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 com_rslt += bmi160_set_paging_enable(bmi160,BMI160_WRITE_ENABLE_PAGE1);
 HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
@@ -17035,15 +16597,15 @@ bmi160_get_paging_enable(bmi160,&v_data_u8);
 HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /* enable the pullup configuration from
 the register 0x05 bit 4 and 5 as 10*/
-bmi160_get_pullup_configuration(&v_pull_value_u8);
+bmi160_get_pullup_configuration(bmi160, &v_pull_value_u8);
 HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 v_pull_value_u8 = v_pull_value_u8 | BMI160_PULL_UP_DATA;
-com_rslt += bmi160_set_pullup_configuration(v_pull_value_u8);
+com_rslt += bmi160_set_pullup_configuration(bmi160, v_pull_value_u8);
 HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /*switch the page0*/
-com_rslt += bmi160_set_target_page(BMI160_WRITE_TARGET_PAGE0);
+com_rslt += bmi160_set_target_page(bmi160, BMI160_WRITE_TARGET_PAGE0);
 HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
-bmi160_get_target_page(&v_data_u8);
+bmi160_get_target_page(bmi160, &v_data_u8);
 HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /* Write the YAS532 i2c address*/
 com_rslt += bmi160_set_i2c_device_addr(bmi160, BMI160_YAS537_I2C_ADDRESS);
@@ -17054,22 +16616,20 @@ HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 bmi160_get_mag_manual_enable(bmi160,&v_data_u8);
 HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /*Enable the MAG interface */
-com_rslt += bmi160_set_if_mode(BMI160_ENABLE_MAG_IF_MODE);
+com_rslt += bmi160_set_if_mode(bmi160, BMI160_ENABLE_MAG_IF_MODE);
 HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
-bmi160_get_if_mode(&v_data_u8);
+bmi160_get_if_mode(bmi160, &v_data_u8);
 HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 v_data_u8 = BMI160_MANUAL_DISABLE;
 /* Read the YAS537 device id 0x07*/
 com_rslt += bmi160_set_mag_read_addr(bmi160, BMI160_YAS_DEVICE_ID_REG);
 HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
-com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG,
-&v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 yas537_data.dev_id = v_data_u8;
 HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /* Read the YAS532 calibration data*/
 
-com_rslt +=
-bmi160_bst_yamaha_yas537_calib_values(BMI160_GEN_READ_WRITE_DATA_LENGTH);
+com_rslt += bmi160_bst_yamaha_yas537_calib_values(bmi160, BMI160_GEN_READ_WRITE_DATA_LENGTH);
 HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 /* set the mode to NORMAL*/
 yas537_data.measure_state = YAS537_MAG_STATE_NORMAL;
@@ -17083,7 +16643,7 @@ for (i = 0; i < 3; i++) {
 for (i = 0; i < 4; i++)
     yas537_data.last_raw[i] = 0;
 /* write the mag bandwidth as 25Hz*/
-com_rslt += bmi160_set_mag_output_data_rate(BMI160_MAG_OUTPUT_DATA_RATE_25HZ);
+com_rslt += bmi160_set_mag_output_data_rate(bmi160, BMI160_MAG_OUTPUT_DATA_RATE_25HZ);
 HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /* Enable mag interface to auto mode*/
 com_rslt += bmi160_set_mag_manual_enable(bmi160,BMI160_MANUAL_DISABLE);
@@ -17113,13 +16673,7 @@ results*/
 uint8_t com_rslt = E_BMI160_COMM_RES;
 /* Array holding the YAS532 calibration values */
 uint8_t a_data_u8[BMI160_YAS537_CALIB_DATA_SIZE] = {
-BMI160_INIT_VALUE, BMI160_INIT_VALUE,
-BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE,
-BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE,
-BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE,
-BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE,
-BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE,
-};
+BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, };
 static const uint8_t v_avrr_u8[] = {0x50, 0x60, 0x70};
 uint8_t v_cal_valid_u8 = BMI160_INIT_VALUE, i;
 /* write soft reset as 0x02*/
@@ -17131,112 +16685,93 @@ HAL_Delay(BMI160_SEC_INTERFACE_GEN_READ_WRITE_DELAY);
 com_rslt = bmi160_set_mag_read_addr(bmi160, YAS537_REG_CALR_C0);
 HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /* 0x04 is secondary read mag x lsb register */
-com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG,
-&a_data_u8[0], BMI160_GEN_READ_WRITE_DATA_LENGTH);
+com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG, &a_data_u8[0], BMI160_GEN_READ_WRITE_DATA_LENGTH);
 /* Read the DY1 value */
 com_rslt += bmi160_set_mag_read_addr(bmi160, YAS537_REG_CALR_C1);
 HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /* 0x04 is secondary read mag x lsb register */
-com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG,
-&a_data_u8[1], BMI160_GEN_READ_WRITE_DATA_LENGTH);
+com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG, &a_data_u8[1], BMI160_GEN_READ_WRITE_DATA_LENGTH);
 /* Read the DY2 value */
 com_rslt += bmi160_set_mag_read_addr(bmi160, YAS537_REG_CALR_C2);
 HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /* 0x04 is secondary read mag x lsb register */
-com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG,
-&a_data_u8[2], BMI160_GEN_READ_WRITE_DATA_LENGTH);
+com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG, &a_data_u8[2], BMI160_GEN_READ_WRITE_DATA_LENGTH);
 /* Read the D2 value */
 com_rslt += bmi160_set_mag_read_addr(bmi160, YAS537_REG_CALR_C3);
 HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /* 0x04 is secondary read mag x lsb register */
-com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG,
-&a_data_u8[3], BMI160_GEN_READ_WRITE_DATA_LENGTH);
+com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG, &a_data_u8[3], BMI160_GEN_READ_WRITE_DATA_LENGTH);
 /* Read the D3 value */
 com_rslt += bmi160_set_mag_read_addr(bmi160, YAS537_REG_CALR_C4);
 HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /* 0x04 is secondary read mag x lsb register */
-com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG,
-&a_data_u8[4], BMI160_GEN_READ_WRITE_DATA_LENGTH);
+com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG, &a_data_u8[4], BMI160_GEN_READ_WRITE_DATA_LENGTH);
 /* Read the D4 value */
 com_rslt += bmi160_set_mag_read_addr(bmi160, YAS537_REG_CALR_C5);
 HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /* 0x04 is secondary read mag x lsb register */
-com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG,
-&a_data_u8[5], BMI160_GEN_READ_WRITE_DATA_LENGTH);
+com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG, &a_data_u8[5], BMI160_GEN_READ_WRITE_DATA_LENGTH);
 /* Read the D5 value */
 com_rslt += bmi160_set_mag_read_addr(bmi160, YAS537_REG_CALR_C6);
 HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /* 0x04 is secondary read mag x lsb register */
-com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG,
-&a_data_u8[6], BMI160_GEN_READ_WRITE_DATA_LENGTH);
+com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG, &a_data_u8[6], BMI160_GEN_READ_WRITE_DATA_LENGTH);
 /* Read the D6 value */
 com_rslt += bmi160_set_mag_read_addr(bmi160, YAS537_REG_CALR_C7);
 HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /* 0x04 is secondary read mag x lsb register */
-com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG,
-&a_data_u8[7], BMI160_GEN_READ_WRITE_DATA_LENGTH);
+com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG, &a_data_u8[7], BMI160_GEN_READ_WRITE_DATA_LENGTH);
 /* Read the D7 value */
 com_rslt += bmi160_set_mag_read_addr(bmi160, YAS537_REG_CALR_C8);
 HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /* 0x04 is secondary read mag x lsb register */
-com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG,
-&a_data_u8[8], BMI160_GEN_READ_WRITE_DATA_LENGTH);
+com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG, &a_data_u8[8], BMI160_GEN_READ_WRITE_DATA_LENGTH);
 /* Read the D8 value */
 com_rslt += bmi160_set_mag_read_addr(bmi160, YAS537_REG_CALR_C9);
 HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /* 0x04 is secondary read mag x lsb register */
-com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG,
-&a_data_u8[9], BMI160_GEN_READ_WRITE_DATA_LENGTH);
+com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG, &a_data_u8[9], BMI160_GEN_READ_WRITE_DATA_LENGTH);
 /* Read the D9 value */
 com_rslt += bmi160_set_mag_read_addr(bmi160, YAS537_REG_CALR_CA);
 HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /* 0x04 is secondary read mag x lsb register */
-com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG,
-&a_data_u8[10], BMI160_GEN_READ_WRITE_DATA_LENGTH);
+com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG, &a_data_u8[10], BMI160_GEN_READ_WRITE_DATA_LENGTH);
 /* Read the RX value */
 com_rslt += bmi160_set_mag_read_addr(bmi160, YAS537_REG_CALR_CB);
 HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /* 0x04 is secondary read mag x lsb register */
-com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG,
-&a_data_u8[11], BMI160_GEN_READ_WRITE_DATA_LENGTH);
+com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG, &a_data_u8[11], BMI160_GEN_READ_WRITE_DATA_LENGTH);
 /* Read the RY1 value */
 com_rslt += bmi160_set_mag_read_addr(bmi160, YAS537_REG_CALR_CC);
 HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /* 0x04 is secondary read mag x lsb register */
-com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG,
-&a_data_u8[12], BMI160_GEN_READ_WRITE_DATA_LENGTH);
+com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG, &a_data_u8[12], BMI160_GEN_READ_WRITE_DATA_LENGTH);
 /* Read the RY2 value */
 com_rslt += bmi160_set_mag_read_addr(bmi160, YAS537_REG_CALR_CD);
 HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /* 0x04 is secondary read mag x lsb register */
-com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG,
-&a_data_u8[13], BMI160_GEN_READ_WRITE_DATA_LENGTH);
+com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG, &a_data_u8[13], BMI160_GEN_READ_WRITE_DATA_LENGTH);
 /* Read the RY2 value */
 com_rslt += bmi160_set_mag_read_addr(bmi160, YAS537_REG_CALR_CE);
 HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /* 0x04 is secondary read mag x lsb register */
-com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG,
-&a_data_u8[14], BMI160_GEN_READ_WRITE_DATA_LENGTH);
+com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG, &a_data_u8[14], BMI160_GEN_READ_WRITE_DATA_LENGTH);
 /* Read the CHF value */
 com_rslt += bmi160_set_mag_read_addr(bmi160, YAS537_REG_CALR_CF);
 HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /* 0x04 is secondary read mag x lsb register */
-com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG,
-&a_data_u8[15], BMI160_GEN_READ_WRITE_DATA_LENGTH);
+com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG, &a_data_u8[15], BMI160_GEN_READ_WRITE_DATA_LENGTH);
 /* Read the VER value */
 com_rslt += bmi160_set_mag_read_addr(bmi160, YAS537_REG_CALR_DO);
 HAL_Delay(BMI160_GEN_READ_WRITE_DELAY);
 /* 0x04 is secondary read mag x lsb register */
-com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG,
-&a_data_u8[16], BMI160_GEN_READ_WRITE_DATA_LENGTH);
+com_rslt += bmi160_read_reg(bmi160, BMI160_MAG_DATA_READ_REG, &a_data_u8[16], BMI160_GEN_READ_WRITE_DATA_LENGTH);
 /* get the calib ver*/
-yas537_data.calib_yas537.ver =
-(a_data_u8[16] >> BMI160_SHIFT_BIT_POSITION_BY_06_BITS);
+yas537_data.calib_yas537.ver = (a_data_u8[16] >> BMI160_SHIFT_BIT_POSITION_BY_06_BITS);
 for (i = 0; i < 17; i++) {
     if (((i < 16 && a_data_u8[i]) != 0))
         v_cal_valid_u8 = 1;
-    if ((i < 16 &&
-    (a_data_u8[i] & 0x3F)) != 0)
+    if ((i < 16 &&(a_data_u8[i] & 0x3F)) != 0)
         v_cal_valid_u8 = 1;
 }
 if (!v_cal_valid_u8)
@@ -17309,44 +16844,38 @@ if (yas537_data.calib_yas537.ver == 0) {
 
     /* Assign the calibration values*/
     /* a2 */
-    yas537_data.calib_yas537.a2 =
-    ((((a_data_u8[3]
+    yas537_data.calib_yas537.a2 = ((((a_data_u8[3]
     << BMI160_SHIFT_BIT_POSITION_BY_02_BITS)
     & 0x7C)
     | (a_data_u8[4]
     >> BMI160_SHIFT_BIT_POSITION_BY_06_BITS)) - 64);
     /* a3 */
-    yas537_data.calib_yas537.a3 =
-    ((((a_data_u8[4] << BMI160_SHIFT_BIT_POSITION_BY_01_BIT)
+    yas537_data.calib_yas537.a3 = ((((a_data_u8[4] << BMI160_SHIFT_BIT_POSITION_BY_01_BIT)
     & 0x7E)
     | (a_data_u8[5]
     >> BMI160_SHIFT_BIT_POSITION_BY_07_BITS)) - 64);
     /* a4 */
-    yas537_data.calib_yas537.a4 =
-    ((((a_data_u8[5]
+    yas537_data.calib_yas537.a4 = ((((a_data_u8[5]
     << BMI160_SHIFT_BIT_POSITION_BY_01_BIT)
     & 0xFE)
     | (a_data_u8[6]
     >> BMI160_SHIFT_BIT_POSITION_BY_07_BITS))
     - 128);
     /* a5 */
-    yas537_data.calib_yas537.a5 =
-    ((((a_data_u8[6]
+    yas537_data.calib_yas537.a5 = ((((a_data_u8[6]
     << BMI160_SHIFT_BIT_POSITION_BY_02_BITS)
     & 0x1FC)
     | (a_data_u8[7]
     >> BMI160_SHIFT_BIT_POSITION_BY_06_BITS))
     - 112);
     /* a6 */
-    yas537_data.calib_yas537.a6 =
-    ((((a_data_u8[7]
+    yas537_data.calib_yas537.a6 = ((((a_data_u8[7]
     << BMI160_SHIFT_BIT_POSITION_BY_01_BIT)
     & 0x7E)
     | (a_data_u8[8]
     >> BMI160_SHIFT_BIT_POSITION_BY_07_BITS)) - 64);
     /* a7 */
-    yas537_data.calib_yas537.a7 =
-    ((((a_data_u8[8]
+    yas537_data.calib_yas537.a7 = ((((a_data_u8[8]
     << BMI160_SHIFT_BIT_POSITION_BY_01_BIT)
     & 0xFE)
     | (a_data_u8[9]
@@ -17428,7 +16957,7 @@ return com_rslt;
  *
  *
  */
-uint8_t bmi160_bst_yas537_acquisition_command_register(const bmi160_t *bmi160, uint8_t v_command_reg_data_u8)
+uint8_t bmi160_bst_yas537_acquisition_command_register(bmi160_t *bmi160, uint8_t v_command_reg_data_u8)
 {
     uint8_t com_rslt = E_BMI160_COMM_RES;
 
@@ -17491,36 +17020,28 @@ static void xy1y2_to_xyz(const bmi160_t *bmi160, uint16_t *xy1y2, int32_t *xyz)
  *
  *
  */
-uint8_t bmi160_bst_yamaha_yas537_read_xy1y2_data(const bmi160_t *bmi160, uint8_t *v_coil_stat_u8, uint8_t *v_busy_u8,
-uint16_t *v_temperature_u16, uint16_t *xy1y2, uint8_t *v_ouflow_u8)
+uint8_t bmi160_bst_yamaha_yas537_read_xy1y2_data(bmi160_t *bmi160, uint8_t *v_coil_stat_u8, uint8_t *v_busy_u8, uint16_t *v_temperature_u16, uint16_t *xy1y2, uint8_t *v_ouflow_u8)
 {
     /* This variable used for provide the communication
     results*/
     uint8_t com_rslt = E_BMI160_COMM_RES;
     /* Array holding the YAS532 calibration values */
     uint8_t a_data_u8[BMI160_YAS_XY1Y2T_DATA_SIZE] = {
-    BMI160_INIT_VALUE, BMI160_INIT_VALUE,
-    BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE,
-    BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE,
-    };
+    BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, };
     uint8_t i = BMI160_INIT_VALUE;
     int32_t a_h_s32[BMI160_YAS_H_DATA_SIZE] = {
     BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE};
     int32_t a_s_s32[BMI160_YAS_S_DATA_SIZE] = {
     BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE};
     /* set command register*/
-    com_rslt = bmi160_bst_yas537_acquisition_command_register(YAS537_SET_COMMAND_REGISTER);
+    com_rslt = bmi160_bst_yas537_acquisition_command_register(bmi160, YAS537_SET_COMMAND_REGISTER);
     /* read the yas537 sensor data of xy1y2*/
-    com_rslt +=
-    bmi160_bus_read(bmi160,
-    BMI160_USER_DATA_MAG_X_LSB__REG,
-    a_data_u8, BMI160_MAG_YAS_DATA_LENGTH);
+    com_rslt += bmi160_bus_read(bmi160, BMI160_USER_DATA_MAG_X_LSB__REG, a_data_u8, BMI160_MAG_YAS_DATA_LENGTH);
     /* read the busy flag*/
     *v_busy_u8 = a_data_u8[2]
     >> BMI160_SHIFT_BIT_POSITION_BY_07_BITS;
     /* read the coil status*/
-    *v_coil_stat_u8 =
-    ((a_data_u8[2] >>
+    *v_coil_stat_u8 = ((a_data_u8[2] >>
     BMI160_SHIFT_BIT_POSITION_BY_06_BITS) & 0X01);
     /* read temperature data*/
     *v_temperature_u16 = (uint16_t)((a_data_u8[0]
@@ -17612,7 +17133,7 @@ static uint8_t invalid_magnetic_field(const bmi160_t *bmi160, uint16_t *v_cur_u1
  *
  *
  */
-uint8_t bmi160_bst_yamaha_yas537_measure_xyz_data(const bmi160_t *bmi160, uint8_t *v_ouflow_u8, struct yas_vector *vector_xyz)
+uint8_t bmi160_bst_yamaha_yas537_measure_xyz_data(bmi160_t *bmi160, uint8_t *v_ouflow_u8, struct yas_vector *vector_xyz)
 {
     int32_t a_xyz_tmp_s32[BMI160_YAS_TEMP_DATA_SIZE] = {
     BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE};
@@ -17625,8 +17146,7 @@ uint8_t bmi160_bst_yamaha_yas537_measure_xyz_data(const bmi160_t *bmi160, uint8_
     BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE};
     *v_ouflow_u8 = 0;
     /* read the yas537 xy1y2 data*/
-    com_rslt = bmi160_bst_yamaha_yas537_read_xy1y2_data(bmi160, &v_rcoil_u8, &v_busy_u8,
-    &v_temperature_u16, a_xy1y2_u16, v_ouflow_u8);
+    com_rslt = bmi160_bst_yamaha_yas537_read_xy1y2_data(bmi160, &v_rcoil_u8, &v_busy_u8, &v_temperature_u16, a_xy1y2_u16, v_ouflow_u8);
     /* linear calculation*/
     xy1y2_to_xyz(bmi160, a_xy1y2_u16, vector_xyz->yas537_vector_xyz);
     if (yas537_data.transform != BMI160_NULL) {
@@ -17643,11 +17163,9 @@ uint8_t bmi160_bst_yamaha_yas537_measure_xyz_data(const bmi160_t *bmi160, uint8_
         yas537_set_vector(vector_xyz->yas537_vector_xyz, a_xyz_tmp_s32);
     }
     for (i = 0; i < 3; i++) {
-        vector_xyz->yas537_vector_xyz[i] -=
-        vector_xyz->yas537_vector_xyz[i] % 10;
+        vector_xyz->yas537_vector_xyz[i] -= vector_xyz->yas537_vector_xyz[i] % 10;
         if (*v_ouflow_u8 & (1 << (i * 2)))
-            vector_xyz->yas537_vector_xyz[i] +=
-            1; /* set overflow */
+            vector_xyz->yas537_vector_xyz[i] += 1; /* set overflow */
         if (*v_ouflow_u8 & (1 << (i * 2 + 1)))
             /* set underflow */
             vector_xyz->yas537_vector_xyz[i] += 2;
@@ -17674,7 +17192,7 @@ uint8_t bmi160_bst_yamaha_yas537_measure_xyz_data(const bmi160_t *bmi160, uint8_
     break;
     case YAS537_MAG_STATE_NORMAL:
         if (BMI160_INIT_VALUE < v_ouflow_u8
-        || invalid_magnetic_field(a_xy1y2_u16, yas537_data.last_after_rcoil)) {
+        || invalid_magnetic_field(bmi160, a_xy1y2_u16, yas537_data.last_after_rcoil)) {
             yas537_data.measure_state = YAS537_MAG_STATE_INIT_COIL;
             for (i = 0; i < 3; i++) {
                 if (!*v_ouflow_u8)
@@ -17702,7 +17220,7 @@ uint8_t bmi160_bst_yamaha_yas537_measure_xyz_data(const bmi160_t *bmi160, uint8_
  *
  *
  */
-uint8_t bmi160_bst_yamaha_yas537_fifo_xyz_data(const bmi160_t *bmi160, uint16_t *a_xy1y2_u16, uint8_t v_over_flow_u8, uint8_t v_rcoil_u8, uint8_t v_busy_u8)
+uint8_t bmi160_bst_yamaha_yas537_fifo_xyz_data(bmi160_t *bmi160, uint16_t *a_xy1y2_u16, uint8_t v_over_flow_u8, uint8_t v_rcoil_u8, uint8_t v_busy_u8)
 {
 
 int32_t a_xyz_tmp_s32[BMI160_YAS_TEMP_DATA_SIZE] = {
@@ -17725,12 +17243,9 @@ if (yas537_data.transform != BMI160_NULL) {
     yas537_set_vector(fifo_vector_xyz.yas537_vector_xyz, a_xyz_tmp_s32);
 }
 for (i = 0; i < 3; i++) {
-    fifo_vector_xyz.yas537_vector_xyz[i] -=
-    fifo_vector_xyz.yas537_vector_xyz[i] % 10;
-    if (v_over_flow_u8 & (1 <<
-    (i * 2)))
-        fifo_vector_xyz.yas537_vector_xyz[i] +=
-        1; /* set overflow */
+    fifo_vector_xyz.yas537_vector_xyz[i] -= fifo_vector_xyz.yas537_vector_xyz[i] % 10;
+    if (v_over_flow_u8 & (1 <<(i * 2)))
+        fifo_vector_xyz.yas537_vector_xyz[i] += 1; /* set overflow */
     if (v_over_flow_u8 & (1 << (i * 2 + 1)))
         /* set underflow */
         fifo_vector_xyz.yas537_vector_xyz[i] += 2;
@@ -17757,8 +17272,7 @@ case YAS537_MAG_STATE_RECORD_DATA:
 break;
 case YAS537_MAG_STATE_NORMAL:
     if (BMI160_INIT_VALUE < v_over_flow_u8
-    || invalid_magnetic_field(a_xy1y2_u16,
-    yas537_data.last_after_rcoil)) {
+    || invalid_magnetic_field(bmi160, a_xy1y2_u16, yas537_data.last_after_rcoil)) {
         yas537_data.measure_state = YAS537_MAG_STATE_INIT_COIL;
         for (i = 0; i < 3; i++) {
             if (!v_over_flow_u8)

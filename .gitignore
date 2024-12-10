@@ -208,3 +208,9 @@ build/CMakeFiles/stm32ACC.dir/Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_mmc
 build/CMakeFiles/stm32ACC.dir/Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_mmc_ex.c.obj.d
 build/CMakeFiles/stm32ACC.dir/Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_mmc.c.obj
 build/CMakeFiles/stm32ACC.dir/Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_mmc.c.obj.d
+build/CMakeFiles/stm32ACC.dir/Core/Src/app_threadx.c.obj
+build/CMakeFiles/stm32ACC.dir/Core/Src/app_threadx.c.obj.d
+build/CMakeFiles/stm32ACC.dir/FileX/App/app_filex.c.obj
+build/CMakeFiles/stm32ACC.dir/FileX/App/app_filex.c.obj.d
+build/CMakeFiles/stm32ACC.dir/FileX/Target/fx_stm32_sd_driver_glue.c.obj
+build/CMakeFiles/stm32ACC.dir/FileX/Target/fx_stm32_sd_driver_glue.c.obj.d

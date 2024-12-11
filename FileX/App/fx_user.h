@@ -151,11 +151,11 @@
 
 /* Defined, local path logic is disabled.  */
 
-/* #define FX_NO_LOCAL_PATH */
+#define FX_NO_LOCAL_PATH
 
 /* Defined, FileX is built without update to the time parameters.  */
 
-/* #define FX_NO_TIMER */
+#define FX_NO_TIMER
 
 /* Defined, renaming inherits path information.  */
 
@@ -170,11 +170,11 @@
    uses, the macros are setup to utilize a ThreadX mutex for multiple thread
    access control into an open media.  */
 
-/* #define FX_SINGLE_THREAD */
+#define FX_SINGLE_THREAD
 
 /* Defined, FileX will be used in standalone mode (without ThreadX) */
 
-/* #define FX_STANDALONE_ENABLE */
+#define FX_STANDALONE_ENABLE
 
 /* Defines the number of seconds the time parameters are updated in FileX.  */
 

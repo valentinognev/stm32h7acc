@@ -48,16 +48,10 @@ set(STM32CUBEMX_INCLUDE_DIRECTORIES
     ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/${MCU_FAMILY}_HAL_Driver/Inc/Legacy
     ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/CMSIS/Device/ST/${MCU_FAMILY}/Include
     ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/CMSIS/Include
-    ${CMAKE_CURRENT_SOURCE_DIR}/FileX/Target
-    ${CMAKE_CURRENT_SOURCE_DIR}/Middlewares/ST/filex/App
-    ${CMAKE_CURRENT_SOURCE_DIR}/Middlewares/ST/filex/Target
-    ${CMAKE_CURRENT_SOURCE_DIR}/Middlewares/ST/filex/common/inc
-    ${CMAKE_CURRENT_SOURCE_DIR}/Middlewares/ST/filex/common/drivers/template
-    ${CMAKE_CURRENT_SOURCE_DIR}/Middlewares/ST/filex/ports/generic/inc/
-    ${CMAKE_CURRENT_SOURCE_DIR}/Middlewares/ST/threadx/common/inc
-    ${CMAKE_CURRENT_SOURCE_DIR}/Middlewares/ST/threadx/common/port
-    ${CMAKE_CURRENT_SOURCE_DIR}/Middlewares/ST/threadx/ports/cortex_m33/gnu/inc
-    ${CMAKE_CURRENT_SOURCE_DIR}/Middlewares/ST/levelx/common/inc
+    ${CMAKE_CURRENT_SOURCE_DIR}/FileX/App 
+    ${CMAKE_CURRENT_SOURCE_DIR}/FileX/Target 
+    ${CMAKE_CURRENT_SOURCE_DIR}/Middlewares/ST/filex/common/inc 
+    ${CMAKE_CURRENT_SOURCE_DIR}/Middlewares/ST/filex/ports/generic/inc 
     # ${CMAKE_CURRENT_SOURCE_DIR}/USB_Device/App
     # ${CMAKE_CURRENT_SOURCE_DIR}/USB_Device/Target
     # ${CMAKE_CURRENT_SOURCE_DIR}/Middlewares/ST/STM32_USB_Device_Library/Core/Inc
@@ -73,6 +67,8 @@ file(GLOB_RECURSE STM32CUBEMX_SOURCES CONFIGURE_DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/${MCU_FAMILY}_HAL_Driver/*.c
     ${CMAKE_CURRENT_SOURCE_DIR}/FileX/App/*.c
     ${CMAKE_CURRENT_SOURCE_DIR}/FileX/Target/*.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/Middlewares/ST/filex/common/src/*.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/Middlewares/ST/filex/common/drivers/*.c
     # ${CMAKE_CURRENT_SOURCE_DIR}/Middlewares/*.c
     # ${CMAKE_CURRENT_SOURCE_DIR}/USB_Device/*.c
     )
@@ -91,7 +87,8 @@ target_compile_definitions(${EXECUTABLE} PRIVATE
     #$<$<CONFIG:Debug>:DEBUG>
     ${MCU_MODEL}
     USE_HAL_DRIVER
-    USE_FULL_LL_DRIVER)
+    USE_FULL_LL_DRIVER
+    FX_INCLUDE_USER_DEFINE_FILE)
 
 target_include_directories(${EXECUTABLE} SYSTEM PRIVATE
     ${STM32CUBEMX_INCLUDE_DIRECTORIES})

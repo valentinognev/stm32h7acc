@@ -17,7 +17,6 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
-#include "app_threadx.h"
 #include "main.h"
 #include "icache.h"
 #include "memorymap.h"
@@ -116,12 +115,9 @@ int main(void)
   MX_USB_PCD_Init();
   MX_ICACHE_Init();
   /* USER CODE BEGIN 2 */
-
+  MX_FileX_Init();
+  MX_FileX_Process();
   /* USER CODE END 2 */
-
-  //MX_ThreadX_Init();
-
-  /* We should never get here as control is now taken by the scheduler */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */

@@ -33,7 +33,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define FILEBASE "IMU_DATA"
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -90,30 +90,104 @@ UINT MX_FileX_Init(void)
 }
 
 /* USER CODE BEGIN 1 */
-VOID MX_FileX_Process(void)
+UINT writeDataToFile(uint16_t* data, uint32_t size)
 {
   UINT status;
-  ULONG bytes_read;
-  CHAR read_buffer[32];
-  CHAR data[] = "This is FileX working on STM32";
+  status =  fx_file_write(&fx_file, data, size);
+  return status;
+}
 
-  /* Create a file called STM32.TXT in the root directory. */
-  status =  fx_file_create(&sdio_disk, "STM32.TXT");
+UINT initDataFile(void)
+{
+  UINT status;
+  CHAR file_name[FX_MAX_LONG_NAME_LEN] = "";
+  uint32_t curIndex = 0;
+  sprintf(file_name, "%s_%d.TXT", FILEBASE, curIndex);
 
-  /* Check the create status. */
-  if (status != FX_SUCCESS)
+  status =  fx_file_create(&sdio_disk, file_name);
+  if (status != FX_SUCCESS && status != FX_ALREADY_CREATED)
   {
-    /* Check for an already created status. This is expected on the
-    second pass of this loop! */
-    if (status != FX_ALREADY_CREATED)
+    Error_Handler();
+  }
+  while (status == FX_ALREADY_CREATED)
+  {
+    curIndex++;
+    sprintf(file_name, "%s_%d.TXT", FILEBASE, curIndex);
+    status =  fx_file_create(&sdio_disk, file_name);
+    if (status != FX_SUCCESS && status != FX_ALREADY_CREATED)
     {
-      /* Create error, call error handler. */
       Error_Handler();
     }
   }
 
   /* Open the test file. */
-  status =  fx_file_open(&sdio_disk, &fx_file, "STM32.TXT", FX_OPEN_FOR_WRITE);
+  status =  fx_file_open(&sdio_disk, &fx_file, file_name, FX_OPEN_FOR_WRITE);
+
+  /* Check the file open status. */
+  if (status != FX_SUCCESS)
+  {
+    /* Error opening file, call error handler. */
+    Error_Handler();
+  }
+
+  return status;
+}
+
+UINT closeDataFile(void)
+{
+  UINT status;
+  /* Close the test file. */
+  status =  fx_file_close(&fx_file);
+
+  /* Check the file close status. */
+  if (status != FX_SUCCESS)
+  {
+    /* Error closing the file, call error handler. */
+    Error_Handler();
+  }
+
+  status = fx_media_flush(&sdio_disk);
+
+  /* Check the media flush  status. */
+  if (status != FX_SUCCESS)
+  {
+    /* Error closing the file, call error handler. */
+    Error_Handler();
+  }
+
+  return status;
+}
+
+
+VOID MX_FileX_Process(void)
+{
+  UINT status;
+  ULONG bytes_read;
+  CHAR read_buffer[32];
+  CHAR data1[] = "This is FileX working on STM32_1";
+  CHAR data2[] = "This is FileX working on STM32_2";
+  CHAR file_name[FX_MAX_LONG_NAME_LEN] = "";
+  uint32_t curIndex = 0;
+  sprintf(file_name, "%s_%d.TXT", FILEBASE, curIndex);
+
+  status =  fx_file_create(&sdio_disk, file_name);
+  if (status != FX_SUCCESS && status != FX_ALREADY_CREATED)
+  {
+    Error_Handler();
+  }
+  while (status == FX_ALREADY_CREATED)
+  {
+    curIndex++;
+    sprintf(file_name, "%s_%d.TXT", FILEBASE, curIndex);
+    status =  fx_file_create(&sdio_disk, file_name);
+    if (status != FX_SUCCESS && status != FX_ALREADY_CREATED)
+    {
+      Error_Handler();
+    }
+  }
+
+  /* Open the test file. */
+  status =  fx_file_open(&sdio_disk, &fx_file, file_name, FX_OPEN_FOR_WRITE);
 
   /* Check the file open status. */
   if (status != FX_SUCCESS)
@@ -133,7 +207,15 @@ VOID MX_FileX_Process(void)
   }
 
   /* Write a string to the test file. */
-  status =  fx_file_write(&fx_file, data, sizeof(data));
+  status =  fx_file_write(&fx_file, data1, sizeof(data1));
+
+  /* Check the file write status. */
+  if (status != FX_SUCCESS)
+  {
+    /* Error writing to a file, call error handler. */
+    Error_Handler();
+  }
+  status =  fx_file_write(&fx_file, data2, sizeof(data2));
 
   /* Check the file write status. */
   if (status != FX_SUCCESS)
@@ -162,7 +244,7 @@ VOID MX_FileX_Process(void)
   }
 
   /* Open the test file. */
-  status =  fx_file_open(&sdio_disk, &fx_file, "STM32.TXT", FX_OPEN_FOR_READ);
+  status =  fx_file_open(&sdio_disk, &fx_file, file_name, FX_OPEN_FOR_READ);
 
   /* Check the file open status. */
   if (status != FX_SUCCESS)
@@ -182,10 +264,10 @@ VOID MX_FileX_Process(void)
   }
 
   /* Read the first 28 bytes of the test file. */
-  status =  fx_file_read(&fx_file, read_buffer, sizeof(data), &bytes_read);
+  status =  fx_file_read(&fx_file, read_buffer, sizeof(data1), &bytes_read);
 
   /* Check the file read status.  */
-  if ((status != FX_SUCCESS) || (bytes_read != sizeof(data)))
+  if ((status != FX_SUCCESS) || (bytes_read != sizeof(data1)))
   {
     /* Error reading file, call error handler. */
     Error_Handler();

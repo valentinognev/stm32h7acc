@@ -116,7 +116,10 @@ int main(void)
   MX_ICACHE_Init();
   /* USER CODE BEGIN 2 */
   MX_FileX_Init();
-  MX_FileX_Process();
+  //   MX_FileX_Process();
+  initDataFile();
+  
+  char acclDataOut[400];
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -137,16 +140,21 @@ int main(void)
   float ax[NUMOFACCL], ay[NUMOFACCL], az[NUMOFACCL], temperature[NUMOFACCL];
   float gx[NUMOFACCL], gy[NUMOFACCL], gz[NUMOFACCL];
   float mx[NUMOFACCL], my[NUMOFACCL], mz[NUMOFACCL];
+  uint16_t bytesWritten = 0;
   while (1)
   {
+    bytesWritten = 0;
     for(int i = 0; i < NUMOFACCL; i++)
     {
       bmi160_update(&bmi160[i]);
       gx[i] = bmi160[i].gyroX;    gy[i] = bmi160[i].gyroY;    gz[i] = bmi160[i].gyroZ;
       ax[i] = bmi160[i].accelX;   ay[i] = bmi160[i].accelY;   az[i] = bmi160[i].accelZ;
       mx[i] = bmi160[i].magX;     my[i] = bmi160[i].magY;     mz[i] = bmi160[i].magZ;
-    }
 
+      bytesWritten = sprintf(&acclDataOut[bytesWritten], "%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f|", i, gx[i], gy[i], gz[i], ax[i], ay[i], az[i], mx[i], my[i], mz[i]);
+    }
+    bytesWritten = sprintf(&acclDataOut[bytesWritten], "\n");
+    writeDataToFile((uint16_t*)acclDataOut, bytesWritten);
     //Madgwick_updateIMU(gx, gy, gz, ax, ay, az);
     HAL_Delay(250);
     /* USER CODE END WHILE */
@@ -167,7 +175,7 @@ void SystemClock_Config(void)
 
   /** Configure the main internal regulator output voltage
   */
-  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE3);
+  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE0);
 
   while(!__HAL_PWR_GET_FLAG(PWR_FLAG_VOSRDY)) {}
 
@@ -181,9 +189,9 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLL1_SOURCE_CSI;
   RCC_OscInitStruct.PLL.PLLM = 1;
-  RCC_OscInitStruct.PLL.PLLN = 36;
+  RCC_OscInitStruct.PLL.PLLN = 125;
   RCC_OscInitStruct.PLL.PLLP = 2;
-  RCC_OscInitStruct.PLL.PLLQ = 3;
+  RCC_OscInitStruct.PLL.PLLQ = 2;
   RCC_OscInitStruct.PLL.PLLR = 2;
   RCC_OscInitStruct.PLL.PLLRGE = RCC_PLL1_VCIRANGE_2;
   RCC_OscInitStruct.PLL.PLLVCOSEL = RCC_PLL1_VCORANGE_WIDE;
@@ -204,14 +212,14 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
   RCC_ClkInitStruct.APB3CLKDivider = RCC_HCLK_DIV1;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_3) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5) != HAL_OK)
   {
     Error_Handler();
   }
 
   /** Configure the programming delay
   */
-  __HAL_FLASH_SET_PROGRAM_DELAY(FLASH_PROGRAMMING_DELAY_1);
+  __HAL_FLASH_SET_PROGRAM_DELAY(FLASH_PROGRAMMING_DELAY_2);
 }
 
 /* USER CODE BEGIN 4 */

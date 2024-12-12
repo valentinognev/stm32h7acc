@@ -56,7 +56,7 @@ UINT MX_FileX_Init(void);
 VOID MX_FileX_Process(void);
 
 UINT initDataFile(void);
-UINT writeDataToFile(uint16_t* data, uint32_t size);
+UINT writeDataToFile(uint8_t* data, uint32_t size);
 UINT closeDataFile(void);
 /* USER CODE END EFP */
 

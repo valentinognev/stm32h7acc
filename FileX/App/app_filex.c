@@ -47,6 +47,8 @@
 /* Define FileX global data structures.  */
 FX_MEDIA sdio_disk;
 FX_FILE  fx_file;
+uint32_t posInFile = 0;
+CHAR file_name[FX_MAX_LONG_NAME_LEN] = "";
 
 UINT media_memory[512 / sizeof(UINT)];
 
@@ -90,17 +92,38 @@ UINT MX_FileX_Init(void)
 }
 
 /* USER CODE BEGIN 1 */
-UINT writeDataToFile(uint16_t* data, uint32_t size)
+UINT openDataFile(void);
+UINT closeDataFile(void);
+
+UINT writeDataToFile(uint8_t* data, uint32_t size)
 {
-  UINT status;
-  status =  fx_file_write(&fx_file, data, size);
+    UINT status;
+    status = openDataFile();
+    status = fx_file_seek(&fx_file, posInFile);
+    status = fx_file_write(&fx_file, data, size);
+    status = closeDataFile();
+    posInFile += size;
+    return status;
+}
+
+UINT openDataFile(void)
+{
+  /* Open the test file. */
+  UINT status =  fx_file_open(&sdio_disk, &fx_file, file_name, FX_OPEN_FOR_WRITE);
+
+  /* Check the file open status. */
+  if (status != FX_SUCCESS)
+  {
+    /* Error opening file, call error handler. */
+    Error_Handler();
+  }
+
   return status;
 }
 
 UINT initDataFile(void)
 {
   UINT status;
-  CHAR file_name[FX_MAX_LONG_NAME_LEN] = "";
   uint32_t curIndex = 0;
   sprintf(file_name, "%s_%d.TXT", FILEBASE, curIndex);
 
@@ -119,17 +142,6 @@ UINT initDataFile(void)
       Error_Handler();
     }
   }
-
-  /* Open the test file. */
-  status =  fx_file_open(&sdio_disk, &fx_file, file_name, FX_OPEN_FOR_WRITE);
-
-  /* Check the file open status. */
-  if (status != FX_SUCCESS)
-  {
-    /* Error opening file, call error handler. */
-    Error_Handler();
-  }
-
   return status;
 }
 

@@ -119,7 +119,7 @@ int main(void)
   //   MX_FileX_Process();
   initDataFile();
   
-  char acclDataOut[400];
+  char acclDataOut[800];
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -141,9 +141,12 @@ int main(void)
   float gx[NUMOFACCL], gy[NUMOFACCL], gz[NUMOFACCL];
   float mx[NUMOFACCL], my[NUMOFACCL], mz[NUMOFACCL];
   uint16_t bytesWritten = 0;
+  uint32_t counter = 0;
   while (1)
   {
     bytesWritten = 0;
+    uint32_t timems = HAL_GetTick();
+    bytesWritten += sprintf(&acclDataOut[bytesWritten], "% 8d% 8d",counter++, timems);
     for(int i = 0; i < NUMOFACCL; i++)
     {
       bmi160_update(&bmi160[i]);
@@ -151,12 +154,12 @@ int main(void)
       ax[i] = bmi160[i].accelX;   ay[i] = bmi160[i].accelY;   az[i] = bmi160[i].accelZ;
       mx[i] = bmi160[i].magX;     my[i] = bmi160[i].magY;     mz[i] = bmi160[i].magZ;
 
-      bytesWritten = sprintf(&acclDataOut[bytesWritten], "%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f|", i, gx[i], gy[i], gz[i], ax[i], ay[i], az[i], mx[i], my[i], mz[i]);
+      bytesWritten += sprintf(&acclDataOut[bytesWritten], "% 8.1f% 8.1f% 8.1f% 8.1f% 8.1f% 8.1f% 8.1f% 8.1f% 8.1f|", gx[i], gy[i], gz[i], ax[i], ay[i], az[i], mx[i], my[i], mz[i]);
     }
-    bytesWritten = sprintf(&acclDataOut[bytesWritten], "\n");
-    writeDataToFile((uint16_t*)acclDataOut, bytesWritten);
+    bytesWritten += sprintf(&acclDataOut[bytesWritten], "\n");
+    writeDataToFile(acclDataOut, bytesWritten);
     //Madgwick_updateIMU(gx, gy, gz, ax, ay, az);
-    HAL_Delay(250);
+    HAL_Delay(40);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

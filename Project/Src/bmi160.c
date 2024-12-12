@@ -36,8 +36,6 @@ static bool isSPI = true;
 // // Our bmi160 info structure
 // struct bmi160_t s_bmi160;
 
-calData calibration;
-
 // For SPI, these are our CS on/off functions, if needed
 static void bmi160_cs_on(const bmi160_t *bmi160)
 {    // if (gpioContext)        mraa_gpio_write(gpioContext, 0);
@@ -91,7 +89,7 @@ int8_t bmi160_bus_write(const bmi160_t *bmi160, uint8_t reg_addr, uint8_t *reg_d
     return 0;
 }
 
-// delay for some milliseconds
+// HAL_Delay for some milliseconds
 void bmi160_delay_ms(uint32_t msek)
 {
   HAL_Delay(msek);
@@ -167,6 +165,7 @@ uint8_t bmi160_init(bmi160_context *dev, GPIO_TypeDef* cs_port, int cs_pin, bool
     bmi160_set_accelerometer_scale(dev, BMI160_ACC_RANGE_2G);
     bmi160_set_gyroscope_scale(dev, BMI160_GYRO_RANGE_125);
 
+    bmi160_calibrateAccelGyro(dev, &(dev->calibration));
     return 1;
 }
 
@@ -257,14 +256,14 @@ void bmi160_update2(bmi160_context* dev)
 	float ax, ay, az, gx, gy, gz, mx, my, mz;
 
 	// Calculate the accel value into actual g's per second
-	ax = -((float)accelxyz.x * aRes - calibration.accelBias[0]);
-	ay = -((float)accelxyz.y * aRes - calibration.accelBias[1]);
-	az =   (float)accelxyz.z * aRes - calibration.accelBias[2];
+	ax = -((float)accelxyz.x * aRes - dev->calibration.accelBias[0]);
+	ay = -((float)accelxyz.y * aRes - dev->calibration.accelBias[1]);
+	az =   (float)accelxyz.z * aRes - dev->calibration.accelBias[2];
 
 	// Calculate the gyro value into actual degrees per second
-	gx = -((float)gyroxyz.x * gRes - calibration.gyroBias[0]);
-	gy = -((float)gyroxyz.y * gRes - calibration.gyroBias[1]);
-	gz =   (float)gyroxyz.z * gRes - calibration.gyroBias[2];
+	gx = -((float)gyroxyz.x * gRes - dev->calibration.gyroBias[0]);
+	gy = -((float)gyroxyz.y * gRes - dev->calibration.gyroBias[1]);
+	gz =   (float)gyroxyz.z * gRes - dev->calibration.gyroBias[2];
 
 	// Calculate the magnetometer value into actual direction
 	mx = - (float)magxyz.x;// * mRes - calibration.magBias[0]);
@@ -525,14 +524,14 @@ void bmi160_calibrateAccelGyro(const bmi160_context *dev, calData* cal)
 	// reset device
     uint8_t buff = 0xB6;
 	bmi160_bus_write(&(dev->bmi160), BMI160_CMD_COMMANDS_ADDR, &buff, 1); // Toggle softreset
-	delay(100); // wait for reset
+	HAL_Delay(100); // wait for reset
 
     buff = ACCEL_MODE_NORMAL;
 	bmi160_bus_write(&(dev->bmi160), BMI160_CMD_COMMANDS_ADDR, &buff, 1);  // Start up accelerometer
-	delay(200);
+	HAL_Delay(200);
     buff = GYRO_MODE_NORMAL;
 	bmi160_bus_write(&(dev->bmi160), BMI160_CMD_COMMANDS_ADDR, &buff, 1);  // Start up gyroscope
-	delay(200);								  //wait until they're done starting up...
+	HAL_Delay(200);								  //wait until they're done starting up...
 	
     buff = BMI160_ACCEL_RANGE_2G;
 	bmi160_bus_write(&(dev->bmi160), BMI160_USER_ACCEL_RANGE_ADDR, &buff, 1);  // Set up Accel range. +-2G
@@ -570,7 +569,7 @@ void bmi160_calibrateAccelGyro(const bmi160_context *dev, calData* cal)
 		gyro_bias[1] += gyro.y * gyrosensitivity;
 		gyro_bias[2] += gyro.z * gyrosensitivity;
 
-		delay(20);
+		HAL_Delay(20);
 	}
 
 	accel_bias[0] /= packet_count; // Normalize sums to get average count biases

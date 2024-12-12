@@ -170,6 +170,7 @@ typedef struct
     // is the magnetometer enabled?
     bool magEnabled;
     bmi160_t bmi160;
+    calData calibration;
 
 } bmi160_context;
 

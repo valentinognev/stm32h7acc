@@ -1214,11 +1214,11 @@ struct yas_vector xyz; /*!< X, Y, Z measurement data of the sensor */
 */
 struct bmi160_fifo_data_header_less_t {
 
-struct bmi160_accel_t accel_fifo[BMI160_FIFO_FRAME_CNT];/**<
+bmi160_accel_t accel_fifo[BMI160_FIFO_FRAME_CNT];/**<
 Accel data of XYZ */
-struct bmi160_mag_t mag_fifo[BMI160_FIFO_FRAME_CNT];/**<
+bmi160_mag_t mag_fifo[BMI160_FIFO_FRAME_CNT];/**<
 Mag data of XYZ */
-struct bmi160_gyro_t gyro_fifo[BMI160_FIFO_FRAME_CNT];/**<
+bmi160_gyro_t gyro_fifo[BMI160_FIFO_FRAME_CNT];/**<
 Gyro data of XYZ */
 uint8_t accel_frame_count;/**< The total number of accel frame stored
 in the FIFO*/
@@ -1231,11 +1231,11 @@ in the FIFO*/
 * @brief Struct used to store the FIFO header data
 */
 struct bmi160_fifo_data_header_t {
-struct bmi160_accel_t accel_fifo[BMI160_FIFO_FRAME_CNT];/**<
+bmi160_accel_t accel_fifo[BMI160_FIFO_FRAME_CNT];/**<
 Accel data of XYZ */
-struct bmi160_mag_t mag_fifo[BMI160_FIFO_FRAME_CNT];/**<
+bmi160_mag_t mag_fifo[BMI160_FIFO_FRAME_CNT];/**<
 Mag data of XYZ */
-struct bmi160_gyro_t gyro_fifo[BMI160_FIFO_FRAME_CNT];/**<
+bmi160_gyro_t gyro_fifo[BMI160_FIFO_FRAME_CNT];/**<
 Gyro data of XYZ */
 uint32_t fifo_time;/**< Value of fifo time*/
 uint8_t skip_frame;/**< The value of skip frame information */
@@ -3991,7 +3991,7 @@ uint8_t bmi160_read_mag_r(const bmi160_t *bmi160, int16_t *v_mag_r_s16);
  *    @retval -1 -> Error *
  *
 */
-uint8_t bmi160_read_mag_xyz(const bmi160_t *bmi160, struct bmi160_mag_t *mag, uint8_t v_sensor_select_u8);
+uint8_t bmi160_read_mag_xyz(const bmi160_t *bmi160, bmi160_mag_t *mag, uint8_t v_sensor_select_u8);
  /*!*
  *    @brief This API reads magnetometer data X,Y,Z,r
  *    values from the register 0x04 to 0x0B
@@ -4009,7 +4009,7 @@ uint8_t bmi160_read_mag_xyz(const bmi160_t *bmi160, struct bmi160_mag_t *mag, ui
  *
  *
 */
-uint8_t bmi160_read_mag_xyzr(const bmi160_t *bmi160, struct bmi160_mag_xyzr_t *mag);
+uint8_t bmi160_read_mag_xyzr(const bmi160_t *bmi160, bmi160_mag_xyzr_t *mag);
 /**************************************************/
 /**\name     FUNCTION FOR GYRO XYZ DATA READ  */
 /*************************************************/
@@ -4095,7 +4095,7 @@ uint8_t bmi160_read_gyro_z(const bmi160_t *bmi160, int16_t *v_gyro_z_s16);
  *
  *
 */
-uint8_t bmi160_read_gyro_xyz(const bmi160_t *bmi160, struct bmi160_gyro_t *gyro);
+uint8_t bmi160_read_gyro_xyz(const bmi160_t *bmi160, bmi160_gyro_t *gyro);
 /**************************************************/
 /**\name     FUNCTION FOR ACCEL XYZ DATA READ  */
 /*************************************************/
@@ -4186,7 +4186,7 @@ uint8_t bmi160_read_accel_z(const bmi160_t *bmi160, int16_t *v_accel_z_s16);
  *
  *
 */
-uint8_t bmi160_read_accel_xyz(const bmi160_t *bmi160, struct bmi160_accel_t *accel);
+uint8_t bmi160_read_accel_xyz(const bmi160_t *bmi160, bmi160_accel_t *accel);
 /**************************************************/
 /**\name     FUNCTION FOR SENSOR TIME */
 /*************************************************/
@@ -10725,7 +10725,7 @@ uint8_t bmi160_read_bmm150_mag_trim(const bmi160_t *bmi160);
  *
  *
 */
-uint8_t bmi160_bmm150_mag_compensate_xyz(const bmi160_t *bmi160, struct bmi160_mag_xyz_s32_t *mag_comp_xyz);
+uint8_t bmi160_bmm150_mag_compensate_xyz(const bmi160_t *bmi160, bmi160_mag_xyz_s32_t *mag_comp_xyz);
 /*!
  *    @brief This API used to get the compensated BMM150-X data
  *    the out put of X as int32_t
@@ -11108,7 +11108,7 @@ int32_t bmi160_bst_akm09912_compensate_Z(const bmi160_t *bmi160, int16_t v_bst_a
  *
  *
 */
-uint8_t bmi160_bst_akm09911_compensate_xyz(const bmi160_t *bmi160, struct bmi160_bst_akm_xyz_t *bst_akm_xyz);
+uint8_t bmi160_bst_akm09911_compensate_xyz(const bmi160_t *bmi160, bmi160_bst_akm_xyz_t *bst_akm_xyz);
  /*!
  *    @brief This function used for read the compensated value of
  *    AKM09912
@@ -11132,7 +11132,7 @@ uint8_t bmi160_bst_akm09911_compensate_xyz(const bmi160_t *bmi160, struct bmi160
  *
  *
 */
-uint8_t bmi160_bst_akm09912_compensate_xyz(const bmi160_t *bmi160, struct bmi160_bst_akm_xyz_t *bst_akm_xyz);
+uint8_t bmi160_bst_akm09912_compensate_xyz(const bmi160_t *bmi160, bmi160_bst_akm_xyz_t *bst_akm_xyz);
 /*!
  *    @brief This function used for set the AKM09911 and AKM09912
  *    power mode.

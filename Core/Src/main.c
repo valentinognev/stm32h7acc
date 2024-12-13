@@ -40,7 +40,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define NUMOFACCL 7
+#define NUMOFACCL 6
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -128,16 +128,20 @@ int main(void)
  
   //bma250e_context bma250 = bma250e_init(BMA250E_DEFAULT_SPI_BUS,-1, 10);
   //bmg160_context bmg160 = bmg160_init(BMG160_DEFAULT_SPI_BUS,-1, 10);
-  bmi160_context bmi160[NUMOFACCL];
+  bmi160_context_t bmi160[NUMOFACCL];
   uint8_t test[NUMOFACCL]={0};
-  test[0] = bmi160_init(&bmi160[0], ACCL1_CS_GPIO_Port, ACCL1_CS_Pin, true);
-  test[1] = bmi160_init(&bmi160[1], ACCL2_CS_GPIO_Port, ACCL2_CS_Pin, true);
-  test[2] = bmi160_init(&bmi160[2], ACCL3_CS_GPIO_Port, ACCL3_CS_Pin, true);
-  test[3] = bmi160_init(&bmi160[3], ACCL4_CS_GPIO_Port, ACCL4_CS_Pin, true);
-  test[4] = bmi160_init(&bmi160[4], ACCL5_CS_GPIO_Port, ACCL5_CS_Pin, true);
-  test[5] = bmi160_init(&bmi160[5], ACCL6_CS_GPIO_Port, ACCL6_CS_Pin, true);
-  test[6] = bmi160_init(&bmi160[6], ACCL7_CS_GPIO_Port, ACCL7_CS_Pin, true);
+  bmi160[0].sensorPosition.geometryIndex = 0;  bmi160[1].sensorPosition.geometryIndex = 0;  bmi160[2].sensorPosition.geometryIndex = 0;
+  bmi160[3].sensorPosition.geometryIndex = 0;  bmi160[4].sensorPosition.geometryIndex = 0;  bmi160[5].sensorPosition.geometryIndex = 0;
+  //bmi160[6].sensorPosition.geometryIndex = 0;
 
+  // test[0] = bmi160_init(&bmi160[0], ACCL1_CS_GPIO_Port, ACCL1_CS_Pin, true);
+  test[0] = bmi160_init(&bmi160[1], ACCL2_CS_GPIO_Port, ACCL2_CS_Pin, true);
+  test[1] = bmi160_init(&bmi160[2], ACCL3_CS_GPIO_Port, ACCL3_CS_Pin, true);
+  test[2] = bmi160_init(&bmi160[3], ACCL4_CS_GPIO_Port, ACCL4_CS_Pin, true);
+  test[3] = bmi160_init(&bmi160[4], ACCL5_CS_GPIO_Port, ACCL5_CS_Pin, true);
+  test[4] = bmi160_init(&bmi160[5], ACCL6_CS_GPIO_Port, ACCL6_CS_Pin, true);
+  test[5] = bmi160_init(&bmi160[6], ACCL7_CS_GPIO_Port, ACCL7_CS_Pin, true);
+  
   float ax[NUMOFACCL], ay[NUMOFACCL], az[NUMOFACCL], temperature[NUMOFACCL];
   float gx[NUMOFACCL], gy[NUMOFACCL], gz[NUMOFACCL];
   float mx[NUMOFACCL], my[NUMOFACCL], mz[NUMOFACCL];

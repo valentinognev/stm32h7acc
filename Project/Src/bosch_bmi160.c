@@ -50,12 +50,12 @@
     brief <Sensor driver for BMI160> */
 #include "bosch_bmi160.h"
 /* used for reading the mag trim values for compensation*/
-struct trim_data_t mag_trim;
+trim_data_t mag_trim;
 /* the following variable used for avoiding the selecting of auto mode
 when it is running in the manual mode of BMM150 mag interface*/
 uint8_t V_bmm150_maual_auto_condition_u8 = BMI160_INIT_VALUE;
 /* used for reading the AKM compensating data */
-struct bst_akm_sensitivity_data_t akm_asa_data;
+bst_akm_sensitivity_data_t akm_asa_data;
 /* FIFO data read for 1024 bytes of data */
 uint8_t v_fifo_data_u8[FIFO_FRAME] = {BMI160_INIT_VALUE,};
 /* YAMAHA-YAS532*/
@@ -66,7 +66,7 @@ struct yas532_t yas532_data;
 /* used for reading the yas537 calibration data*/
 struct yas537_t yas537_data;
 struct bmi160_mag_fifo_data_t mag_data;
-struct bmi160_mag_xyz_s32_t processed_data;
+bmi160_mag_xyz_s32_t processed_data;
 struct yas532_vector fifo_xyz_data;
 struct yas_vector fifo_vector_xyz;
 
@@ -759,7 +759,7 @@ uint8_t bmi160_read_mag_r(const bmi160_t *bmi160, int16_t *v_mag_r_s16)
  *    @retval -1 -> Error *
  *
 */
-uint8_t bmi160_read_mag_xyz(const bmi160_t *bmi160, struct bmi160_mag_t *mag, uint8_t v_sensor_select_u8)
+uint8_t bmi160_read_mag_xyz(const bmi160_t *bmi160, bmi160_mag_t *mag, uint8_t v_sensor_select_u8)
 {
     /* variable used for return the status of communication result*/
     uint8_t com_rslt = E_BMI160_COMM_RES;
@@ -840,7 +840,7 @@ uint8_t bmi160_read_mag_xyz(const bmi160_t *bmi160, struct bmi160_mag_t *mag, ui
  *
  *
 */
-uint8_t bmi160_read_mag_xyzr(const bmi160_t *bmi160, struct bmi160_mag_xyzr_t *mag)
+uint8_t bmi160_read_mag_xyzr(const bmi160_t *bmi160, bmi160_mag_xyzr_t *mag)
 {
     /* variable used for return the status of communication result*/
     uint8_t com_rslt = E_BMI160_COMM_RES;
@@ -1031,7 +1031,7 @@ uint8_t bmi160_read_gyro_z(const bmi160_t *bmi160, int16_t *v_gyro_z_s16)
  *
  *
 */
-uint8_t bmi160_read_gyro_xyz(const bmi160_t *bmi160, struct bmi160_gyro_t *gyro)
+uint8_t bmi160_read_gyro_xyz(const bmi160_t *bmi160, bmi160_gyro_t *gyro)
 {
     /* variable used for return the status of communication result*/
     uint8_t com_rslt = E_BMI160_COMM_RES;
@@ -1093,15 +1093,15 @@ uint8_t bmi160_read_accel_x(const bmi160_t *bmi160, int16_t *v_accel_x_s16)
         v_data_u8[1] - MSB*/
     uint8_t v_data_u8[BMI160_ACCEL_X_DATA_SIZE] = {BMI160_INIT_VALUE, BMI160_INIT_VALUE};
     /* check the bmi160 structure as NULL*/
-    if (bmi160 == BMI160_NULL) {
+    if (bmi160 == BMI160_NULL) 
+    {
         return E_BMI160_NULL_PTR;
-        } else {
-            com_rslt = bmi160_bus_read(bmi160,BMI160_USER_DATA_14_ACCEL_X_LSB__REG,v_data_u8, BMI160_ACCEL_DATA_LENGTH);
-
-            *v_accel_x_s16 = (int16_t)((((int32_t)((int8_t)v_data_u8[BMI160_ACCEL_X_MSB_BYTE]))
-            << BMI160_SHIFT_BIT_POSITION_BY_08_BITS)
-            | (v_data_u8[BMI160_ACCEL_X_LSB_BYTE]));
-        }
+    } 
+    else 
+    {
+        com_rslt = bmi160_bus_read(bmi160,BMI160_USER_DATA_14_ACCEL_X_LSB__REG,v_data_u8, BMI160_ACCEL_DATA_LENGTH);
+        *v_accel_x_s16 = (int16_t)((((int32_t)((int8_t)v_data_u8[BMI160_ACCEL_X_MSB_BYTE])) << BMI160_SHIFT_BIT_POSITION_BY_08_BITS) | (v_data_u8[BMI160_ACCEL_X_LSB_BYTE]));
+    }
     return com_rslt;
 }
 /*!
@@ -1134,15 +1134,15 @@ uint8_t bmi160_read_accel_y(const bmi160_t *bmi160, int16_t *v_accel_y_s16)
         v_data_u8[1] - MSB*/
     uint8_t v_data_u8[BMI160_ACCEL_Y_DATA_SIZE] = {BMI160_INIT_VALUE, BMI160_INIT_VALUE};
     /* check the bmi160 structure as NULL*/
-    if (bmi160 == BMI160_NULL) {
+    if (bmi160 == BMI160_NULL) 
+    {
         return E_BMI160_NULL_PTR;
-        } else {
-            com_rslt = bmi160_bus_read(bmi160,BMI160_USER_DATA_16_ACCEL_Y_LSB__REG,v_data_u8, BMI160_ACCEL_DATA_LENGTH);
-
-            *v_accel_y_s16 = (int16_t)((((int32_t)((int8_t)v_data_u8[BMI160_ACCEL_Y_MSB_BYTE]))
-            << BMI160_SHIFT_BIT_POSITION_BY_08_BITS)
-            | (v_data_u8[BMI160_ACCEL_Y_LSB_BYTE]));
-        }
+    } 
+    else 
+    {
+        com_rslt = bmi160_bus_read(bmi160,BMI160_USER_DATA_16_ACCEL_Y_LSB__REG,v_data_u8, BMI160_ACCEL_DATA_LENGTH);
+        *v_accel_y_s16 = (int16_t)((((int32_t)((int8_t)v_data_u8[BMI160_ACCEL_Y_MSB_BYTE]))<< BMI160_SHIFT_BIT_POSITION_BY_08_BITS) | (v_data_u8[BMI160_ACCEL_Y_LSB_BYTE]));
+    }
     return com_rslt;
 }
 /*!
@@ -1173,18 +1173,17 @@ uint8_t bmi160_read_accel_z(const bmi160_t *bmi160, int16_t *v_accel_z_s16)
     /* Array contains the accel Z lSB and MSB data
         a_data_u8r[LSB_ZERO] - LSB
         a_data_u8r[MSB_ONE] - MSB*/
-    uint8_t a_data_u8r[BMI160_ACCEL_Z_DATA_SIZE] = {
-    BMI160_INIT_VALUE, BMI160_INIT_VALUE};
+    uint8_t a_data_u8r[BMI160_ACCEL_Z_DATA_SIZE] = {BMI160_INIT_VALUE, BMI160_INIT_VALUE};
     /* check the bmi160 structure as NULL*/
-    if (bmi160 == BMI160_NULL) {
+    if (bmi160 == BMI160_NULL) 
+    {
         return E_BMI160_NULL_PTR;
-        } else {
-            com_rslt = bmi160_bus_read(bmi160,BMI160_USER_DATA_18_ACCEL_Z_LSB__REG,a_data_u8r, BMI160_ACCEL_DATA_LENGTH);
-
-            *v_accel_z_s16 = (int16_t)((((int32_t)((int8_t)a_data_u8r[BMI160_ACCEL_Z_MSB_BYTE]))
-            << BMI160_SHIFT_BIT_POSITION_BY_08_BITS)
-            | (a_data_u8r[BMI160_ACCEL_Z_LSB_BYTE]));
-        }
+    } 
+    else 
+    {
+        com_rslt = bmi160_bus_read(bmi160,BMI160_USER_DATA_18_ACCEL_Z_LSB__REG,a_data_u8r, BMI160_ACCEL_DATA_LENGTH);
+        *v_accel_z_s16 = (int16_t)((((int32_t)((int8_t)a_data_u8r[BMI160_ACCEL_Z_MSB_BYTE]))<< BMI160_SHIFT_BIT_POSITION_BY_08_BITS) | (a_data_u8r[BMI160_ACCEL_Z_LSB_BYTE]));
+    }
     return com_rslt;
 }
 /*!
@@ -1208,7 +1207,7 @@ uint8_t bmi160_read_accel_z(const bmi160_t *bmi160, int16_t *v_accel_z_s16)
  *
  *
 */
-uint8_t bmi160_read_accel_xyz(const bmi160_t *bmi160, struct bmi160_accel_t *accel)
+uint8_t bmi160_read_accel_xyz(const bmi160_t *bmi160, bmi160_accel_t *accel)
 {
     /* variable used for return the status of communication result*/
     uint8_t com_rslt = E_BMI160_COMM_RES;
@@ -1220,8 +1219,7 @@ uint8_t bmi160_read_accel_xyz(const bmi160_t *bmi160, struct bmi160_accel_t *acc
     a_data_u8r[0] - Z-LSB
     a_data_u8r[1] - Z-MSB
     */
-    uint8_t a_data_u8r[BMI160_ACCEL_XYZ_DATA_SIZE] = {
-    BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE};
+    uint8_t a_data_u8r[BMI160_ACCEL_XYZ_DATA_SIZE] = {BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE, BMI160_INIT_VALUE};
     /* check the bmi160 structure as NULL*/
     if (bmi160 == BMI160_NULL) 
     {
@@ -14381,11 +14379,11 @@ v_fifo_index_u16 < v_fifo_length_u16;) {
  *
  *
 */
-uint8_t bmi160_bmm150_mag_compensate_xyz(const bmi160_t *bmi160, struct bmi160_mag_xyz_s32_t *mag_comp_xyz)
+uint8_t bmi160_bmm150_mag_compensate_xyz(const bmi160_t *bmi160, bmi160_mag_xyz_s32_t *mag_comp_xyz)
 {
     /* variable used for return the status of communication result*/
     uint8_t com_rslt = E_BMI160_COMM_RES;
-    struct bmi160_mag_xyzr_t mag_xyzr;
+    bmi160_mag_xyzr_t mag_xyzr;
 
     com_rslt = bmi160_read_mag_xyzr(bmi160, &mag_xyzr);
     if (com_rslt)
@@ -15518,11 +15516,11 @@ int32_t bmi160_bst_akm09912_compensate_Z(const bmi160_t *bmi160, int16_t v_bst_a
  *
  *
 */
-uint8_t bmi160_bst_akm09911_compensate_xyz(const bmi160_t *bmi160, struct bmi160_bst_akm_xyz_t *bst_akm_xyz)
+uint8_t bmi160_bst_akm09911_compensate_xyz(const bmi160_t *bmi160, bmi160_bst_akm_xyz_t *bst_akm_xyz)
 {
     /* variable used for return the status of communication result*/
     uint8_t com_rslt = E_BMI160_COMM_RES;
-    struct bmi160_mag_t mag_xyz;
+    bmi160_mag_t mag_xyz;
 
     com_rslt = bmi160_read_mag_xyz(bmi160, &mag_xyz, BST_AKM);
     /* Compensation for X axis */
@@ -15558,11 +15556,11 @@ uint8_t bmi160_bst_akm09911_compensate_xyz(const bmi160_t *bmi160, struct bmi160
  *
  *
 */
-uint8_t bmi160_bst_akm09912_compensate_xyz(const bmi160_t *bmi160, struct bmi160_bst_akm_xyz_t *bst_akm_xyz)
+uint8_t bmi160_bst_akm09912_compensate_xyz(const bmi160_t *bmi160, bmi160_bst_akm_xyz_t *bst_akm_xyz)
 {
     /* variable used for return the status of communication result*/
     uint8_t com_rslt = E_BMI160_COMM_RES;
-    struct bmi160_mag_t mag_xyz;
+    bmi160_mag_t mag_xyz;
 
     com_rslt = bmi160_read_mag_xyz(bmi160, &mag_xyz, BST_AKM);
     /* Compensation for X axis */

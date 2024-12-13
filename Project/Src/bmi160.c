@@ -95,10 +95,10 @@ void bmi160_delay_ms(uint32_t msek)
   HAL_Delay(msek);
 }
 
-uint8_t bmi160_init(bmi160_context *dev, GPIO_TypeDef* cs_port, int cs_pin, bool enable_mag)
+uint8_t bmi160_init(bmi160_context_t *dev, GPIO_TypeDef* cs_port, int cs_pin, bool enable_mag)
 {
     // zero out context
-    //memset((void *)&dev, 0, sizeof(bmi160_context));
+    //memset((void *)&dev, 0, sizeof(bmi160_context_t));
 
     // Only create cs context if we are actually using a valid pin.
     // A hardware controlled pin should specify cs as -1.
@@ -169,7 +169,7 @@ uint8_t bmi160_init(bmi160_context *dev, GPIO_TypeDef* cs_port, int cs_pin, bool
     return 1;
 }
 
-void bmi160_close(bmi160_context* dev)
+void bmi160_close(bmi160_context_t* dev)
 {
     // assert(dev != NULL);
 
@@ -188,36 +188,74 @@ void bmi160_close(bmi160_context* dev)
     // free(dev);
 }
 
-void bmi160_update(bmi160_context* dev)
+void bmi160_initialSensor2Body(const bmi160_context_t* dev, int16_t *x, int16_t *y, int16_t *z)
+{
+    float x_, y_, z_;
+ 	switch (dev->sensorPosition.geometryIndex) 
+    {
+	case 0:
+        return;
+	case 1:
+		x_ = -*y;		y_ =  *x;		z_ =  *z;
+		break;
+	case 2:
+        x_ = -*x;		y_ = -*y;		z_ =  *z;
+		break;
+	case 3:
+        x_ =  *y;		y_ = -*x;		z_ =  *z;
+		break;
+	case 4:
+        x_ = -*z;		y_ = -*y;		z_ = -*x;
+		break;
+	case 5:
+        x_ = -*z;		y_ =  *x;		z_ = -*y;
+		break;
+	case 6:
+        x_ = -*z;		y_ =  *y;		z_ =  *x;
+		break;
+	case 7:
+        x_ = -*z;		y_ = -*x;		z_ =  *y;
+		break;
+	}
+    *x = x_;    *y = y_;    *z = z_;
+}
+
+void bmi160_update(bmi160_context_t* dev)
 {
     assert(dev != NULL); 
 
-    struct bmi160_gyro_t gyroxyz;
-    struct bmi160_accel_t accelxyz;
-    struct bmi160_mag_xyz_s32_t magxyz;
+    bmi160_gyro_t gyroxyz;
+    bmi160_accel_t accelxyz;
+    bmi160_mag_xyz_s32_t magxyz;
 
     // read gyro data
     bmi160_read_gyro_xyz(&(dev->bmi160), &gyroxyz);
-
+    bmi160_initialSensor2Body(dev, &gyroxyz.x, &gyroxyz.y, &gyroxyz.z);
     // read accel data
     bmi160_read_accel_xyz(&(dev->bmi160), &accelxyz);
+    bmi160_initialSensor2Body(dev, &accelxyz.x, &accelxyz.y, &accelxyz.z);
 
     // read mag data
     if (dev->magEnabled)
+    {
         bmi160_bmm150_mag_compensate_xyz(&(dev->bmi160), &magxyz);
+        bmi160_initialSensor2Body(dev, &magxyz.x, &magxyz.y, &magxyz.z);
+    }
 
     // read the sensor time
     uint32_t v_sensor_time;
     bmi160_get_sensor_time(&(dev->bmi160), &v_sensor_time);
     dev->sensorTime = (unsigned int)v_sensor_time;
 
-    dev->accelX = (float)accelxyz.x;
-    dev->accelY = (float)accelxyz.y;
-    dev->accelZ = (float)accelxyz.z;
+  	// Calculate the accel value into actual g's per second
+	dev->accelX = (float)accelxyz.x * dev->accelScale - dev->calibration.accelBias[0];
+	dev->accelY = (float)accelxyz.y * dev->accelScale - dev->calibration.accelBias[1];
+	dev->accelZ = (float)accelxyz.z * dev->accelScale - dev->calibration.accelBias[2];
 
-    dev->gyroX = (float)gyroxyz.x;
-    dev->gyroY = (float)gyroxyz.y;
-    dev->gyroZ = (float)gyroxyz.z;
+	// Calculate the gyro value into actual degrees per second
+	dev->gyroX = (float)gyroxyz.x * dev->gyroScale - dev->calibration.gyroBias[0];
+	dev->gyroY = (float)gyroxyz.y * dev->gyroScale - dev->calibration.gyroBias[1];
+	dev->gyroZ = (float)gyroxyz.z * dev->gyroScale - dev->calibration.gyroBias[2];
 
     if (dev->magEnabled)
     {
@@ -227,96 +265,7 @@ void bmi160_update(bmi160_context* dev)
     }
 }
 
-void bmi160_update2(bmi160_context* dev) 
-{
-   	float aRes = 16.0 / 32768.0;			//ares value for full range (16g) readings
-	float gRes = 2000.0 / 32768.0;			//gres value for full range (2000dps) readings
-
-	int16_t IMUCount[6];                                          // used to read all 16 bytes at once from the accel/gyro
-	uint8_t rawData[12];                                          // x/y/z accel register data stored here
-
-    struct bmi160_gyro_t gyroxyz;
-    struct bmi160_accel_t accelxyz;
-    struct bmi160_mag_xyz_s32_t magxyz;
-
-    // read gyro data
-    bmi160_read_gyro_xyz(&(dev->bmi160), &gyroxyz);
-
-    // read accel data
-    bmi160_read_accel_xyz(&(dev->bmi160), &accelxyz);
-
-    // read mag data
-    if (dev->magEnabled)
-        bmi160_bmm150_mag_compensate_xyz(&(dev->bmi160), &magxyz);
-
-    // read the sensor time
-    uint32_t v_sensor_time;
-    bmi160_get_sensor_time(&(dev->bmi160), &v_sensor_time);
-
-	float ax, ay, az, gx, gy, gz, mx, my, mz;
-
-	// Calculate the accel value into actual g's per second
-	ax = -((float)accelxyz.x * aRes - dev->calibration.accelBias[0]);
-	ay = -((float)accelxyz.y * aRes - dev->calibration.accelBias[1]);
-	az =   (float)accelxyz.z * aRes - dev->calibration.accelBias[2];
-
-	// Calculate the gyro value into actual degrees per second
-	gx = -((float)gyroxyz.x * gRes - dev->calibration.gyroBias[0]);
-	gy = -((float)gyroxyz.y * gRes - dev->calibration.gyroBias[1]);
-	gz =   (float)gyroxyz.z * gRes - dev->calibration.gyroBias[2];
-
-	// Calculate the magnetometer value into actual direction
-	mx = - (float)magxyz.x;// * mRes - calibration.magBias[0]);
-	my = - (float)magxyz.y;// * mRes - calibration.magBias[1]);
-	mz =   (float)magxyz.z;// * mRes - calibration.magBias[2];
-
-    uint8_t geometryIndex = 0;
-	switch (geometryIndex) {
-	case 0:
-		dev->accelX = ax;		dev->gyroX = gx;	  dev->magX = mx;
-		dev->accelY = ay;		dev->gyroY = gy;      dev->magY = my;
-		dev->accelZ = az;		dev->gyroZ = gz;      dev->magZ = mz;
-		break;
-	case 1:
-		dev->accelX = -ay;		dev->gyroX = -gy;     dev->magX = -my;
-		dev->accelY = ax;		dev->gyroY = gx;      dev->magY =  mx;
-		dev->accelZ = az;		dev->gyroZ = gz;      dev->magZ =  mz;
-		break;
-	case 2:
-		dev->accelX = -ax;		dev->gyroX = -gx;     dev->magX = -mx;
-		dev->accelY = -ay;		dev->gyroY = -gy;     dev->magY = -my;
-		dev->accelZ = az;		dev->gyroZ = gz;      dev->magZ =  mz;
-		break;
-	case 3:
-		dev->accelX = ay;		dev->gyroX = gy;      dev->magX =  my;
-		dev->accelY = -ax;		dev->gyroY = -gx;     dev->magY = -mx;
-		dev->accelZ = az;		dev->gyroZ = gz;      dev->magZ =  mz;
-		break;
-	case 4:
-		dev->accelX = -az;		dev->gyroX = -gz;     dev->magX = -mz;
-		dev->accelY = -ay;		dev->gyroY = -gy;     dev->magY = -my;
-		dev->accelZ = -ax;		dev->gyroZ = -gx;     dev->magZ = -mx;
-		break;
-	case 5:
-		dev->accelX = -az;		dev->gyroX = -gz;     dev->magX = -mz;
-		dev->accelY =  ax;		dev->gyroY =  gx;     dev->magY =  mx;
-		dev->accelZ = -ay;		dev->gyroZ = -gy;     dev->magZ = -my;
-		break;
-	case 6:
-		dev->accelX = -az;		dev->gyroX = -gz;     dev->magX = -mz;
-		dev->accelY = ay;		dev->gyroY = gy;      dev->magY =  my;
-		dev->accelZ = ax;		dev->gyroZ = gx;      dev->magZ =  mx;
-		break;
-	case 7:
-		dev->accelX = -az;		dev->gyroX = -gz;     dev->magX = -mz;
-		dev->accelY = -ax;		dev->gyroY = -gx;     dev->magY = -mx;
-		dev->accelZ = ay;		dev->gyroZ = gy;      dev->magZ =  my;
-		break;
-	}
-}
-
-void bmi160_set_accelerometer_scale(bmi160_context* dev,
-                                    BMI160_ACC_RANGE_T scale)
+void bmi160_set_accelerometer_scale(bmi160_context_t* dev, BMI160_ACC_RANGE_T scale)
 {
     assert(dev != NULL);
 
@@ -356,7 +305,7 @@ void bmi160_set_accelerometer_scale(bmi160_context* dev,
     return;
 }
 
-void bmi160_set_gyroscope_scale(bmi160_context* dev, BMI160_GYRO_RANGE_T scale)
+void bmi160_set_gyroscope_scale(bmi160_context_t* dev, BMI160_GYRO_RANGE_T scale)
 {
     assert(dev != NULL);
 
@@ -402,7 +351,7 @@ void bmi160_set_gyroscope_scale(bmi160_context* dev, BMI160_GYRO_RANGE_T scale)
     return;
 }
 
-void bmi160_get_accelerometer(const bmi160_context* dev, float *x, float *y,
+void bmi160_get_accelerometer(const bmi160_context_t* dev, float *x, float *y,
                               float *z)
 {
     assert(dev != NULL);
@@ -417,7 +366,7 @@ void bmi160_get_accelerometer(const bmi160_context* dev, float *x, float *y,
         *z = dev->accelZ * dev->accelScale;
 }
 
-void bmi160_get_gyroscope(const bmi160_context* dev, float *x, float *y, float *z)
+void bmi160_get_gyroscope(const bmi160_context_t* dev, float *x, float *y, float *z)
 {
     assert(dev != NULL);
 
@@ -431,7 +380,7 @@ void bmi160_get_gyroscope(const bmi160_context* dev, float *x, float *y, float *
         *z = dev->gyroZ * dev->gyroScale;
 }
 
-void bmi160_get_magnetometer(const bmi160_context* dev, float *x, float *y,
+void bmi160_get_magnetometer(const bmi160_context_t* dev, float *x, float *y,
                              float *z)
 {
     assert(dev != NULL);
@@ -475,7 +424,7 @@ float *bmi160_getMagnetometer()
 }
 #endif
 
-void bmi160_enable_magnetometer(bmi160_context *dev, bool enable)
+void bmi160_enable_magnetometer(bmi160_context_t *dev, bool enable)
 {
     assert(dev != NULL);
 
@@ -505,14 +454,14 @@ void bmi160_enable_magnetometer(bmi160_context *dev, bool enable)
     }
 }
 
-unsigned int bmi160_get_time(const bmi160_context *dev)
+unsigned int bmi160_get_time(const bmi160_context_t *dev)
 {
     assert(dev != NULL);
 
     return dev->sensorTime;
 }
 
-void bmi160_calibrateAccelGyro(const bmi160_context *dev, calData* cal)
+void bmi160_calibrateAccelGyro(const bmi160_context_t *dev, calData* cal)
 {
 	uint8_t data[12];
 	uint16_t packet_count = 64; // How many sets of full gyro and accelerometer data for averaging;
@@ -538,28 +487,33 @@ void bmi160_calibrateAccelGyro(const bmi160_context *dev, calData* cal)
     buff = BMI160_GYRO_RANGE_125_DEG_SEC;
 	bmi160_bus_write(&(dev->bmi160), BMI160_USER_GYRO_RANGE_ADDR, &buff, 1);  // Set up Gyro range. +-125dps
 
-    buff = BMI160_ACCEL_OUTPUT_DATA_RATE_400HZ;
+    buff = 0x2A;//BMI160_ACCEL_OUTPUT_DATA_RATE_400HZ;
 	bmi160_bus_write(&(dev->bmi160), BMI160_USER_ACCEL_CONFIG_ADDR, &buff, 1);//0x2A);  // Set Accel ODR to 400hz, BWP mode to Oversample 1, LPF of ~162hz
-    buff = BMI160_GYRO_OUTPUT_DATA_RATE_400HZ;
+    buff = 0x2A;//BMI160_GYRO_OUTPUT_DATA_RATE_400HZ;
 	bmi160_bus_write(&(dev->bmi160), BMI160_USER_GYRO_CONFIG_ADDR, &buff, 1);//0x2A);  // Set Gyro ODR to 400hz, BWP mode to Oversample 1, LPF of ~136hz
 
-    struct bmi160_accel_t accel;
-    struct bmi160_gyro_t gyro;
+    bmi160_accel_t accel, accel2;
+    bmi160_gyro_t gyro;
 	for (int i = 0; i < packet_count; i++)
 	{
 		int16_t accel_temp[3] = { 0, 0, 0 }, gyro_temp[3] = { 0, 0, 0 };
 
-		//bmi160_bus_read(&(dev->bmi160), BMI160_GYR_X_L, 12, &data[0]);    // Read the 12 raw data registers into data array
-        bmi160_read_accel_xyz(&(dev->bmi160), &accel);
-        bmi160_read_gyro_xyz(&(dev->bmi160), &gyro);
+		bmi160_bus_read(&(dev->bmi160), BMI160_USER_DATA_8_GYRO_X_LSB__REG, &data[0], 12);    // Read the 12 raw data registers into data array
+    	gyro.x = ((int16_t)data[1] << 8) | data[0];		  // Turn the MSB and LSB into a signed 16-bit value
+		gyro.y = ((int16_t)data[3] << 8) | data[2];
+		gyro.z = ((int16_t)data[5] << 8) | data[4];
 
-		// gyro_temp[0] = ((int16_t)data[1] << 8) | data[0];		  // Turn the MSB and LSB into a signed 16-bit value
-		// gyro_temp[1] = ((int16_t)data[3] << 8) | data[2];
-		// gyro_temp[2] = ((int16_t)data[5] << 8) | data[4];
+		accel.x = ((int16_t)data[7] << 8) | data[6];
+		accel.y = ((int16_t)data[9] << 8) | data[8];
+		accel.z = ((int16_t)data[11] << 8) | data[10];
 
-		// accel_temp[0] = ((int16_t)data[7] << 8) | data[6];
-		// accel_temp[1] = ((int16_t)data[9] << 8) | data[8];
-		// accel_temp[2] = ((int16_t)data[11] << 8) | data[10];
+        // bmi160_read_accel_xyz(&(dev->bmi160), &accel2);
+        bmi160_read_accel_x(&(dev->bmi160), &accel2.x);
+        bmi160_read_accel_y(&(dev->bmi160), &accel2.y);
+        bmi160_read_accel_z(&(dev->bmi160), &accel2.z);
+        bmi160_initialSensor2Body(dev, &accel.x, &accel.y, &accel.z);
+        //bmi160_read_gyro_xyz(&(dev->bmi160), &gyro);
+        bmi160_initialSensor2Body(dev, &gyro.x, &gyro.y, &gyro.z);
 
 		accel_bias[0] += accel.x * accelsensitivity; // Sum individual signed 16-bit biases to get accumulated biases
 		accel_bias[1] += accel.y * accelsensitivity;
@@ -580,39 +534,8 @@ void bmi160_calibrateAccelGyro(const bmi160_context *dev, calData* cal)
 	gyro_bias[1] /= packet_count;
 	gyro_bias[2] /= packet_count;
 
-    uint8_t geometryIndex = 0;
-	switch (geometryIndex) 
-    {
-	case 0:
-	case 1:
-	case 2:
-	case 3:
-		if (accel_bias[2] > 0.f) {
-			accel_bias[2] -= 1.f; // Remove gravity from the z-axis accelerometer bias calculation
-		}
-		else {
-			accel_bias[2] += 1.f;
-		}
-		break;
-	case 4:
-	case 6:
-		if (accel_bias[0] > 0.f) {
-			accel_bias[0] -= 1.f; // Remove gravity from the z-axis accelerometer bias calculation
-		}
-		else {
-			accel_bias[0] += 1.f;
-		}
-		break;
-	case 5:
-	case 7:
-		if (accel_bias[1] > 0.f) {
-			accel_bias[1] -= 1.f; // Remove gravity from the z-axis accelerometer bias calculation
-		}
-		else {
-			accel_bias[1] += 1.f;
-		}
-		break;
-	}
+    accel_bias[2] += 1.f;          // Remove gravity from the z-axis accelerometer bias calculation
+
 	// Output scaled accelerometer biases for display in the main program
 	cal->accelBias[0] = (float)accel_bias[0];
 	cal->accelBias[1] = (float)accel_bias[1];

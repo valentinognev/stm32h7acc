@@ -62,53 +62,61 @@ typedef struct
 *    magnetometer values for x,y and
 *    z-axis in int16_t
 */
-struct bmi160_mag_t 
+typedef struct 
+{
+    float x;
+    float y;
+    float z;
+    uint8_t geometryIndex;
+} sensorPosition_t;
+
+typedef struct 
 {
     int32_t x;/**< BMM150 and AKM09911 and AKM09912 X raw data*/
     int32_t y;/**< BMM150 and AKM09911 and AKM09912 Y raw data*/
     int32_t z;/**< BMM150 and AKM09911 and AKM09912 Z raw data*/
-};
+} bmi160_mag_t;
 /*!
 * @brief Structure containing bmm150 xyz data and temperature
 */
-struct bmi160_mag_xyzr_t 
+typedef struct  
 {
     int16_t x;/**< BMM150 X raw data*/
     int16_t y;/**< BMM150 Y raw data*/
     int16_t z;/**<BMM150 Z raw data*/
     uint16_t r;/**<BMM150 R raw data*/
-};
+} bmi160_mag_xyzr_t;
 /*!
 * @brief Structure containing gyro xyz data
 */
-struct bmi160_gyro_t 
+typedef struct 
 {
     int16_t x;/**<gyro X  data*/
     int16_t y;/**<gyro Y  data*/
     int16_t z;/**<gyro Z  data*/
-};
+} bmi160_gyro_t;
 /*!
 * @brief Structure containing accel xyz data
 */
-struct bmi160_accel_t 
+typedef struct
 {
     int16_t x;/**<accel X  data*/
     int16_t y;/**<accel Y  data*/
     int16_t z;/**<accel Z  data*/
-};
+}  bmi160_accel_t;
 /*!
 * @brief Structure bmm150 mag compensated data with int32_t output
 */
-struct bmi160_mag_xyz_s32_t 
+typedef struct 
 {
     int32_t x;/**<BMM150 X compensated data*/
     int32_t y;/**<BMM150 Y compensated data*/
     int32_t z;/**<BMM150 Z compensated data*/
-};
+} bmi160_mag_xyz_s32_t;
 /*!
 * @brief Structure bmm150 mag trim data
 */
-struct trim_data_t 
+typedef struct  
 {
     int8_t dig_x1;/**<BMM150 trim x1 data*/
     int8_t dig_y1;/**<BMM150 trim y1 data*/
@@ -125,25 +133,25 @@ struct trim_data_t
     int8_t dig_xy2;/**<BMM150 trim xy2 data*/
 
     uint16_t dig_xyz1;/**<BMM150 trim xyz1 data*/
-};
+} trim_data_t;
 /*!
 *    @brief Used to read the akm compensated values
 */
-struct bmi160_bst_akm_xyz_t 
+typedef struct  
 {
     int32_t x;/**<AKM09911 and AKM09912 X compensated data*/
     int32_t y;/**<AKM09911 and AKM09912 Y compensated data*/
     int32_t z;/**<AKM09911 and AKM09912 Z compensated data*/
-};
+} bmi160_bst_akm_xyz_t;
 /*!
 *    @brief Structure for reading AKM compensating data
 */
-struct bst_akm_sensitivity_data_t 
+typedef struct 
 {
     uint8_t asax;/**<AKM09911 and AKM09912 X sensitivity data*/
     uint8_t asay;/**<AKM09911 and AKM09912 Y sensitivity data*/
     uint8_t asaz;/**<AKM09911 and AKM09912 Z sensitivity data*/
-};
+} bst_akm_sensitivity_data_t ;
 
 typedef struct 
 {
@@ -171,8 +179,9 @@ typedef struct
     bool magEnabled;
     bmi160_t bmi160;
     calData calibration;
+    sensorPosition_t sensorPosition;
 
-} bmi160_context;
+} bmi160_context_t;
 
 /**
  * bmi160 constructor
@@ -187,14 +196,14 @@ typedef struct
  * @param enable_mag True, if you want to enable the magnetometer
  * @return an initialized device context on success, NULL on error.
  */
-uint8_t bmi160_init(bmi160_context *dev, GPIO_TypeDef* cs_port, int cs_pin, bool enable_mag);
+uint8_t bmi160_init(bmi160_context_t *dev, GPIO_TypeDef* cs_port, int cs_pin, bool enable_mag);
 
 /**
  * BMI160 Destructor
  *
  * @param dev Device context.
  */
-void bmi160_close(bmi160_context* dev);
+void bmi160_close(bmi160_context_t* dev);
 
 /**
  * Take a measurement and store the current sensor values
@@ -204,7 +213,7 @@ void bmi160_close(bmi160_context* dev);
  * @param dev Device context.
  * @param dev sensor context
  */
-void bmi160_update(bmi160_context* dev);
+void bmi160_update(bmi160_context_t* dev);
 
 /**
  * set the scaling mode of the accelerometer
@@ -212,7 +221,7 @@ void bmi160_update(bmi160_context* dev);
  * @param dev Device context.
  * @param scale one of the ACCEL_RANGE_T values
  */
-void bmi160_set_accelerometer_scale(bmi160_context* dev, BMI160_ACC_RANGE_T scale);
+void bmi160_set_accelerometer_scale(bmi160_context_t* dev, BMI160_ACC_RANGE_T scale);
 
 /**
  * set the scaling mode of the gyroscope
@@ -220,7 +229,7 @@ void bmi160_set_accelerometer_scale(bmi160_context* dev, BMI160_ACC_RANGE_T scal
  * @param dev Device context.
  * @param scale one of the GYRO_RANGE_T values
  */
-void bmi160_set_gyroscope_scale(bmi160_context* dev, BMI160_GYRO_RANGE_T scale);
+void bmi160_set_gyroscope_scale(bmi160_context_t* dev, BMI160_GYRO_RANGE_T scale);
 
 /**
  * Get the Accelerometer values.  The values returned are in
@@ -232,7 +241,7 @@ void bmi160_set_gyroscope_scale(bmi160_context* dev, BMI160_GYRO_RANGE_T scale);
  * @param y A pointer into which the Y value will be returned
  * @param z A pointer into which the Z value will be returned
  */
-void bmi160_get_accelerometer(const bmi160_context* dev, float *x, float *y, float *z);
+void bmi160_get_accelerometer(const bmi160_context_t* dev, float *x, float *y, float *z);
 
 /**
  * Get the Gyroscope values.  The values returned are in degrees
@@ -244,7 +253,7 @@ void bmi160_get_accelerometer(const bmi160_context* dev, float *x, float *y, flo
  * @param y A pointer into which the Y value will be returned
  * @param z A pointer into which the Z value will be returned
  */
-void bmi160_get_gyroscope(const bmi160_context* dev, float *x, float *y, float *z);
+void bmi160_get_gyroscope(const bmi160_context_t* dev, float *x, float *y, float *z);
 
 /**
  * Get the Magnetometer values.  The values returned are in micro
@@ -256,7 +265,7 @@ void bmi160_get_gyroscope(const bmi160_context* dev, float *x, float *y, float *
  * @param y A pointer into which the Y value will be returned
  * @param z A pointer into which the Z value will be returned
  */
-void bmi160_get_magnetometer(const bmi160_context* dev, float *x, float *y, float *z);
+void bmi160_get_magnetometer(const bmi160_context_t* dev, float *x, float *y, float *z);
 
 /**
  * Enable or disable the Magnetometer.  By default, the
@@ -265,7 +274,7 @@ void bmi160_get_magnetometer(const bmi160_context* dev, float *x, float *y, floa
  * @param dev Device context.
  * @param enable true to enable the magnetometer, false to disable.
  */
-void bmi160_enable_magnetometer(bmi160_context *dev, bool enable);
+void bmi160_enable_magnetometer(bmi160_context_t *dev, bool enable);
 
 /**
  * Return the sensor time.  This is a 24bit value that increments
@@ -275,7 +284,7 @@ void bmi160_enable_magnetometer(bmi160_context *dev, bool enable);
  * @param dev Device context.
  * @return The current sensor time.
  */
-unsigned int bmi160_get_time(const bmi160_context* dev);
+unsigned int bmi160_get_time(const bmi160_context_t* dev);
 
 /**
  * Perform a bus read.  This function is bus agnostic, and is used

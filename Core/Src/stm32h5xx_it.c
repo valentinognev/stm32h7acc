@@ -58,7 +58,7 @@
 extern SD_HandleTypeDef hsd1;
 extern SPI_HandleTypeDef hspi1;
 /* USER CODE BEGIN EV */
-
+extern bool HALSPI;
 /* USER CODE END EV */
 
 /******************************************************************************/

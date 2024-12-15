@@ -722,6 +722,11 @@ uint8_t *, uint8_t)
 /**\name POWER MODE STATUS */
 /*******************/
 #define BMI160_USER_PMU_STAT_ADDR                (0X03)
+
+#define BMI160_ACC_PMU_STATUS_BIT   4
+#define BMI160_ACC_PMU_STATUS_LEN   2
+#define BMI160_GYR_PMU_STATUS_BIT   2
+#define BMI160_GYR_PMU_STATUS_LEN   2
 /*******************/
 /**\name MAG DATA REGISTERS */
 /*******************/
@@ -761,6 +766,36 @@ uint8_t *, uint8_t)
 /**\name STATUS REGISTER FOR SENSOR STATUS FLAG */
 /*******************/
 #define BMI160_USER_STAT_ADDR                    (0X1B)
+
+#define BMI160_STATUS_FOC_RDY       3
+#define BMI160_STATUS_NVM_RDY       4
+#define BMI160_STATUS_DRDY_GYR      6
+#define BMI160_STATUS_DRDY_ACC      7
+
+#define BMI160_STEP_INT_BIT         0
+#define BMI160_ANYMOTION_INT_BIT    2
+#define BMI160_D_TAP_INT_BIT        4
+#define BMI160_S_TAP_INT_BIT        5
+#define BMI160_NOMOTION_INT_BIT     7
+#define BMI160_FFULL_INT_BIT        5
+#define BMI160_DRDY_INT_BIT         4
+#define BMI160_LOW_G_INT_BIT        3
+#define BMI160_HIGH_G_INT_BIT       2
+
+#define BMI160_TAP_SIGN_BIT         7
+#define BMI160_TAP_1ST_Z_BIT        6
+#define BMI160_TAP_1ST_Y_BIT        5
+#define BMI160_TAP_1ST_X_BIT        4
+
+#define BMI160_ANYMOTION_SIGN_BIT   3
+#define BMI160_ANYMOTION_1ST_Z_BIT  2
+#define BMI160_ANYMOTION_1ST_Y_BIT  1
+#define BMI160_ANYMOTION_1ST_X_BIT  0
+
+#define BMI160_HIGH_G_SIGN_BIT      3
+#define BMI160_HIGH_G_1ST_Z_BIT     2
+#define BMI160_HIGH_G_1ST_Y_BIT     1
+#define BMI160_HIGH_G_1ST_X_BIT     0
 /*******************/
 /**\name INTERRUPY STATUS REGISTERS */
 /*******************/
@@ -779,6 +814,9 @@ uint8_t *, uint8_t)
 #define BMI160_USER_FIFO_LENGTH_0_ADDR            (0X22)
 #define BMI160_USER_FIFO_LENGTH_1_ADDR            (0X23)
 #define BMI160_USER_FIFO_DATA_ADDR                (0X24)
+
+#define BMI160_ACCEL_RATE_SEL_BIT    0
+#define BMI160_ACCEL_RATE_SEL_LEN    4
 /***************************************************/
 /**\name ACCEL CONFIG REGISTERS  FOR ODR, BANDWIDTH AND UNDERSAMPLING*/
 /******************************************************/
@@ -787,6 +825,9 @@ uint8_t *, uint8_t)
 /**\name ACCEL RANGE */
 /*******************/
 #define BMI160_USER_ACCEL_RANGE_ADDR            (0X41)
+
+#define BMI160_GYRO_RATE_SEL_BIT    0
+#define BMI160_GYRO_RATE_SEL_LEN    4
 /***************************************************/
 /**\name GYRO CONFIG REGISTERS  FOR ODR AND BANDWIDTH */
 /******************************************************/
@@ -795,6 +836,10 @@ uint8_t *, uint8_t)
 /**\name GYRO RANGE */
 /*******************/
 #define BMI160_USER_GYRO_RANGE_ADDR             (0X43)
+
+#define BMI160_FIFO_HEADER_EN_BIT   4
+#define BMI160_FIFO_ACC_EN_BIT      6
+#define BMI160_FIFO_GYR_EN_BIT      7
 /***************************************************/
 /**\name MAG CONFIG REGISTERS  FOR ODR*/
 /******************************************************/
@@ -808,6 +853,21 @@ uint8_t *, uint8_t)
 /******************************************************/
 #define BMI160_USER_FIFO_CONFIG_0_ADDR          (0X46)
 #define BMI160_USER_FIFO_CONFIG_1_ADDR          (0X47)
+
+#define BMI160_ANYMOTION_EN_BIT     0
+#define BMI160_ANYMOTION_EN_LEN     3
+#define BMI160_D_TAP_EN_BIT         4
+#define BMI160_S_TAP_EN_BIT         5
+#define BMI160_NOMOTION_EN_BIT      0
+#define BMI160_NOMOTION_EN_LEN      3
+#define BMI160_LOW_G_EN_BIT         3
+#define BMI160_LOW_G_EN_LEN         1
+#define BMI160_HIGH_G_EN_BIT        0
+#define BMI160_HIGH_G_EN_LEN        3
+
+#define BMI160_STEP_EN_BIT          3
+#define BMI160_DRDY_EN_BIT          4
+#define BMI160_FFULL_EN_BIT         5
 /***************************************************/
 /**\name MAG INTERFACE REGISTERS*/
 /******************************************************/
@@ -822,7 +882,16 @@ uint8_t *, uint8_t)
 #define BMI160_USER_INTR_ENABLE_0_ADDR            (0X50)
 #define BMI160_USER_INTR_ENABLE_1_ADDR            (0X51)
 #define BMI160_USER_INTR_ENABLE_2_ADDR            (0X52)
+
+#define BMI160_INT1_EDGE_CTRL       0
+#define BMI160_INT1_LVL             1
+#define BMI160_INT1_OD              2
+#define BMI160_INT1_OUTPUT_EN       3
+
 #define BMI160_USER_INTR_OUT_CTRL_ADDR            (0X53)
+
+#define BMI160_LATCH_MODE_BIT       0
+#define BMI160_LATCH_MODE_LEN       4
 /***************************************************/
 /**\name LATCH DURATION REGISTERS*/
 /******************************************************/
@@ -833,6 +902,14 @@ uint8_t *, uint8_t)
 #define BMI160_USER_INTR_MAP_0_ADDR                (0X55)
 #define BMI160_USER_INTR_MAP_1_ADDR                (0X56)
 #define BMI160_USER_INTR_MAP_2_ADDR                (0X57)
+
+#define BMI160_ANYMOTION_DUR_BIT    0
+#define BMI160_ANYMOTION_DUR_LEN    2
+#define BMI160_NOMOTION_DUR_BIT     2
+#define BMI160_NOMOTION_DUR_LEN     6
+
+#define BMI160_NOMOTION_SEL_BIT     0
+#define BMI160_NOMOTION_SEL_LEN     1
 /***************************************************/
 /**\name DATA SOURCE REGISTERS*/
 /******************************************************/
@@ -851,8 +928,25 @@ INTERRUPT THRESHOLD, HYSTERESIS, DURATION, MODE CONFIGURATION REGISTERS*/
 #define BMI160_USER_INTR_MOTION_1_ADDR            (0X60)
 #define BMI160_USER_INTR_MOTION_2_ADDR            (0X61)
 #define BMI160_USER_INTR_MOTION_3_ADDR            (0X62)
+
+#define BMI160_TAP_DUR_BIT          0
+#define BMI160_TAP_DUR_LEN          3
+#define BMI160_TAP_SHOCK_BIT        6
+#define BMI160_TAP_QUIET_BIT        7
+#define BMI160_TAP_THRESH_BIT       0
+#define BMI160_TAP_THRESH_LEN       5
+
 #define BMI160_USER_INTR_TAP_0_ADDR                (0X63)
 #define BMI160_USER_INTR_TAP_1_ADDR                (0X64)
+
+#define BMI160_FOC_ACC_Z_BIT        0
+#define BMI160_FOC_ACC_Z_LEN        2
+#define BMI160_FOC_ACC_Y_BIT        2
+#define BMI160_FOC_ACC_Y_LEN        2
+#define BMI160_FOC_ACC_X_BIT        4
+#define BMI160_FOC_ACC_X_LEN        2
+#define BMI160_FOC_GYR_EN           6
+
 #define BMI160_USER_INTR_ORIENT_0_ADDR            (0X65)
 #define BMI160_USER_INTR_ORIENT_1_ADDR            (0X66)
 #define BMI160_USER_INTR_FLAT_0_ADDR            (0X67)
@@ -861,6 +955,15 @@ INTERRUPT THRESHOLD, HYSTERESIS, DURATION, MODE CONFIGURATION REGISTERS*/
 /**\name FAST OFFSET CONFIGURATION REGISTER*/
 /******************************************************/
 #define BMI160_USER_FOC_CONFIG_ADDR                (0X69)
+
+#define BMI160_GYR_OFFSET_X_MSB_BIT 0
+#define BMI160_GYR_OFFSET_X_MSB_LEN 2
+#define BMI160_GYR_OFFSET_Y_MSB_BIT 2
+#define BMI160_GYR_OFFSET_Y_MSB_LEN 2
+#define BMI160_GYR_OFFSET_Z_MSB_BIT 4
+#define BMI160_GYR_OFFSET_Z_MSB_LEN 2
+#define BMI160_ACC_OFFSET_EN        6
+#define BMI160_GYR_OFFSET_EN        7
 /***************************************************/
 /**\name MISCELLANEOUS CONFIGURATION REGISTER*/
 /******************************************************/
@@ -896,6 +999,17 @@ INTERRUPT THRESHOLD, HYSTERESIS, DURATION, MODE CONFIGURATION REGISTERS*/
 /******************************************************/
 #define BMI160_USER_STEP_COUNT_0_ADDR            (0X78)
 #define BMI160_USER_STEP_COUNT_1_ADDR            (0X79)
+
+#define BMI160_STEP_BUF_MIN_BIT     0
+#define BMI160_STEP_BUF_MIN_LEN     3
+#define BMI160_STEP_CNT_EN_BIT      3
+
+#define BMI160_STEP_TIME_MIN_BIT    0
+#define BMI160_STEP_TIME_MIN_LEN    3
+#define BMI160_STEP_THRESH_MIN_BIT  3
+#define BMI160_STEP_THRESH_MIN_LEN  2
+#define BMI160_STEP_ALPHA_BIT       5
+#define BMI160_STEP_ALPHA_LEN       3
 /***************************************************/
 /**\name STEP COUNTER CONFIGURATION REGISTERS*/
 /******************************************************/

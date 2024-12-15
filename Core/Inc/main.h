@@ -43,6 +43,8 @@ extern "C" {
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "stdbool.h"
+#include "stm32h5xx_ll_spi.h"
+#include "stm32_hal_legacy.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -104,6 +106,8 @@ void Error_Handler(void);
 #define ACCL2_CS_GPIO_Port GPIOB
 #define DIODE_Pin LL_GPIO_PIN_2
 #define DIODE_GPIO_Port GPIOB
+#define USBpulldown_Pin LL_GPIO_PIN_8
+#define USBpulldown_GPIO_Port GPIOA
 
 /* USER CODE BEGIN Private defines */
 

@@ -300,7 +300,9 @@ unsigned int bmi160_get_time(const bmi160_context_t* dev);
  * @param cnt The number of bytes to read.
  * @return A return of 0 indicates no errors, non-zero indicates an error.
  */
-    int8_t bmi160_bus_write(const bmi160_t *bmi160, uint8_t reg_addr, uint8_t *reg_data, uint8_t cnt);
+ int8_t bmi160_bus_read(const bmi160_t *bmi160, uint8_t reg_addr, uint8_t *reg_data, uint8_t cnt);
+
+uint8_t bmi160_bus_read_bit(const bmi160_t *bmi160, uint8_t reg_addr, unsigned pos, uint8_t len);
 
 /**
  * Perform a bus write.  This function is bus agnostic, and is used
@@ -316,7 +318,7 @@ unsigned int bmi160_get_time(const bmi160_context_t* dev);
  * @param cnt The number of bytes to write.
  * @return A return of 0 indicates no errors, non-zero indicates an error.
  */
-int8_t bmi160_bus_read(const bmi160_t *bmi160, uint8_t reg_addr, uint8_t *reg_data, uint8_t cnt);
+   int8_t bmi160_bus_write(const bmi160_t *bmi160, uint8_t reg_addr, uint8_t *reg_data, uint8_t cnt);
 
 #ifdef __cplusplus
 }

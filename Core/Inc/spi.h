@@ -29,7 +29,7 @@ extern "C" {
 #include "main.h"
 
 /* USER CODE BEGIN Includes */
-
+#include "bmi160.h" 
 /* USER CODE END Includes */
 
 extern SPI_HandleTypeDef hspi1;
@@ -41,9 +41,9 @@ extern SPI_HandleTypeDef hspi1;
 void MX_SPI1_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-void SPI_TransmitReceive_DMA(uint8_t* transferData, uint8_t* receiveData, uint16_t size);
-void SPI_Transfer_DMA(uint8_t* transferData, uint16_t size);
-void SPI_Receive_DMA(uint8_t* receiveData, uint16_t size);
+void SPI_TransmitReceive_DMA(uint8_t* transferData, uint8_t* receiveData, uint16_t size, const bmi160_t *bmi160);
+void SPI_Transfer_DMA(uint8_t* transferData, uint16_t size, const bmi160_t *bmi160);
+void SPI_Receive_DMA(uint8_t* receiveData, uint16_t size, const bmi160_t *bmi160);
 void DMA1_ReceiveComplete(void);
 void DMA1_TransmitComplete(void);
 void SPI1_TransferError_Callback(void);

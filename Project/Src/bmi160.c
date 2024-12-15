@@ -58,7 +58,7 @@ int8_t bmi160_bus_read(const bmi160_t *bmi160, uint8_t reg_addr, uint8_t *reg_da
     sbuf[0] = reg_addr;
 
     bmi160_cs_on(bmi160);
-    SPI_TransmitReceive_DMA(sbuf, sbufout, cnt + 1);  
+    SPI_TransmitReceive_DMA(sbuf, sbufout, cnt + 1, bmi160);  
     bmi160_cs_off(bmi160);
 
     // now copy it into user buffer
@@ -67,6 +67,27 @@ int8_t bmi160_bus_read(const bmi160_t *bmi160, uint8_t reg_addr, uint8_t *reg_da
         reg_data[i] = sbufout[i + 1];
 
     return 0;
+}
+
+uint8_t bmi160_bus_read_bit(const bmi160_t *bmi160, uint8_t reg_addr, unsigned pos, uint8_t len)
+{
+    reg_addr |= 0x80; // needed for read
+    const uint8_t cnt = 1;   
+
+    uint8_t sbuf[cnt + 1], sbufout[cnt + 1];
+    memset((char *)sbuf, 0, cnt + 1);
+    memset((char *)sbufout, 0, cnt + 1);
+    sbuf[0] = reg_addr;
+
+    bmi160_cs_on(bmi160);
+    SPI_TransmitReceive_DMA(sbuf, sbufout, cnt + 1, bmi160);  
+    bmi160_cs_off(bmi160);
+
+    uint8_t b = sbufout[1];
+    uint8_t mask = (1 << len) - 1;
+    b >>= pos;
+    b &= mask;
+    return b;
 }
 
 int8_t bmi160_bus_write(const bmi160_t *bmi160, uint8_t reg_addr, uint8_t *reg_data, uint8_t cnt)
@@ -83,7 +104,7 @@ int8_t bmi160_bus_write(const bmi160_t *bmi160, uint8_t reg_addr, uint8_t *reg_d
         sbuf[i + 1] = reg_data[i];
 
     bmi160_cs_on(bmi160);
-    SPI_TransmitReceive_DMA(sbuf, res, cnt + 1);
+    SPI_TransmitReceive_DMA(sbuf, res, cnt + 1, bmi160);
     bmi160_cs_off(bmi160);
 
     return 0;
@@ -108,6 +129,8 @@ uint8_t bmi160_init(bmi160_context_t *dev, GPIO_TypeDef* cs_port, int cs_pin, bo
     dev->bmi160.cs_port = cs_port;
     dev->bmi160.spi = hspi1;
     dev->bmi160.mag_manual_enable = enable_mag;
+
+    bmi160_calibrateAccelGyro(dev, &(dev->calibration));
 
     if (bmi160_init_bus(&(dev->bmi160)))
     {
@@ -165,7 +188,6 @@ uint8_t bmi160_init(bmi160_context_t *dev, GPIO_TypeDef* cs_port, int cs_pin, bo
     bmi160_set_accelerometer_scale(dev, BMI160_ACC_RANGE_2G);
     bmi160_set_gyroscope_scale(dev, BMI160_GYRO_RANGE_125);
 
-    bmi160_calibrateAccelGyro(dev, &(dev->calibration));
     return 1;
 }
 
@@ -470,18 +492,34 @@ void bmi160_calibrateAccelGyro(const bmi160_context_t *dev, calData* cal)
 	float  gyrosensitivity = 125.f / 32768.f;			
 	float  accelsensitivity = 2.f / 32768.f;
 
-	// reset device
-    uint8_t buff = 0xB6;
+    /* Perform a dummy read from 0x7f to switch to spi interface */
+    bmi160_bus_read(&(dev->bmi160), BMI160_CMD_EXT_MODE_ADDR, data, 1);	
+
+    /* The SPI interface is ready - now invoke the base class initialization */
+    uint8_t buff = 0xB6;           // reset device
 	bmi160_bus_write(&(dev->bmi160), BMI160_CMD_COMMANDS_ADDR, &buff, 1); // Toggle softreset
-	HAL_Delay(100); // wait for reset
+	HAL_Delay(1); // wait for reset
+
+    /* Perform a dummy read from 0x7f to switch to spi interface */
+    bmi160_bus_read(&(dev->bmi160), BMI160_CMD_EXT_MODE_ADDR, data, 1);	
 
     buff = ACCEL_MODE_NORMAL;
 	bmi160_bus_write(&(dev->bmi160), BMI160_CMD_COMMANDS_ADDR, &buff, 1);  // Start up accelerometer
-	HAL_Delay(200);
+	HAL_Delay(1);
+			  //wait until they're done starting up...
+    while (0x1 != bmi160_bus_read_bit(&(dev->bmi160), BMI160_USER_PMU_STAT_ADDR, BMI160_ACC_PMU_STATUS_BIT, BMI160_ACC_PMU_STATUS_LEN))
+    {    
+        HAL_Delay(1); 
+    }
+
     buff = GYRO_MODE_NORMAL;
 	bmi160_bus_write(&(dev->bmi160), BMI160_CMD_COMMANDS_ADDR, &buff, 1);  // Start up gyroscope
-	HAL_Delay(200);								  //wait until they're done starting up...
-	
+	HAL_Delay(1);			
+			  //wait until they're done starting up...
+    while (0x1 != bmi160_bus_read_bit(&(dev->bmi160), BMI160_USER_PMU_STAT_ADDR, BMI160_GYR_PMU_STATUS_BIT, BMI160_GYR_PMU_STATUS_LEN))
+    {    HAL_Delay(1); }
+
+
     buff = BMI160_ACCEL_RANGE_2G;
 	bmi160_bus_write(&(dev->bmi160), BMI160_USER_ACCEL_RANGE_ADDR, &buff, 1);  // Set up Accel range. +-2G
     buff = BMI160_GYRO_RANGE_125_DEG_SEC;
@@ -498,19 +536,20 @@ void bmi160_calibrateAccelGyro(const bmi160_context_t *dev, calData* cal)
 	{
 		int16_t accel_temp[3] = { 0, 0, 0 }, gyro_temp[3] = { 0, 0, 0 };
 
-		bmi160_bus_read(&(dev->bmi160), BMI160_USER_DATA_8_GYRO_X_LSB__REG, &data[0], 12);    // Read the 12 raw data registers into data array
-    	gyro.x = ((int16_t)data[1] << 8) | data[0];		  // Turn the MSB and LSB into a signed 16-bit value
-		gyro.y = ((int16_t)data[3] << 8) | data[2];
-		gyro.z = ((int16_t)data[5] << 8) | data[4];
+		// bmi160_bus_read(&(dev->bmi160), BMI160_USER_DATA_8_GYRO_X_LSB__REG, &data[0], 6);    // Read the 12 raw data registers into data array
+    	// gyro.x = ((int16_t)data[1] << 8) | data[0];		  // Turn the MSB and LSB into a signed 16-bit value
+		// gyro.y = ((int16_t)data[3] << 8) | data[2];
+		// gyro.z = ((int16_t)data[5] << 8) | data[4];
 
-		accel.x = ((int16_t)data[7] << 8) | data[6];
-		accel.y = ((int16_t)data[9] << 8) | data[8];
-		accel.z = ((int16_t)data[11] << 8) | data[10];
+		// bmi160_bus_read(&(dev->bmi160), BMI160_USER_DATA_14_ACCEL_X_LSB__REG, &data[6], 6);    // Read the 12 raw data registers into data array
+		// accel.x = ((int16_t)data[7] << 8) | data[6];
+		// accel.y = ((int16_t)data[9] << 8) | data[8];
+		// accel.z = ((int16_t)data[11] << 8) | data[10];
 
-        // bmi160_read_accel_xyz(&(dev->bmi160), &accel2);
-        bmi160_read_accel_x(&(dev->bmi160), &accel2.x);
-        bmi160_read_accel_y(&(dev->bmi160), &accel2.y);
-        bmi160_read_accel_z(&(dev->bmi160), &accel2.z);
+        //bmi160_read_accel_xyz(&(dev->bmi160), &accel);
+        bmi160_read_accel_x(&(dev->bmi160), &accel.x);
+        bmi160_read_accel_y(&(dev->bmi160), &accel.y);
+        bmi160_read_accel_z(&(dev->bmi160), &accel.z);
         bmi160_initialSensor2Body(dev, &accel.x, &accel.y, &accel.z);
         //bmi160_read_gyro_xyz(&(dev->bmi160), &gyro);
         bmi160_initialSensor2Body(dev, &gyro.x, &gyro.y, &gyro.z);

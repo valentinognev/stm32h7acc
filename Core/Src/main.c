@@ -40,7 +40,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define NUMOFACCL 6
+#define NUMOFACCL 7
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -54,14 +54,6 @@ static uint16_t Buffercmp(uint8_t *pBuffer1, uint8_t *pBuffer2, uint16_t BufferL
 extern SPI_HandleTypeDef hspi1;
 extern SPI_HandleTypeDef hspi2;
 /* Buffer used for transmission */
-uint8_t aTxBuffer[] = "****SPI - Two Boards communication based on Interrupt **** SPI Message ******** SPI Message ******** SPI Message ****";
-#define BUFFERSIZE                       (COUNTOF(aTxBuffer) - 1)
-
-/* Exported macro ------------------------------------------------------------*/
-#define COUNTOF(__BUFFER__)   (sizeof(__BUFFER__) / sizeof(*(__BUFFER__)))
-
-/* Buffer used for reception */
-uint8_t aRxBuffer[BUFFERSIZE] = {0};
 
 /* transfer state */
 __IO uint32_t wTransferState = TRANSFER_WAIT;
@@ -116,9 +108,9 @@ int main(void)
   MX_USB_PCD_Init();
   MX_ICACHE_Init();
   /* USER CODE BEGIN 2 */
-  MX_FileX_Init();
+  //MX_FileX_Init();
   //   MX_FileX_Process();
-  initDataFile();
+  //initDataFile();
   
   char acclDataOut[800];
   /* USER CODE END 2 */
@@ -132,15 +124,15 @@ int main(void)
   uint8_t test[NUMOFACCL]={0};
   bmi160[0].sensorPosition.geometryIndex = 0;  bmi160[1].sensorPosition.geometryIndex = 0;  bmi160[2].sensorPosition.geometryIndex = 0;
   bmi160[3].sensorPosition.geometryIndex = 0;  bmi160[4].sensorPosition.geometryIndex = 0;  bmi160[5].sensorPosition.geometryIndex = 0;
-  //bmi160[6].sensorPosition.geometryIndex = 0;
+  bmi160[6].sensorPosition.geometryIndex = 0;
 
-  // test[0] = bmi160_init(&bmi160[0], ACCL1_CS_GPIO_Port, ACCL1_CS_Pin, true);
-  test[0] = bmi160_init(&bmi160[1], ACCL2_CS_GPIO_Port, ACCL2_CS_Pin, true);
-  test[1] = bmi160_init(&bmi160[2], ACCL3_CS_GPIO_Port, ACCL3_CS_Pin, true);
-  test[2] = bmi160_init(&bmi160[3], ACCL4_CS_GPIO_Port, ACCL4_CS_Pin, true);
-  test[3] = bmi160_init(&bmi160[4], ACCL5_CS_GPIO_Port, ACCL5_CS_Pin, true);
-  test[4] = bmi160_init(&bmi160[5], ACCL6_CS_GPIO_Port, ACCL6_CS_Pin, true);
-  test[5] = bmi160_init(&bmi160[6], ACCL7_CS_GPIO_Port, ACCL7_CS_Pin, true);
+  test[0] = bmi160_init(&bmi160[0], ACCL1_CS_GPIO_Port, ACCL1_CS_Pin, true);
+  test[1] = bmi160_init(&bmi160[1], ACCL2_CS_GPIO_Port, ACCL2_CS_Pin, true);
+  test[2] = bmi160_init(&bmi160[2], ACCL3_CS_GPIO_Port, ACCL3_CS_Pin, true);
+  test[3] = bmi160_init(&bmi160[3], ACCL4_CS_GPIO_Port, ACCL4_CS_Pin, true);
+  test[4] = bmi160_init(&bmi160[4], ACCL5_CS_GPIO_Port, ACCL5_CS_Pin, true);
+  test[5] = bmi160_init(&bmi160[5], ACCL6_CS_GPIO_Port, ACCL6_CS_Pin, true);
+  test[6] = bmi160_init(&bmi160[6], ACCL7_CS_GPIO_Port, ACCL7_CS_Pin, true);
   
   float ax[NUMOFACCL], ay[NUMOFACCL], az[NUMOFACCL], temperature[NUMOFACCL];
   float gx[NUMOFACCL], gy[NUMOFACCL], gz[NUMOFACCL];

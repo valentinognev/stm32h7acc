@@ -108,9 +108,9 @@ int main(void)
   MX_USB_PCD_Init();
   MX_ICACHE_Init();
   /* USER CODE BEGIN 2 */
-  //MX_FileX_Init();
+  MX_FileX_Init();
   //   MX_FileX_Process();
-  //initDataFile();
+  initDataFile();
   
   char acclDataOut[800];
   /* USER CODE END 2 */
@@ -118,8 +118,6 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
  
-  //bma250e_context bma250 = bma250e_init(BMA250E_DEFAULT_SPI_BUS,-1, 10);
-  //bmg160_context bmg160 = bmg160_init(BMG160_DEFAULT_SPI_BUS,-1, 10);
   bmi160_context_t bmi160[NUMOFACCL];
   uint8_t test[NUMOFACCL]={0};
   bmi160[0].sensorPosition.geometryIndex = 0;  bmi160[1].sensorPosition.geometryIndex = 0;  bmi160[2].sensorPosition.geometryIndex = 0;
@@ -151,7 +149,9 @@ int main(void)
       ax[i] = bmi160[i].accelX;   ay[i] = bmi160[i].accelY;   az[i] = bmi160[i].accelZ;
       mx[i] = bmi160[i].magX;     my[i] = bmi160[i].magY;     mz[i] = bmi160[i].magZ;
 
-      bytesWritten += sprintf(&acclDataOut[bytesWritten], "% 8.1f% 8.1f% 8.1f% 8.1f% 8.1f% 8.1f% 8.1f% 8.1f% 8.1f|", gx[i], gy[i], gz[i], ax[i], ay[i], az[i], mx[i], my[i], mz[i]);
+      bytesWritten += sprintf(&acclDataOut[bytesWritten], "% 8.5f% 8.5f% 8.5f|", ax[i], ay[i], az[i]);
+    //   bytesWritten += sprintf(&acclDataOut[bytesWritten], "% 8.1f% 8.1f% 8.1f|", gx[i], gy[i], gz[i]);
+    //   bytesWritten += sprintf(&acclDataOut[bytesWritten], "% 8.1f% 8.1f% 8.1f|", mx[i], my[i], mz[i]);
     }
     bytesWritten += sprintf(&acclDataOut[bytesWritten], "\n");
     writeDataToFile(acclDataOut, bytesWritten);

@@ -104,13 +104,16 @@ uint8_t bmi160_init_bus(bmi160_t *bmi160)
     uint8_t v_pmu_data_u8 = BMI160_INIT_VALUE;
     /* assign bmi160 ptr */
     com_rslt = bmi160_read_reg(bmi160, BMI160_USER_CHIP_ID__REG, &v_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+    HAL_Delay(20);
     /* read Chip Id */
     bmi160->chip_id = v_data_u8;
     /* To avoid gyro wakeup it is required to write 0x00 to 0x6C*/
     com_rslt += bmi160_write_reg(bmi160, BMI160_USER_PMU_TRIGGER_ADDR, &v_pmu_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
-    uint8_t v_nv_data_u8 = BMI160_USER_NV_CONFIG_SPI_ENABLE__MSK;
+    HAL_Delay(20);
 
+    uint8_t v_nv_data_u8 = BMI160_USER_NV_CONFIG_SPI_ENABLE__MSK;
     com_rslt += bmi160_write_reg(bmi160, BMI160_USER_NV_CONFIG_ADDR, &v_nv_data_u8, BMI160_GEN_READ_WRITE_DATA_LENGTH);
+    HAL_Delay(20);
     return com_rslt;
 }
 /*!

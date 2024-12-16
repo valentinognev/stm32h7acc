@@ -21,7 +21,7 @@
 #include "spi.h"
 #include "main.h"
 
-#define uint8_t        uint8_t
+#define LARGEDELAY  (20)
 
 // we have to do it the old skool way.  Note, this also means that
 // only one instance of the bmi160 driver can be active at a time.
@@ -130,7 +130,7 @@ uint8_t bmi160_init(bmi160_context_t *dev, GPIO_TypeDef* cs_port, int cs_pin, bo
     dev->bmi160.spi = hspi1;
     dev->bmi160.mag_manual_enable = enable_mag;
 
-    bmi160_calibrateAccelGyro(dev, &(dev->calibration));
+    //bmi160_calibrateAccelGyro(dev, &(dev->calibration));
 
     if (bmi160_init_bus(&(dev->bmi160)))
     {
@@ -270,14 +270,14 @@ void bmi160_update(bmi160_context_t* dev)
     dev->sensorTime = (unsigned int)v_sensor_time;
 
   	// Calculate the accel value into actual g's per second
-	dev->accelX = (float)accelxyz.x * dev->accelScale - dev->calibration.accelBias[0];
-	dev->accelY = (float)accelxyz.y * dev->accelScale - dev->calibration.accelBias[1];
-	dev->accelZ = (float)accelxyz.z * dev->accelScale - dev->calibration.accelBias[2];
+	dev->accelX = (float)accelxyz.x * dev->accelScale;// - dev->calibration.accelBias[0];
+	dev->accelY = (float)accelxyz.y * dev->accelScale;// - dev->calibration.accelBias[1];
+	dev->accelZ = (float)accelxyz.z * dev->accelScale;// - dev->calibration.accelBias[2];
 
 	// Calculate the gyro value into actual degrees per second
-	dev->gyroX = (float)gyroxyz.x * dev->gyroScale - dev->calibration.gyroBias[0];
-	dev->gyroY = (float)gyroxyz.y * dev->gyroScale - dev->calibration.gyroBias[1];
-	dev->gyroZ = (float)gyroxyz.z * dev->gyroScale - dev->calibration.gyroBias[2];
+	dev->gyroX = (float)gyroxyz.x * dev->gyroScale;// - dev->calibration.gyroBias[0];
+	dev->gyroY = (float)gyroxyz.y * dev->gyroScale;// - dev->calibration.gyroBias[1];
+	dev->gyroZ = (float)gyroxyz.z * dev->gyroScale;// - dev->calibration.gyroBias[2];
 
     if (dev->magEnabled)
     {
@@ -498,37 +498,38 @@ void bmi160_calibrateAccelGyro(const bmi160_context_t *dev, calData* cal)
     /* The SPI interface is ready - now invoke the base class initialization */
     uint8_t buff = 0xB6;           // reset device
 	bmi160_bus_write(&(dev->bmi160), BMI160_CMD_COMMANDS_ADDR, &buff, 1); // Toggle softreset
-	HAL_Delay(1); // wait for reset
+	HAL_Delay(LARGEDELAY); // wait for reset
 
     /* Perform a dummy read from 0x7f to switch to spi interface */
     bmi160_bus_read(&(dev->bmi160), BMI160_CMD_EXT_MODE_ADDR, data, 1);	
+	HAL_Delay(LARGEDELAY); // wait for reset
 
     buff = ACCEL_MODE_NORMAL;
 	bmi160_bus_write(&(dev->bmi160), BMI160_CMD_COMMANDS_ADDR, &buff, 1);  // Start up accelerometer
-	HAL_Delay(1);
+	HAL_Delay(LARGEDELAY); // wait for reset
 			  //wait until they're done starting up...
     while (0x1 != bmi160_bus_read_bit(&(dev->bmi160), BMI160_USER_PMU_STAT_ADDR, BMI160_ACC_PMU_STATUS_BIT, BMI160_ACC_PMU_STATUS_LEN))
-    {    
-        HAL_Delay(1); 
-    }
+    {    HAL_Delay(LARGEDELAY); }
 
     buff = GYRO_MODE_NORMAL;
 	bmi160_bus_write(&(dev->bmi160), BMI160_CMD_COMMANDS_ADDR, &buff, 1);  // Start up gyroscope
-	HAL_Delay(1);			
+	HAL_Delay(LARGEDELAY);			
 			  //wait until they're done starting up...
     while (0x1 != bmi160_bus_read_bit(&(dev->bmi160), BMI160_USER_PMU_STAT_ADDR, BMI160_GYR_PMU_STATUS_BIT, BMI160_GYR_PMU_STATUS_LEN))
-    {    HAL_Delay(1); }
-
+    {    HAL_Delay(LARGEDELAY); }
 
     buff = BMI160_ACCEL_RANGE_2G;
 	bmi160_bus_write(&(dev->bmi160), BMI160_USER_ACCEL_RANGE_ADDR, &buff, 1);  // Set up Accel range. +-2G
+	HAL_Delay(LARGEDELAY);			
+
     buff = BMI160_GYRO_RANGE_125_DEG_SEC;
 	bmi160_bus_write(&(dev->bmi160), BMI160_USER_GYRO_RANGE_ADDR, &buff, 1);  // Set up Gyro range. +-125dps
+	HAL_Delay(LARGEDELAY);			
 
-    buff = 0x2A;//BMI160_ACCEL_OUTPUT_DATA_RATE_400HZ;
-	bmi160_bus_write(&(dev->bmi160), BMI160_USER_ACCEL_CONFIG_ADDR, &buff, 1);//0x2A);  // Set Accel ODR to 400hz, BWP mode to Oversample 1, LPF of ~162hz
-    buff = 0x2A;//BMI160_GYRO_OUTPUT_DATA_RATE_400HZ;
-	bmi160_bus_write(&(dev->bmi160), BMI160_USER_GYRO_CONFIG_ADDR, &buff, 1);//0x2A);  // Set Gyro ODR to 400hz, BWP mode to Oversample 1, LPF of ~136hz
+    // buff = 0x2A;//BMI160_ACCEL_OUTPUT_DATA_RATE_400HZ;
+	// bmi160_bus_write(&(dev->bmi160), BMI160_USER_ACCEL_CONFIG_ADDR, &buff, 1);//0x2A);  // Set Accel ODR to 400hz, BWP mode to Oversample 1, LPF of ~162hz
+    // buff = 0x2A;//BMI160_GYRO_OUTPUT_DATA_RATE_400HZ;
+	// bmi160_bus_write(&(dev->bmi160), BMI160_USER_GYRO_CONFIG_ADDR, &buff, 1);//0x2A);  // Set Gyro ODR to 400hz, BWP mode to Oversample 1, LPF of ~136hz
 
     bmi160_accel_t accel, accel2;
     bmi160_gyro_t gyro;
@@ -546,13 +547,13 @@ void bmi160_calibrateAccelGyro(const bmi160_context_t *dev, calData* cal)
 		// accel.y = ((int16_t)data[9] << 8) | data[8];
 		// accel.z = ((int16_t)data[11] << 8) | data[10];
 
-        //bmi160_read_accel_xyz(&(dev->bmi160), &accel);
-        bmi160_read_accel_x(&(dev->bmi160), &accel.x);
-        bmi160_read_accel_y(&(dev->bmi160), &accel.y);
-        bmi160_read_accel_z(&(dev->bmi160), &accel.z);
+        bmi160_read_accel_xyz(&(dev->bmi160), &accel);
         bmi160_initialSensor2Body(dev, &accel.x, &accel.y, &accel.z);
-        //bmi160_read_gyro_xyz(&(dev->bmi160), &gyro);
+        HAL_Delay(LARGEDELAY);
+
+        bmi160_read_gyro_xyz(&(dev->bmi160), &gyro);
         bmi160_initialSensor2Body(dev, &gyro.x, &gyro.y, &gyro.z);
+		HAL_Delay(LARGEDELAY);
 
 		accel_bias[0] += accel.x * accelsensitivity; // Sum individual signed 16-bit biases to get accumulated biases
 		accel_bias[1] += accel.y * accelsensitivity;
@@ -562,7 +563,6 @@ void bmi160_calibrateAccelGyro(const bmi160_context_t *dev, calData* cal)
 		gyro_bias[1] += gyro.y * gyrosensitivity;
 		gyro_bias[2] += gyro.z * gyrosensitivity;
 
-		HAL_Delay(20);
 	}
 
 	accel_bias[0] /= packet_count; // Normalize sums to get average count biases

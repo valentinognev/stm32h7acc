@@ -195,27 +195,21 @@ void Deactivate_SPI_Interupts(void)
 void SPI_TransmitReceive_DMA(uint8_t* transferData, uint8_t* receiveData, uint16_t size, const bmi160_t *bmi160)
 {
   uint8_t res = HAL_OK;
-  // uint8_t aRxBuffer[117] = {0};
-
-  // HAL_SPI_TransmitReceive_IT(&hspi1, aTxBuffer, aRxBuffer, 2);
-  // HAL_SPI_TransmitReceive_DMA(&hspi1, aTxBuffer, aRxBuffer, 2);
-  // LL_GPIO_ResetOutputPin(bmi160->cs_port, bmi160->cs_pin);
-  //SPI_TransmitReceive(&transferData[0], &receiveData[0], 1, bmi160);
-  res = HAL_SPI_TransmitReceive(&hspi1, &transferData[0], &receiveData[0], 1, 1000); 
+  //res = HAL_SPI_TransmitReceive(&hspi1, &transferData[0], &receiveData[0], 1, 1000); 
   wTransferState = TRANSFER_WAIT;
-  //res = HAL_SPI_TransmitReceive_IT(&hspi1, transferData, receiveData, 2);
+  res = HAL_SPI_TransmitReceive_IT(&hspi1, &transferData[0], &receiveData[0], 1);
   if (res!= HAL_OK) // after we will use bytesize if we want to optimize
     res = res;
+  while(wTransferState != TRANSFER_COMPLETE);
 
-  //LL_GPIO_SetOutputPin(bmi160->cs_port, bmi160->cs_pin);
-  res = HAL_SPI_TransmitReceive(&hspi1, &transferData[1], &receiveData[1], 1, 1000);
+  //res = HAL_SPI_TransmitReceive(&hspi1, &transferData[1], &receiveData[1], 1, 1000);
   wTransferState = TRANSFER_WAIT;
-  //uint8_t res = HAL_SPI_TransmitReceive_IT(&hspi1, transferData, receiveData, 2);
+  res = HAL_SPI_TransmitReceive_IT(&hspi1, &transferData[1], &receiveData[1], 1);
   if (res!= HAL_OK) // after we will use bytesize if we want to optimize
-     res = res;
-//  while(wTransferState != TRANSFER_COMPLETE); // after we will use bytesize if we want to optimize
+    res = res;
+  while(wTransferState != TRANSFER_COMPLETE);
  
-  for (uint16_t i=2; i<size; i+=2)
+  for (uint16_t i=2; i<size; i+=1)
   {
     // uint8_t res = HAL_SPI_TransmitReceive_DMA(&hspi1, (uint32_t)(transferData+i), (uint32_t)(receiveData+i), 1) ;
     wTransferState = TRANSFER_WAIT;
@@ -223,22 +217,6 @@ void SPI_TransmitReceive_DMA(uint8_t* transferData, uint8_t* receiveData, uint16
     if (res!= HAL_OK) // after we will use bytesize if we want to optimize
       res = res;
     while(wTransferState != TRANSFER_COMPLETE); // after we will use bytesize if we want to optimize
-    res = HAL_SPI_TransmitReceive_IT(&hspi1, (transferData+i+1), (receiveData+i+1), 1) ;
-    if (res!= HAL_OK) // after we will use bytesize if we want to optimize
-      res = res;
-    while(wTransferState != TRANSFER_COMPLETE); // after we will use bytesize if we want to optimize
-    //HAL_Delay(1);
-    for (uint16_t j=1; j<10; j+=1);
-    // LL_DMA_DisableChannel(DMA2, LL_DMA_CHANNEL_4);
-    // LL_DMA_DisableChannel(DMA2, LL_DMA_CHANNEL_5);
-    // LL_SPI_Disable(SPI1);
-    // LL_DMA_ConfigAddresses(DMA2, LL_DMA_CHANNEL_4, LL_SPI_DMA_GetRegAddr(SPI1), (uint32_t)(receiveData+i), LL_DMA_GetDataTransferDirection(DMA2, LL_DMA_CHANNEL_4));
-    // LL_DMA_ConfigAddresses(DMA2, LL_DMA_CHANNEL_5, (uint32_t)(transferData+i), LL_SPI_DMA_GetRegAddr(SPI1), LL_DMA_GetDataTransferDirection(DMA2, LL_DMA_CHANNEL_5));
-
-    // LL_SPI_Enable(SPI1);   
-    // LL_DMA_EnableChannel(DMA2, LL_DMA_CHANNEL_4);
-    // LL_DMA_EnableChannel(DMA2, LL_DMA_CHANNEL_5);
-
   }
 }
 
